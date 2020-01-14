@@ -148,20 +148,15 @@ fig.update_layout(
 pyo.plot(fig)
 
 # -----------------------------------------------------------------------------
-# LINE CHART
+# LINE CHART - DONE
 # -----------------------------------------------------------------------------
-
-#temp = df_participants.copy()
-#temp['Year'] = temp['Year'].astype(str)
-#temp['Countries'] = temp['Countries'].astype(str)
-#temp['concat'] = temp[['Year', 'Countries']].apply(lambda x: '<br>'.join(x), axis=1)
+df_participants['Edition'] = df_participants['Edition'].astype(str)
 
 line = go.Figure(data=go.Scatter(x=df_participants['Year'],
                                  y=df_participants['Countries'],
                                  mode="lines+markers",
-#                                 text=[val for val in df_participants['Countries']],
-#                                 hoverinfo='text',
-                                 hovertemplate="<b>%{y:,.0f}</b> different countries participated in the Olympic Summer Games of %{x:.0f}.",
+                                 text=df_participants['Edition'],
+                                 hovertemplate="<b>%{y:,.0f}</b> countries participated in the %{text} Summer Olympics",
                                  hoverlabel=dict(bgcolor='rgb(242, 242, 242)',
                                                  bordercolor='rgb(242, 242, 242)',
                                                  font=dict(size=15,
@@ -297,7 +292,7 @@ point = go.Figure(data=go.Scatter(x=df_participants['Year'],
                                         spikecolor='rgb(0, 0, 0)',
                                         spikethickness=2,
                                         ),
-                              yaxis=dict(title=dict(text="<b>Number of Countries",
+                              yaxis=dict(title=dict(text="<b>Number of Sports",
                                                    font=dict(family='Arial',
                                                              size=16,
                                                              color='rgb(0, 0, 0)',
@@ -317,110 +312,112 @@ point = go.Figure(data=go.Scatter(x=df_participants['Year'],
 pyo.plot(point)
 
 # -----------------------------------------------------------------------------
-# AREA CHART
+# AREA CHART - DONE
 # -----------------------------------------------------------------------------
 
 trace1 = go.Scatter(x=df_participants['Year'],
                     y=df_participants['Men'],
                     mode="lines+markers",
-                    fill="tozeroy", # "none" | "tozeroy" | "tozerox" | "tonexty" | "tonextx" | "toself" | "tonext"
-                    fillcolor='rgb(255, 159, 128)'
-#                    text=df_participants['Sports'],
-#                    textposition="top center",
-#                    textfont=dict(family="Arial",
-#                                   size=18,
-#                                   color="rgb(0, 0, 0)"),
-#                     hovertemplate="In %{x:.0f} the Olympic Summer Games featured <b>%{y:,.0f}</b> different sports.",
-#                     hoverlabel=dict(bgcolor='rgb(242, 242, 242)',
-#                                     bordercolor='rgb(242, 242, 242)',
-#                                     font=dict(size=15,
-#                                               color='rgb(0, 0, 0)',
-#                                               ),
-#                                     namelength=0,
-#                                    ),          
-                     line=dict(color='rgb(255, 159, 128)',
+                    fill="tonexty", # "none" | "tozeroy" | "tozerox" | "tonexty" | "tonextx" | "toself" | "tonext"
+                    fillcolor='rgb(179, 204, 204)',
+                    stackgroup='one',
+                    text=df_participants['Participants'],
+                    hovertemplate="Total: %{text:.0f}<br>Men: %{y:.0f}",
+                    hoverlabel=dict(bgcolor='rgb(242, 242, 242)',
+                                    bordercolor='rgb(242, 242, 242)',
+                                    font=dict(size=15,
+                                              color='rgb(0, 0, 0)',
+                                           ),
+                                    namelength=0,
+                                    ),          
+                     line=dict(color='rgb(102, 153, 153)',
                                width=3,
                                dash='solid',
-                               shape="spline"), #"linear" | "spline" | "hv" | "vh" | "hvh" | "vhv" 
-                     marker=dict(symbol=200,
-                                 size=10, color='rgb(51, 51, 51)'),
+                               shape="linear"), #"linear" | "spline"
+                     marker=dict(symbol='x-dot',
+                                 size=5, color='rgb(31, 46, 46)'),
                      showlegend=False,
                      )
                                              
 trace2 = go.Scatter(x=df_participants['Year'],
                     y=df_participants['Women'],
                     mode="lines+markers",
-                    fill="tozeroy", # "none" | "tozeroy" | "tozerox" | "tonexty" | "tonextx" | "toself" | "tonext"
-                    fillcolor='rgb(255, 159, 128)'
-#                    text=df_participants['Sports'],
-#                    textposition="top center",
-#                    textfont=dict(family="Arial",
-#                                   size=18,
-#                                   color="rgb(0, 0, 0)"),
-#                     hovertemplate="In %{x:.0f} the Olympic Summer Games featured <b>%{y:,.0f}</b> different sports.",
-#                     hoverlabel=dict(bgcolor='rgb(242, 242, 242)',
-#                                     bordercolor='rgb(242, 242, 242)',
-#                                     font=dict(size=15,
-#                                               color='rgb(0, 0, 0)',
-#                                               ),
-#                                     namelength=0,
-#                                    ),          
-                     line=dict(color='rgb(255, 159, 128)',
-                               width=3,
-                               dash='solid',
-                               shape="spline"), #"linear" | "spline" | "hv" | "vh" | "hvh" | "vhv" 
-                     marker=dict(symbol=200,
-                                 size=10, color='rgb(51, 51, 51)'),
-                     showlegend=False,
-                     )
-                     
-layout= layout=dict(title=dict(text="<b><i> Even Sports need to qualify?",
-                                font=dict(family='Raleway',
-                                          size=30,
-                                          color='rgb(0, 0, 0)',
-                                          ),
-                                x=0.5,
-                                ),
-                     xaxis=dict(title=dict(text="<b>Year",
-                                           font=dict(family='Arial',
-                                                     size=16,
-                                                     color='rgb(0, 0, 0)',
-                                                   ),
-                                           ),
-                                showline=True,
-                                showgrid=False,
-                                showticklabels=True,
-                                linecolor='rgb(0, 0, 0)',
-                                linewidth=2,
-                                ticks='outside',
-                                tickfont=dict(
-                                        family='Arial',
-                                        size=14,
-                                        color='rgb(0, 0, 0)',
-                                        ),
-                                tick0 = 1896,
-                                dtick = 4,
-                                nticks=14,
-                                tickangle=45,
-                                showspikes=True,
-                                spikecolor='rgb(0, 0, 0)',
-                                spikethickness=2,
-                                ),
-                      yaxis=dict(title=dict(text="<b>Number of Countries",
-                                           font=dict(family='Arial',
-                                                     size=16,
-                                                     color='rgb(0, 0, 0)',
-                                                   ),
-                                           ),
-                               showgrid=True,
-                               showline=True,
-                               showticklabels=False,
-                               linecolor='rgb(0, 0, 0)',
-                               linewidth=2,
-                               ),
+                    fill="tonexty", # "tozeroy" |"tonexty" | "tonextx" | "toself" | "tonext"
+                    fillcolor='rgb(255, 217, 179)',
+                    stackgroup='one',
+                    text=df_participants['Participants'],
+                    hovertemplate="Total: %{text:.0f}<br>Women: %{y:.0f}",
+                    hoverlabel=dict(bgcolor='rgb(242, 242, 242)',
+                                    bordercolor='rgb(242, 242, 242)',
+                                    font=dict(size=15,
+                                              color='rgb(0, 0, 0)',
+                                              ),
+                                    namelength=0,
+                                    ),          
+                    line=dict(color='rgb(255, 191, 128)',
+                              width=3,
+                              dash='solid',
+                              shape="linear"), #"linear" | "spline"
+                    marker=dict(symbol='x-dot',
+                                size=5, color='rgb(255, 179, 102)'),
                     showlegend=False,
-                    plot_bgcolor='white'
                     )
-                 )
+                     
+layout= dict(title=dict(text="<b><i> Sports is only for Men?",
+                        font=dict(family='Raleway',
+                                  size=30,
+                                  color='rgb(0, 0, 0)',
+                                  ),
+                        x=0.5,
+                        ),
+             xaxis=dict(title=dict(text="<b>Year",
+                                   font=dict(family='Arial',
+                                             size=16,
+                                             color='rgb(0, 0, 0)',
+                                           ),
+                                   ),
+                        showline=True,
+                        showgrid=False,
+                        showticklabels=True,
+                        linecolor='rgb(0, 0, 0)',
+                        linewidth=2,
+                        ticks='outside',
+                        tickfont=dict(
+                                family='Arial',
+                                size=14,
+                                color='rgb(0, 0, 0)',
+                                ),
+                        tickvals=df_participants['Year'].unique().tolist(),
+                        dtick = 4,
+                        tickangle=45,
+                        showspikes=True,
+                        spikecolor='rgb(0, 0, 0)',
+                        spikethickness=2,
+                        ),
+              yaxis=dict(title=dict(text="<b>Number of Athletes",
+                                   font=dict(family='Arial',
+                                             size=16,
+                                             color='rgb(0, 0, 0)',
+                                           ),
+                                   ),
+                         showgrid=True,
+                         showline=True,
+                         showticklabels=True,
+                         linecolor='rgb(0, 0, 0)',
+                         linewidth=2,
+                         ticks='outside',
+                         tickfont=dict(family='Arial',
+                                       size=14,
+                                       color='rgb(0, 0, 0)',
+                                       ),
+                         tick0 = 0,
+                         range=[0,12000],
+                         side='right',
+                       ),
+            showlegend=False,
+            plot_bgcolor='white'
+            )
+                                           
+area = go.Figure(data=[trace1, trace2], layout=layout) 
 
 pyo.plot(area)
