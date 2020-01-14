@@ -1,6 +1,6 @@
 # Default ignored files
 /workspace.xml
-.idea/*
+
 ./idea/*
 temp-plot.html
-code/temp-plot.html
+./code/temp-plot.html
