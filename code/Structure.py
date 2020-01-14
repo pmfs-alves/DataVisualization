@@ -2,6 +2,7 @@ import pandas as pd
 import dash
 import dash_core_components as dcc
 import dash_html_components as html
+import base64
 
 from dash.dependencies import Input, Output
 from dash.dependencies import Input, Output
@@ -17,6 +18,11 @@ datedict =dict((date, str(date)) for date in dates)
 
 app = dash.Dash(__name__, assets_folder='style')
 
+#Encode Image
+
+encoded_image = base64.b64encode(open('images/Olympic-logo.png', 'rb').read())
+
+
 # Page Layout
 app.layout = html.Div([
 
@@ -30,7 +36,8 @@ app.layout = html.Div([
             html.Div([
                 # Div 1.1.1.1. Title
                 html.Div([
-                    html.Img(src=app.get_asset_url('images/Olympic-logo.png"')),
+                    html.Img(src='data:image/png;base64,{}'.format(encoded_image.decode())),
+                    #html.Img(src=app.get_asset_url( '/images/Olympic-logo.png')),
                     html.P('Olympic Games Statistics')
                 ], id='title', className='title'
                 ),  # end div 1.1.1.1.
