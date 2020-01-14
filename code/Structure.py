@@ -8,6 +8,11 @@ from dash.dependencies import Input, Output
 import numpy as np
 import plotly.graph_objects as go
 
+date_min= 1896  #TODO:  substituir pelo minimo da dataframe  df['year'].min(),
+date_max= 2016#TODO:  substituir pelo maximo da dataframe df['year'].max()
+dates = range(date_min,date_max+4,4)
+datedict =dict((date, str(date)) for date in dates)
+
 
 
 app = dash.Dash(__name__, assets_folder='style')
@@ -80,8 +85,20 @@ app.layout = html.Div([
             # Div 2.1.1. - Slider
             html.Div([
                 html.P('SLIDER'),
-                html.P('PEDRO')
-            ], id='slider', className='row_2_1'
+                html.P('PEDRO'),
+                dcc.Slider(
+                    id='my-slider',
+                    min=date_min,
+                    max=date_max + 4,
+                    step=4,
+                    marks=datedict,
+                    value=2016,
+                    included=False,
+                    persistence_type='session',
+                )
+
+
+            ], id='slider', className='row_2_1',
             ),  # end div 2.1.1.
 
 
@@ -117,8 +134,18 @@ app.layout = html.Div([
 
         # Div 2.2. - Filter, Search
         html.Div([
-            html.P('Filter Search'),
-            html.P('PEDRO')
+            html.P('What Type of Sports do you want to see?'),
+            dcc.RadioItems(
+                id='Sport_type',
+                options=[
+                    {'label': 'Colective', 'value': 'Colective'},
+                    {'label': 'Individual', 'value': 'Individual'},
+                    {'label': 'Both', 'value': 'Both'},
+
+                ],
+                value='Both',
+                labelStyle={'display': 'inline-block'}
+            ),
         ], id='inner_div_4', className='column_2'
         ),  # end div 2.2
 
