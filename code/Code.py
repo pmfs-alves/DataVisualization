@@ -7,6 +7,8 @@ import plotly.graph_objects as go
 df_athletes = pd.read_excel(r'C:\Users\TITA\OneDrive\Faculdade\2 Mestrado\1º semestre\Data Visualization\Project\DataVisualization\code\data\athlete_events.xlsx', 'athlete_events')
 df_participants = pd.read_excel(r'C:\Users\TITA\OneDrive\Faculdade\2 Mestrado\1º semestre\Data Visualization\Project\DataVisualization\code\data\athlete_events.xlsx', 'participants')
 
+df_participants['Edition'] = df_participants['Edition'].astype(str)
+
 medals_country = pd.DataFrame(data=df_athletes.groupby(["ISO3", "Medal"])["Medal"].count())
 medals_country = medals_country.unstack(level=['Medal'])
 medals_country.columns = medals_country.columns.droplevel()
@@ -20,31 +22,26 @@ df_athletes = df_athletes.merge(medals_country, on='ISO3')
 # CHOROPLETH
 # -----------------------------------------------------------------------------
 
-df_athletes['text'] = 'Country: ' + df_athletes['Country'] + '<br>' + \
-                      'Host City: ' + df_athletes['City'] + '<br>' + \
-                      'Edition ' + df_athletes['Edition'] + '<br>' + \
-                      'Hosting Year: ' + df_athletes['Year'].astype(str) + '<br>' + \
-                      '  ' + '<br>' + \
-                      'Total Number of Medals ' + df_athletes['Total'].astype(int).astype(str) + '<br>' + \
-                      '    Gold: ' + df_athletes['Gold'].astype(str) + '<br>' + \
-                      '    Silver: ' + df_athletes['Silver'].astype(str) + '<br>' + \
-                      '    Bronze: ' + df_athletes['Bronze'].astype(str)
-
 map = go.Figure(data=go.Choropleth(locations=df_athletes['ISO3'],
                                    locationmode='ISO-3',
                                    z=df_athletes['Total'], # Gold, Silver, Bronze
-                                   text=[zval for zval in df_athletes['Country']],
+                                   text=df_athletes['Country'],
+                                   customdata=df_athletes['City'],
                                    hovertemplate="<b>%{text}</b><br><br>" +
-                                               "Host City: {df_athletes['City']}<br>" +
+                                               "Host City: {customdata}<br>" +
                                                "Edition: {df_athletes['Edition']}<br>" +
-                                               "Hosting Year: {df_athletes['Year'].astype(str)}<br>" +
-                                               "Total Number of Medals: {df_athletes['Total'].astype(int).astype(str)}<br>" +
-                                               "    Gold: {df_athletes['Gold'].astype(str)}<br>" +
-                                               "    Silver: {df_athletes['Silver'].astype(str)}<br>" +
-                                               "    Bronze: {df_athletes['Bronze'].astype(str)}<br>" +
-                                               "<extra></extra>",
-                                   hovertext=df_athletes['text'],
-                                   hoverinfo='text',
+                                               "Hosting Year: {df_athletes['Year']:.0f}<br>" +
+                                               "Total Number of Medals: {z:,.0f}<br>" +
+                                               "    Gold: {df_athletes['Gold']:,.0f}<br>" +
+                                               "    Silver: {df_athletes['Silver']:,.0f}<br>" +
+                                               "    Bronze: {df_athletes['Bronze']:,.0f}<br>",
+                                   hoverlabel=dict(bgcolor='rgb(242, 242, 242)',
+                                                 bordercolor='rgb(242, 242, 242)',
+                                                 font=dict(size=15,
+                                                           color='rgb(0, 0, 0)',
+                                                           ),
+                                                 namelength=0,
+                                                ),
                                    colorscale='fall',
                                    colorbar={'title': 'Total Number<br>of Medals'}
                                    ),
@@ -64,15 +61,15 @@ fig.add_trace(
                   locationmode='ISO-3',
                   z=df_athletes['Total'],
                   name='Total',
-                  hovertemplate="<b>%{df_athletes['Country']}</b><br><br>" +
-                                "Host City: {df_athletes['City']}<br>" +
-                                "Edition: {df_athletes['Edition']}<br>" +
-                                "Hosting Year: {df_athletes['Year'].astype(str)}<br>" +
-                                "Total Number of Medals: {df_athletes['Total'].astype(int).astype(str)}<br>" +
-                                "    Gold: {df_athletes['Gold'].astype(str)}<br>" +
-                                "    Silver: {df_athletes['Silver'].astype(str)}<br>" +
-                                "    Bronze: {df_athletes['Bronze'].astype(str)}<br>" +
-                                "<extra></extra>",
+#                  hovertemplate="<b>%{df_athletes['Country']}</b><br><br>" +
+#                                "Host City: {df_athletes['City']}<br>" +
+#                                "Edition: {df_athletes['Edition']}<br>" +
+#                                "Hosting Year: {df_athletes['Year'].astype(str)}<br>" +
+#                                "Total Number of Medals: {df_athletes['Total'].astype(int).astype(str)}<br>" +
+#                                "    Gold: {df_athletes['Gold'].astype(str)}<br>" +
+#                                "    Silver: {df_athletes['Silver'].astype(str)}<br>" +
+#                                "    Bronze: {df_athletes['Bronze'].astype(str)}<br>" +
+#                                "<extra></extra>",
                   colorscale='fall',
                   colorbar={'title': 'Total Number<br>of Medals'}))
 fig.add_trace(
@@ -80,15 +77,15 @@ fig.add_trace(
                   locationmode='ISO-3',
                   z=df_athletes['Gold'],
                   name='Gold',
-                  hovertemplate="<b>%{df_athletes['Country']}</b><br><br>" +
-                                "Host City: {df_athletes['City']}<br>" +
-                                "Edition: {df_athletes['Edition']}<br>" +
-                                "Hosting Year: {df_athletes['Year'].astype(str)}<br>" +
-                                "Total Number of Medals: {df_athletes['Total'].astype(int).astype(str)}<br>" +
-                                "    Gold: {df_athletes['Gold'].astype(str)}<br>" +
-                                "    Silver: {df_athletes['Silver'].astype(str)}<br>" +
-                                "    Bronze: {df_athletes['Bronze'].astype(str)}<br>" +
-                                "<extra></extra>",
+#                  hovertemplate="<b>%{df_athletes['Country']}</b><br><br>" +
+#                                "Host City: {df_athletes['City']}<br>" +
+#                                "Edition: {df_athletes['Edition']}<br>" +
+#                                "Hosting Year: {df_athletes['Year'].astype(str)}<br>" +
+#                                "Total Number of Medals: {df_athletes['Total'].astype(int).astype(str)}<br>" +
+#                                "    Gold: {df_athletes['Gold'].astype(str)}<br>" +
+#                                "    Silver: {df_athletes['Silver'].astype(str)}<br>" +
+#                                "    Bronze: {df_athletes['Bronze'].astype(str)}<br>" +
+#                                "<extra></extra>",
                   colorscale='fall',
                   colorbar={'title': 'Total Number<br>of Golden Medals \n' }))
 
@@ -97,15 +94,15 @@ fig.add_trace(
                   locationmode='ISO-3',
                   z=df_athletes['Silver'],
                   name='Silver',
-                  hovertemplate="<b>%{df_athletes['Country']}</b><br><br>" +
-                                "Host City: {df_athletes['City']}<br>" +
-                                "Edition: {df_athletes['Edition']}<br>" +
-                                "Hosting Year: {df_athletes['Year'].astype(str)}<br>" +
-                                "Total Number of Medals: {df_athletes['Total'].astype(int).astype(str)}<br>" +
-                                "    Gold: {df_athletes['Gold'].astype(str)}<br>" +
-                                "    Silver: {df_athletes['Silver'].astype(str)}<br>" +
-                                "    Bronze: {df_athletes['Bronze'].astype(str)}<br>" +
-                                "<extra></extra>",
+#                  hovertemplate="<b>%{df_athletes['Country']}</b><br><br>" +
+#                                "Host City: {df_athletes['City']}<br>" +
+#                                "Edition: {df_athletes['Edition']}<br>" +
+#                                "Hosting Year: {df_athletes['Year'].astype(str)}<br>" +
+#                                "Total Number of Medals: {df_athletes['Total'].astype(int).astype(str)}<br>" +
+#                                "    Gold: {df_athletes['Gold'].astype(str)}<br>" +
+#                                "    Silver: {df_athletes['Silver'].astype(str)}<br>" +
+#                                "    Bronze: {df_athletes['Bronze'].astype(str)}<br>" +
+#                                "<extra></extra>",
                   colorscale='fall',
                   colorbar={'title': 'Total Number<br>of Silver Medals'}))
 
@@ -114,15 +111,15 @@ fig.add_trace(
                   locationmode='ISO-3',
                   z=df_athletes['Bronze'],
                   name='Bronze',
-                  hovertemplate="<b>%{df_athletes['Country']}</b><br><br>" +
-                                "Host City: {df_athletes['City']}<br>" +
-                                "Edition: {df_athletes['Edition']}<br>" +
-                                "Hosting Year: {df_athletes['Year'].astype(str)}<br>" +
-                                "Total Number of Medals: {df_athletes['Total'].astype(int).astype(str)}<br>" +
-                                "    Gold: {df_athletes['Gold'].astype(str)}<br>" +
-                                "    Silver: {df_athletes['Silver'].astype(str)}<br>" +
-                                "    Bronze: {df_athletes['Bronze'].astype(str)}<br>" +
-                                "<extra></extra>",
+#                  hovertemplate="<b>%{df_athletes['Country']}</b><br><br>" +
+#                                "Host City: {df_athletes['City']}<br>" +
+#                                "Edition: {df_athletes['Edition']}<br>" +
+#                                "Hosting Year: {df_athletes['Year'].astype(str)}<br>" +
+#                                "Total Number of Medals: {df_athletes['Total'].astype(int).astype(str)}<br>" +
+#                                "    Gold: {df_athletes['Gold'].astype(str)}<br>" +
+#                                "    Silver: {df_athletes['Silver'].astype(str)}<br>" +
+#                                "    Bronze: {df_athletes['Bronze'].astype(str)}<br>" +
+#                                "<extra></extra>",
                   colorscale='fall',
                   colorbar={'title': 'Total Number<br>of Bronze Medals'}))
 
@@ -150,7 +147,6 @@ pyo.plot(fig)
 # -----------------------------------------------------------------------------
 # LINE CHART - DONE
 # -----------------------------------------------------------------------------
-df_participants['Edition'] = df_participants['Edition'].astype(str)
 
 line = go.Figure(data=go.Scatter(x=df_participants['Year'],
                                  y=df_participants['Countries'],
@@ -359,7 +355,7 @@ trace2 = go.Scatter(x=df_participants['Year'],
                               dash='solid',
                               shape="linear"), #"linear" | "spline"
                     marker=dict(symbol='x-dot',
-                                size=5, color='rgb(255, 179, 102)'),
+                                size=5, color='rgb(153, 77, 0)'),
                     showlegend=False,
                     )
                      
