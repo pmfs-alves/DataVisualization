@@ -2,8 +2,6 @@ import pandas as pd
 import dash
 import dash_core_components as dcc
 import dash_html_components as html
-import plotly.offline as pyo
-import plotly.graph_objects as go
 import base64
 
 from dash.dependencies import Input, Output
@@ -11,25 +9,26 @@ from dash.dependencies import Input, Output
 import numpy as np
 import plotly.graph_objects as go
 
-#from code import Code
+#--------------------------------------- Get Data ---------------------------------------------------------#
+#df_athletes = pd.read_excel(r'C:\Users\Sofia\OneDrive - NOVAIMS\Nova IMS\Mestrado\Cadeiras\Data_Visualization\Projeto DV\DataVisualization\code\data\athlete_events.xlsx', 'athlete_events')
+#df_participants = pd.read_excel(r'C:\Users\Sofia\OneDrive - NOVAIMS\Nova IMS\Mestrado\Cadeiras\Data_Visualization\Projeto DV\DataVisualization\code\data\athlete_events.xlsx', 'participants')
+#df_athletes = pd.read_excel(r'C:\Users\TITA\OneDrive\Faculdade\2 Mestrado\1º semestre\Data Visualization\Project\DataVisualization\code\data\athlete_events.xlsx', 'athlete_events')
+#df_participants = pd.read_excel(r'C:\Users\TITA\OneDrive\Faculdade\2 Mestrado\1º semestre\Data Visualization\Project\DataVisualization\code\data\athlete_events.xlsx', 'participants')
 
-
-date_min= 1896  #TODO:  substituir pelo minimo da dataframe  df['year'].min(),
-date_max= 2016  #TODO:  substituir pelo maximo da dataframe df['year'].max()
-dates = range(date_min,date_max+4,4)
-datedict =dict((date, str(date)) for date in dates)
-
-
-
-#--------------------------------------- Figure Top Countries ---------------------------------------------------------#
-# Import Data
-
-
+df_athletes = pd.read_excel('data/athlete_events.xlsx', sheet_name='athlete_events')
+df_participants = pd.read_excel('data/athlete_events.xlsx', sheet_name='participants')
+#df_athletes = pd.read_excel('code/data/athlete_events.xlsx', sheet_name='athlete_events')
+#df_participants = pd.read_excel('code/data/athlete_events.xlsx', sheet_name='participants')
 
 #Encode Image
 
 encoded_image = base64.b64encode(open('images/Olympic-logo.png', 'rb').read())
 
+
+#temp
+
+#----------------------------------------Layout------------------------------------------------------------------------#
+# Page Layout
 
 # Page Layout
 app = dash.Dash(__name__, assets_folder='style')
@@ -48,8 +47,8 @@ app.layout = html.Div([
                 html.Div([
                     html.Img(src='data:image/png;base64,{}'.format(encoded_image.decode()), style={'height':'20%', 'width':'10%'}),
                     #html.Img(src=app.get_asset_url( '/images/Olympic-logo.png')),
-                    html.P('Summer Olympics Games')
-                ], id='title', className='title'
+                    html.P('Summer Olympics Games'),
+                ], id='title', className='title', style={'display': 'inline-block'},
                 ),  # end div 1.1.1.1.
 
                 # Div 1.1.1.2. Nr of Editions
@@ -120,10 +119,12 @@ app.layout = html.Div([
                 html.P('SLIDER'),
                 dcc.Slider(
                     id='my-slider',
-                    min=date_min,
-                    max=date_max + 4,
-                    step=4,
-                    marks=datedict,
+                    #min=df_athletes['year'].min(),
+                    #max=df_athletes['year'].max(),
+                    #step=4,
+                    #marks=datedict,
+                    marks={str(i): '{}'.format(str(i)) for i in [df_athletes.Year.unique()]}, #.insert(0, 'All')
+                    #tooltip=str(value),
                     value=2016,
                     included=False,
                     persistence_type='session',
@@ -188,6 +189,63 @@ app.layout = html.Div([
 
 ], id='outer_div'
 )
+
+
+
+
+
+#--------------------------------------- Figure Top Countries ---------------------------------------------------------#
+
+
+athletes_medals = df_athletes[['Name', 'Medal']]
+athletes_medals['c'] = 1
+a_m = athletes_medals.groupby(by=['Name', 'Medal']).c.sum()
+a_m = a_m.to_frame().reset_index()
+
+athletes_names = a_m.Name.unique()
+
+athletes_names_ordered = a_m.groupby(by='Name').c.sum()
+athletes_names_ordered = athletes_names_ordered.to_frame().reset_index()
+athletes_names_ordered = athletes_names_ordered.sort_values(by=['c'], ascending=False)
+top_5_winners = athletes_names_ordered.head()
+
+for athlete in top_5_winners.Name:
+    a_medals = a_m.loc[a_m['Name'] == athlete]
+
+    aux = pd.Series(dict(zip(a_medals.Medal, a_medals.c)))
+
+    Xlim = 29
+    Ylim = 1
+    Xpos = 0
+    Ypos = 1
+    series = []
+    for medal, count in aux.iteritems():
+        x = []
+        y = []
+        for j in range(0, count):
+            if Xpos == Xlim:
+                Xpos = 0
+                Ypos -= 1  ##change to positive for upwards
+            x.append(Xpos)
+            y.append(Ypos)
+            Xpos += 1
+        if (medal == 'Gold'):
+            #pass
+            series.append(go.Scatter(x=x, y=y, mode='markers',
+                                     marker={'symbol': 'circle', 'size': 8, 'color': 'rgb(255, 215, 0)'},
+                                     name=f'{medal} ({count})'))
+        elif (medal == 'Silver'):
+            # pass
+            series.append(go.Scatter(x=x, y=y, mode='markers',
+                                     marker={'symbol': 'circle', 'size': 8, 'color': 'rgb(192, 192, 192)'},
+                                     name=f'{medal} ({count})'))
+        elif (medal == 'Bronze'):
+            # pass
+            series.append(go.Scatter(x=x, y=y, mode='markers',
+                                     marker={'symbol': 'circle', 'size': 8, 'color': 'rgb(205, 127, 50)'},
+                                     name=f'{medal} ({count})'))
+
+
 
 
 
