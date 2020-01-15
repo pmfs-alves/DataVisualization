@@ -16,131 +16,176 @@ medals_country['ISO3'] = medals_country.index
 medals_country.reset_index(drop=True, inplace=True)
 medals_country['Total'] = medals_country.iloc[:,0:3].sum(axis=1)
 
-df_athletes = df_athletes.merge(medals_country, on='ISO3')
+medals_country = medals_country.merge(df_athletes[['ISO3','City','Country','Edition','Year']], on='ISO3')
+medals_country.drop_duplicates(inplace=True)
 
 # -----------------------------------------------------------------------------
 # CHOROPLETH
 # -----------------------------------------------------------------------------
+medals_country['Hosting_City'] = medals_country['City']
+medals_country['Hosting_Edition'] = medals_country['Edition']
+medals_country['Hosting_Year'] = medals_country['Year']
 
-map = go.Figure(data=go.Choropleth(locations=df_athletes['ISO3'],
-                                   locationmode='ISO-3',
-                                   z=df_athletes['Total'], # Gold, Silver, Bronze
-                                   text=df_athletes['Country'],
-                                   customdata=df_athletes['City'],
-                                   hovertemplate="<b>%{text}</b><br><br>" +
-                                               "Host City: {customdata}<br>" +
-                                               "Edition: {df_athletes['Edition']}<br>" +
-                                               "Hosting Year: {df_athletes['Year']:.0f}<br>" +
-                                               "Total Number of Medals: {z:,.0f}<br>" +
-                                               "    Gold: {df_athletes['Gold']:,.0f}<br>" +
-                                               "    Silver: {df_athletes['Silver']:,.0f}<br>" +
-                                               "    Bronze: {df_athletes['Bronze']:,.0f}<br>",
-                                   hoverlabel=dict(bgcolor='rgb(242, 242, 242)',
-                                                 bordercolor='rgb(242, 242, 242)',
-                                                 font=dict(size=15,
-                                                           color='rgb(0, 0, 0)',
-                                                           ),
-                                                 namelength=0,
-                                                ),
-                                   colorscale='fall',
-                                   colorbar={'title': 'Total Number<br>of Medals'}
-                                   ),
-                layout=dict(geo=dict(landcolor='rgb(255, 255, 255)',
-                                     showframe=False,
-                                     projection={'type': 'equirectangular'})
-                            )
-                )
+uniques = df_participants['ISO3'].unique().tolist()
 
-pyo.plot(map)
+medals_country.reset_index(drop=True, inplace=True)
+
+row = 0
+for i in medals_country['ISO3']:
+    if i not in uniques:
+        medals_country.loc[row, 'Hosting_City'] = 'No host'
+        medals_country.loc[row, 'Hosting_Edition'] = 'No host'
+        medals_country.loc[row, 'Hosting_Year'] = 'No host'
+    
+    row+=1
+    
+del row, i, uniques
+    
+medals_country.fillna(0, inplace=True)
+customdata = df_participants[['ISO3','City','Edition','Year']].copy()
+
+
+#map = go.Figure(data=go.Choropleth(locations=medals_country['ISO3'],
+#                                   locationmode='ISO-3',
+#                                   z=medals_country['Total'], # Gold, Silver, Bronze
+#                                   text=np.array(medals_country),
+#                                   customdata=np.array(customdata),
+#                                   hovertemplate="<b>%{text[6]}</b><br><br>" +
+#                                                 "Host City: %{customdata}<br>"
+##                                               "Host City: %{customdata[1]}<br>" +
+##                                               "Edition: %{customdata[2]}<br>" +
+##                                               "Hosting Year: %{customdata[3]:.0f}<br>" +
+#                                               "Total Number of Medals: %{text[4]:.0f}<br>" +
+#                                               "    Gold: %{text[1]:.0f}<br>" +
+#                                               "    Silver: %{text[2]:.0f}<br>" +
+#                                               "    Bronze: %{text[0]:.0f}<br>",
+#                                   hoverlabel=dict(bgcolor='rgb(242, 242, 242)',
+#                                                 bordercolor='rgb(242, 242, 242)',
+#                                                 font=dict(size=15,
+#                                                           color='rgb(0, 0, 0)',
+#                                                           ),
+#                                                 namelength=0,
+#                                                ),
+#                                   colorscale='fall',
+#                                   colorbar={'title': 'Total Number<br>of Medals'}
+#                                   ),
+#                layout=dict(geo=dict(landcolor='rgb(255, 255, 255)',
+#                                     showframe=False,
+#                                     projection={'type': 'equirectangular'})
+#                            )
+#                )
+#
+#pyo.plot(map)
 
 fig = go.Figure()
 
 # Add Traces
-fig.add_trace(
-    go.Choropleth(locations=df_athletes['ISO3'],
-                  locationmode='ISO-3',
-                  z=df_athletes['Total'],
-                  name='Total',
-#                  hovertemplate="<b>%{df_athletes['Country']}</b><br><br>" +
-#                                "Host City: {df_athletes['City']}<br>" +
-#                                "Edition: {df_athletes['Edition']}<br>" +
-#                                "Hosting Year: {df_athletes['Year'].astype(str)}<br>" +
-#                                "Total Number of Medals: {df_athletes['Total'].astype(int).astype(str)}<br>" +
-#                                "    Gold: {df_athletes['Gold'].astype(str)}<br>" +
-#                                "    Silver: {df_athletes['Silver'].astype(str)}<br>" +
-#                                "    Bronze: {df_athletes['Bronze'].astype(str)}<br>" +
-#                                "<extra></extra>",
-                  colorscale='fall',
-                  colorbar={'title': 'Total Number<br>of Medals'}))
-fig.add_trace(
-    go.Choropleth(locations=df_athletes['ISO3'],
-                  locationmode='ISO-3',
-                  z=df_athletes['Gold'],
-                  name='Gold',
-#                  hovertemplate="<b>%{df_athletes['Country']}</b><br><br>" +
-#                                "Host City: {df_athletes['City']}<br>" +
-#                                "Edition: {df_athletes['Edition']}<br>" +
-#                                "Hosting Year: {df_athletes['Year'].astype(str)}<br>" +
-#                                "Total Number of Medals: {df_athletes['Total'].astype(int).astype(str)}<br>" +
-#                                "    Gold: {df_athletes['Gold'].astype(str)}<br>" +
-#                                "    Silver: {df_athletes['Silver'].astype(str)}<br>" +
-#                                "    Bronze: {df_athletes['Bronze'].astype(str)}<br>" +
-#                                "<extra></extra>",
-                  colorscale='fall',
-                  colorbar={'title': 'Total Number<br>of Golden Medals \n' }))
+fig.add_trace(go.Choropleth(locations=medals_country['ISO3'],
+                             locationmode='ISO-3',
+                             z=medals_country['Total'],
+                             text=np.array(medals_country),
+                             name='Total',
+                             hovertemplate="<b>%{text[6]}</b><br>" +
+                                             "Total Number of Medals: %{text[4]:.0f}<br>",
+                             hoverlabel=dict(bgcolor='rgb(242, 242, 242)',
+                                             bordercolor='rgb(242, 242, 242)',
+                                             font=dict(size=15,
+                                                       color='rgb(0, 0, 0)',
+                                                       ),
+                                             namelength=0,
+                                            ),
+                             colorscale='fall',
+                             colorbar={'title': '<b>Total Number<br>of Medals'}))
+fig.add_trace(go.Choropleth(locations=medals_country['ISO3'],
+                             locationmode='ISO-3',
+                             z=medals_country['Gold'],
+                             text=np.array(medals_country),
+                             name='Gold',
+                             hovertemplate="<b>%{text[6]}</b><br>" +
+                                             "Total Number of Medals: %{text[4]:.0f}<br>" +
+                                            "   Gold:  %{text[1]:.0f}",
+                             hoverlabel=dict(bgcolor='rgb(242, 242, 242)',
+                                             bordercolor='rgb(242, 242, 242)',
+                                             font=dict(size=15,
+                                                       color='rgb(0, 0, 0)',
+                                                       ),
+                                             namelength=0,
+                                            ),
+                             colorscale='fall',
+                             colorbar={'title': '<b>Total Number<br>of Golden Medals \n' }))
 
-fig.add_trace(
-    go.Choropleth(locations=df_athletes['ISO3'],
-                  locationmode='ISO-3',
-                  z=df_athletes['Silver'],
-                  name='Silver',
-#                  hovertemplate="<b>%{df_athletes['Country']}</b><br><br>" +
-#                                "Host City: {df_athletes['City']}<br>" +
-#                                "Edition: {df_athletes['Edition']}<br>" +
-#                                "Hosting Year: {df_athletes['Year'].astype(str)}<br>" +
-#                                "Total Number of Medals: {df_athletes['Total'].astype(int).astype(str)}<br>" +
-#                                "    Gold: {df_athletes['Gold'].astype(str)}<br>" +
-#                                "    Silver: {df_athletes['Silver'].astype(str)}<br>" +
-#                                "    Bronze: {df_athletes['Bronze'].astype(str)}<br>" +
-#                                "<extra></extra>",
-                  colorscale='fall',
-                  colorbar={'title': 'Total Number<br>of Silver Medals'}))
+fig.add_trace(go.Choropleth(locations=medals_country['ISO3'],
+                             locationmode='ISO-3',
+                             z=medals_country['Silver'],
+                             text=np.array(medals_country),
+                             name='Silver',
+                             hovertemplate="<b>%{text[6]}</b><br>" +
+                                             "Total Number of Medals: %{text[4]:.0f}<br>" +
+                                            "   Silver:  %{text[2]:.0f}",
+                             hoverlabel=dict(bgcolor='rgb(242, 242, 242)',
+                                             bordercolor='rgb(242, 242, 242)',
+                                             font=dict(size=15,
+                                                       color='rgb(0, 0, 0)',
+                                                       ),
+                                             namelength=0,
+                                             ),
+                             colorscale='Geyser',
+                             colorbar={'title': '<b>Total Number<br>of Silver Medals'}))
 
-fig.add_trace(
-    go.Choropleth(locations=df_athletes['ISO3'],
-                  locationmode='ISO-3',
-                  z=df_athletes['Bronze'],
-                  name='Bronze',
-#                  hovertemplate="<b>%{df_athletes['Country']}</b><br><br>" +
-#                                "Host City: {df_athletes['City']}<br>" +
-#                                "Edition: {df_athletes['Edition']}<br>" +
-#                                "Hosting Year: {df_athletes['Year'].astype(str)}<br>" +
-#                                "Total Number of Medals: {df_athletes['Total'].astype(int).astype(str)}<br>" +
-#                                "    Gold: {df_athletes['Gold'].astype(str)}<br>" +
-#                                "    Silver: {df_athletes['Silver'].astype(str)}<br>" +
-#                                "    Bronze: {df_athletes['Bronze'].astype(str)}<br>" +
-#                                "<extra></extra>",
-                  colorscale='fall',
-                  colorbar={'title': 'Total Number<br>of Bronze Medals'}))
+fig.add_trace(go.Choropleth(locations=medals_country['ISO3'],
+                             locationmode='ISO-3',
+                             z=medals_country['Bronze'],
+                             text=np.array(medals_country),
+                             name='Bronze',
+                             hovertemplate="<b>%{text[6]}</b><br>" +
+                                             "Total Number of Medals: %{text[4]:.0f}<br>" +
+                                            "   Bronze:  %{text[0]:.0f}",
+                             hoverlabel=dict(bgcolor='rgb(242, 242, 242)',
+                                             bordercolor='rgb(242, 242, 242)',
+                                             font=dict(size=15,
+                                                       color='rgb(0, 0, 0)',
+                                                       ),
+                                                       namelength=0,
+                                            ),
+                             colorscale='Geyser',
+                             colorbar={'title': '<b>Total Number<br>of Bronze Medals'}))
+
+fig.update_layout(geo=dict(landcolor='rgb(255, 255, 255)',
+                    showframe=False,
+                    projection={'type': 'equirectangular'})
+           )
 
 fig.update_layout(
     updatemenus=[
         go.layout.Updatemenu(
             visible=True,
             type='buttons',
-            #active=0,
+            direction="right",
+            active=None,
             buttons=list([
-                dict(label="Total",
-                     method="update"),
-                dict(label="Gold",
-                     method="update"),
-                dict(label="Silver",
-                     method="update"),
-                dict(label="Bronze",
-                     method="update"),
+                dict(args=[{"visible": [True, False, False, False]}],
+                     label="Total",method="update"),
+                dict(args=[{"visible": [False, True, False, False]}],
+                     label="Gold",method="update"),
+                dict(args=[{"visible": [False, False, True, False]}],
+                     label="Silver",method="update"),
+                dict(args=[{"visible": [False, False, False, True]}],
+                     label="Bronze",method="update"),
             ]),
+            showactive=True,
+            x=0,
+            xanchor="left",
+            y=0,
+            yanchor="top"
         )
     ])
+                
+fig.update_layout(
+    annotations=[
+        go.layout.Annotation(text="<b>Medals Type", showarrow=False,
+                             x=0, y=0, yref="paper", align="left")
+    ]
+)
 
 pyo.plot(fig)
 
