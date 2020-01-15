@@ -5,8 +5,10 @@ import plotly.graph_objects as go
 from plotly.subplots import make_subplots
 
 # DATAFRAMES
-df_athletes = pd.read_excel(r'C:\Users\Sofia\OneDrive - NOVAIMS\Nova IMS\Mestrado\Cadeiras\Data_Visualization\Projeto DV\DataVisualization\code\data\athlete_events.xlsx', 'athlete_events')
-df_participants = pd.read_excel(r'C:\Users\Sofia\OneDrive - NOVAIMS\Nova IMS\Mestrado\Cadeiras\Data_Visualization\Projeto DV\DataVisualization\code\data\athlete_events.xlsx', 'participants')
+#df_athletes = pd.read_excel(r'C:\Users\Sofia\OneDrive - NOVAIMS\Nova IMS\Mestrado\Cadeiras\Data_Visualization\Projeto DV\DataVisualization\code\data\athlete_events.xlsx', 'athlete_events')
+#df_participants = pd.read_excel(r'C:\Users\Sofia\OneDrive - NOVAIMS\Nova IMS\Mestrado\Cadeiras\Data_Visualization\Projeto DV\DataVisualization\code\data\athlete_events.xlsx', 'participants')
+df_athletes = pd.read_excel(r'C:\Users\TITA\OneDrive\Faculdade\2 Mestrado\1º semestre\Data Visualization\Project\DataVisualization\code\data\athlete_events.xlsx', 'athlete_events')
+df_participants = pd.read_excel(r'C:\Users\TITA\OneDrive\Faculdade\2 Mestrado\1º semestre\Data Visualization\Project\DataVisualization\code\data\athlete_events.xlsx', 'participants')
 
 df_participants['Edition'] = df_participants['Edition'].astype(str)
 
@@ -23,27 +25,27 @@ medals_country.drop_duplicates(inplace=True)
 # -----------------------------------------------------------------------------
 # CHOROPLETH
 # -----------------------------------------------------------------------------
-medals_country['Hosting_City'] = medals_country['City']
-medals_country['Hosting_Edition'] = medals_country['Edition']
-medals_country['Hosting_Year'] = medals_country['Year']
-
-uniques = df_participants['ISO3'].unique().tolist()
-
-medals_country.reset_index(drop=True, inplace=True)
-
-row = 0
-for i in medals_country['ISO3']:
-    if i not in uniques:
-        medals_country.loc[row, 'Hosting_City'] = 'No host'
-        medals_country.loc[row, 'Hosting_Edition'] = 'No host'
-        medals_country.loc[row, 'Hosting_Year'] = 'No host'
-    
-    row+=1
-    
-del row, i, uniques
+#medals_country['Hosting_City'] = medals_country['City']
+#medals_country['Hosting_Edition'] = medals_country['Edition']
+#medals_country['Hosting_Year'] = medals_country['Year']
+#
+#uniques = df_participants['ISO3'].unique().tolist()
+#
+#medals_country.reset_index(drop=True, inplace=True)
+#
+#row = 0
+#for i in medals_country['ISO3']:
+#    if i not in uniques:
+#        medals_country.loc[row, 'Hosting_City'] = 'No host'
+#        medals_country.loc[row, 'Hosting_Edition'] = 'No host'
+#        medals_country.loc[row, 'Hosting_Year'] = 'No host'
+#    
+#    row+=1
+#    
+#del row, i, uniques
     
 medals_country.fillna(0, inplace=True)
-customdata = df_participants[['ISO3','City','Edition','Year']].copy()
+#customdata = df_participants[['ISO3','City','Edition','Year']].copy()
 
 
 #map = go.Figure(data=go.Choropleth(locations=medals_country['ISO3'],
@@ -78,10 +80,10 @@ customdata = df_participants[['ISO3','City','Edition','Year']].copy()
 #
 #pyo.plot(map)
 
-fig = go.Figure()
+map = go.Figure()
 
 # Add Traces
-fig.add_trace(go.Choropleth(locations=medals_country['ISO3'],
+map.add_trace(go.Choropleth(locations=medals_country['ISO3'],
                              locationmode='ISO-3',
                              z=medals_country['Total'],
                              text=np.array(medals_country),
@@ -97,7 +99,7 @@ fig.add_trace(go.Choropleth(locations=medals_country['ISO3'],
                                             ),
                              colorscale='fall',
                              colorbar={'title': '<b>Total Number<br>of Medals'}))
-fig.add_trace(go.Choropleth(locations=medals_country['ISO3'],
+map.add_trace(go.Choropleth(locations=medals_country['ISO3'],
                              locationmode='ISO-3',
                              z=medals_country['Gold'],
                              text=np.array(medals_country),
@@ -115,7 +117,7 @@ fig.add_trace(go.Choropleth(locations=medals_country['ISO3'],
                              colorscale='fall',
                              colorbar={'title': '<b>Total Number<br>of Golden Medals \n' }))
 
-fig.add_trace(go.Choropleth(locations=medals_country['ISO3'],
+map.add_trace(go.Choropleth(locations=medals_country['ISO3'],
                              locationmode='ISO-3',
                              z=medals_country['Silver'],
                              text=np.array(medals_country),
@@ -133,7 +135,7 @@ fig.add_trace(go.Choropleth(locations=medals_country['ISO3'],
                              colorscale='Geyser',
                              colorbar={'title': '<b>Total Number<br>of Silver Medals'}))
 
-fig.add_trace(go.Choropleth(locations=medals_country['ISO3'],
+map.add_trace(go.Choropleth(locations=medals_country['ISO3'],
                              locationmode='ISO-3',
                              z=medals_country['Bronze'],
                              text=np.array(medals_country),
@@ -151,12 +153,12 @@ fig.add_trace(go.Choropleth(locations=medals_country['ISO3'],
                              colorscale='Geyser',
                              colorbar={'title': '<b>Total Number<br>of Bronze Medals'}))
 
-fig.update_layout(geo=dict(landcolor='rgb(255, 255, 255)',
+map.update_layout(geo=dict(landcolor='rgb(255, 255, 255)',
                     showframe=False,
                     projection={'type': 'equirectangular'})
            )
 
-fig.update_layout(
+map.update_layout(
     updatemenus=[
         go.layout.Updatemenu(
             visible=True,
@@ -165,13 +167,13 @@ fig.update_layout(
             active=None,
             buttons=list([
                 dict(args=[{"visible": [True, False, False, False]}],
-                     label="Total",method="update"),
+                     label="Total", method="update"),
                 dict(args=[{"visible": [False, True, False, False]}],
-                     label="Gold",method="update"),
+                     label="Gold", method="update"),
                 dict(args=[{"visible": [False, False, True, False]}],
-                     label="Silver",method="update"),
+                     label="Silver", method="update"),
                 dict(args=[{"visible": [False, False, False, True]}],
-                     label="Bronze",method="update"),
+                     label="Bronze", method="update"),
             ]),
             showactive=True,
             x=0,
@@ -179,16 +181,14 @@ fig.update_layout(
             y=0,
             yanchor="top"
         )
-    ])
-                
-fig.update_layout(
+    ],
     annotations=[
         go.layout.Annotation(text="<b>Medals Type", showarrow=False,
                              x=0, y=0, yref="paper", align="left")
     ]
 )
 
-pyo.plot(fig)
+pyo.plot(map)
 
 # -----------------------------------------------------------------------------
 # LINE CHART - DONE
@@ -263,12 +263,6 @@ line = go.Figure(data=go.Scatter(x=df_participants['Year'],
                                        tick0 = 0,
                                        dtick = 50,
                                        ),
-#                            autosize=False,
-#                            margin=dict(autoexpand=False,
-#                                        l=100,
-#                                        r=20,
-#                                        t=110,
-#                                        ),
                             showlegend=False,
                             plot_bgcolor='white'
                             )
@@ -589,7 +583,7 @@ layout= dict(title=dict(text="<b><i> Even Sports need to qualify?",
 
 
 
-fig = go.Figure(data=[
+bar = go.Figure(data=[
     go.Bar(name='Maintained Sports', x=df_participants['Year'], y=df_participants['Maintained Sports_Count'],
            text=df_participants['Lost Sports'], marker=dict(color='rgb(0, 153, 204)'),
            hovertemplate="Maintained Sports: %{y:.0f}<br>Lost Sports: %{text}",
@@ -624,10 +618,10 @@ fig = go.Figure(data=[
     layout=layout)
 
 # Change the bar mode
-fig.update_layout(barmode='stack')
+bar.update_layout(barmode='stack')
 
 # Add totals at the top of the bars
-fig.add_trace(go.Scatter(
+bar.add_trace(go.Scatter(
     x=df_participants['Year'],
     y=df_participants['Sports'],
     mode="text",
@@ -710,7 +704,6 @@ for athlete in top_5_winners.Name:
                       )
     # final_fig.append_trace(fig, i, 1)
     # i = i + 1
-    print(athlete)
     fig.show()
-
+    
 # final_fig.show()
