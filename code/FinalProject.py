@@ -25,7 +25,11 @@ df_participants = pd.read_excel('data/athlete_events.xlsx', sheet_name='particip
 encoded_image = base64.b64encode(open('images/Olympic-logo.png', 'rb').read())
 
 
-#temp
+years_select = [dict(label=year, value=year) for year in df_participants['Year'].unique()]
+years_select={str(i): '{}'.format(str(i)) for i in [df_participants.Year.unique()]}
+years_select['all']="all"
+
+
 
 #----------------------------------------Layout------------------------------------------------------------------------#
 # Page Layout
@@ -118,12 +122,12 @@ app.layout = html.Div([
             html.Div([
                 html.P('SLIDER'),
                 dcc.Slider(
-                    id='my-slider',
-                    #min=df_athletes['year'].min(),
-                    #max=df_athletes['year'].max(),
+                    id='year-slider',
+                    min=df_athletes['year'].min(),
+                    max=df_athletes['year'].max(),
                     #step=4,
                     #marks=datedict,
-                    marks={str(i): '{}'.format(str(i)) for i in [df_athletes.Year.unique()]}, #.insert(0, 'All')
+                    marks=years_select, #.insert(0, 'All')
                     #tooltip=str(value),
                     value=2016,
                     included=False,
@@ -169,14 +173,14 @@ app.layout = html.Div([
         html.Div([
             html.P('What Type of Sports do you want to see?'),
             dcc.RadioItems(
-                id='Sport_type',
+                id='sport_type',
                 options=[
-                    {'label': 'Colective', 'value': 'Colective'},
-                    {'label': 'Individual', 'value': 'Individual'},
-                    {'label': 'Both', 'value': 'Both'},
+                    {'label': 'Colective', 'value': 'colective'},
+                    {'label': 'Individual', 'value': 'individual'},
+                    {'label': 'Both', 'value': 'both'},
 
                 ],
-                value='Both',
+                value='both',
                 labelStyle={'display': 'inline-block'}
             ),
         ], id='inner_div_4', className='column_2'
@@ -190,7 +194,20 @@ app.layout = html.Div([
 ], id='outer_div'
 )
 
+#----------------------------------------Callbacks---------------------------------------------------------------------#
 
+@app.callback(
+    [
+        Output("bar_graph", "figure"),
+        Output("choropleth", "figure"),
+        Output("countries_linechart", "figure"),
+    ],
+    [
+        Input("sport_type", "value"),
+        Input("year-slider", "value"),
+        # Input("gas_option", "value"),
+
+    ]
 
 
 
