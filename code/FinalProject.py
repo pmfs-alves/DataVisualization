@@ -895,9 +895,9 @@ def update_graph (team, sport, year):
                                          tickfont=dict(color='white')))
     layout = dict(geo=dict(landcolor='rgb(43, 43, 43)',
                            showcountries=False,
-                           # showframe=False,
-                           framewidth=0,
-                           framecolor='rgb(30, 30, 30)',
+                           showframe=False,
+                           #framewidth=0,
+                           #framecolor='rgb(30, 30, 30)',
                            coastlinecolor='rgb(43, 43, 43)',
                            showcoastlines=True,
                            showland=True,
@@ -906,9 +906,6 @@ def update_graph (team, sport, year):
                            showlakes=True,
                            lakecolor='rgb(30, 30, 30)',
                            projection={'type': 'equirectangular'}),
-                  # autosize=False,
-                  # width=1000,
-                  # height=700,
                   dragmode=False,
                   margin=dict(autoexpand=False,
                               l=10, r=150, t=10, b=40
@@ -920,7 +917,7 @@ def update_graph (team, sport, year):
                           visible=True,
                           type='buttons',
                           direction="right",
-                          active=-1,
+                          active=0,
                           buttons=list([
                               dict(args=[{"visible": [True, False, False, False]}],
                                    label="Total", method="update"),
@@ -932,17 +929,13 @@ def update_graph (team, sport, year):
                                    label="Bronze", method="update"),
                           ]),
                           showactive=True,
-                          x=0,
-                          xanchor="left",
-                          y=0,
+                          x=0.90,
+                          xanchor="right",
+                          y=0.10,
                           yanchor="top",
                           bgcolor='rgb(30, 30, 30)',
                           font=dict(color='rgb(165, 149, 1)')
                       )
-                  ],
-                  annotations=[
-                      go.layout.Annotation(text="Medals Type", showarrow=False,
-                                           x=0, y=0, yref="paper", align="left", font=dict(color='white'))
                   ]
                   )
 
