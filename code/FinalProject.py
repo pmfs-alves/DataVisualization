@@ -47,7 +47,7 @@ nr_events = len(nr_events)
 #----------------------------------------------LAYOUT---------------------------------------------------#
 #-------------------------------------------------------------------------------------------------------#
 
-app = dash.Dash(__name__)
+app = dash.Dash(__name__, assets_folder='style')
 
 app.layout = html.Div([
 
@@ -56,15 +56,17 @@ app.layout = html.Div([
 
         # Div 1.1. - Title
         html.Div([
-            html.Img(src='data:image/png;base64,{}'.format(encoded_image.decode()), id='logo'),
+            html.P('OLYMPIC GAMES'),
+            html.P('Summer', id='p2'),
+            html.Img(src='data:image/png;base64,{}'.format(encoded_image.decode()), id='logo')
             #html.Img(src=app.get_asset_url( '/images/Olympic-logo.png')),
-            html.P('Summer Olympics Games')
+
         ], id='title', className='title leftboxes'
         ),  # end div 1.1.
 
         # Div 1.2. - Top Winners
         html.Div([
-            html.P('Top Winners'),
+            html.H2('Top Winners'),
             # dcc.Graph(
             #         id='top_contries_fig'
             # )
@@ -74,7 +76,7 @@ app.layout = html.Div([
         # Div 1.3. - Top Countries
         html.Div([
 
-            html.P('Top Countries')
+            html.H2('Top Countries')
 
         ], id='top_countries', className='leftboxes'
         ),  # end div 1.3.
@@ -127,28 +129,28 @@ app.layout = html.Div([
         html.Div([
             # Div 2.1.1. - Nr of Editions
             html.Div([
-                html.P('Number of Editions:'),
+                html.H3('Number of Editions:'),
                 html.P('XXXI')
             ], id='nr_editions', className='miniboxes'
             ),  # end div 2.1.1.
 
             # Div 2.1.2. - Nr Countries
             html.Div([
-                html.P('Number of Countries: '),
+                html.H3('Number of Countries: '),
                 html.Div([str(nr_countries)], className='nr')
             ], id='nr_countries', className='miniboxes'
             ),  # end div 2.1.2.
 
             # Div 2.1.2. - Nr Cities
             html.Div([
-                html.P('Number of Host Cities: '),
+                html.H3('Number of Host Cities: '),
                 html.Div([str(nr_host_cities)], className='nr'),
             ], id='nr_cities', className='miniboxes'
             ),  # end div 2.1.2.
 
             # Div 2.1.3. - Nr Events
             html.Div([
-                html.P('Number of Events: '),
+                html.H3('Number of Events: '),
                 html.Div([str(nr_events)], className='nr')
             ], id='nr_events', className='miniboxes'
             ),  # end div 2.1.3.
@@ -169,7 +171,7 @@ app.layout = html.Div([
         html.Div([
             html.P('SLIDER'),
             dcc.Slider(
-                id='year-slider',
+                id='year_slider',
                 min=1892,
                 max=2016,
                 #step=4,

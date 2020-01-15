@@ -1,21 +1,93 @@
 body {
-    background-color: #2b2b2b;
-    font-family: 'Open Sans', sans-serif;
+    background-color: rgb(30,30,30);
+    font-family: "Open Sans", "HelveticaNeue", "Helvetica Neue", Helvetica, Arial, sans-serif;
     font-size: 0.8rem;
-    color: #f3f6fa;
+    text-align: center;
+    color: #ededed;
 }
+
+
 
 #outer_div{
     display: flex;
-    background-color: #2b2b2b;
+    background-color: rgb(30,30,30);
 }
 
 .column_1{
-    flex: 25%;
+    margin-top: -10px;
+    margin-left: -10px;
+    height: 100%;
+    flex: 28%;
+    background-color: #2b2b2b;
+
 }
+#title p{
+    color: rgb(255,255,255);
+    font-size: 40px;
+    color: #fff;
+    font-family: ATrebuchet MS, sans-serif ;
+    margin-top: 20%;
+}
+p#p2{
+    margin-top: -35px;
+    font-size: 23px;
+}
+#title{
+    margin-top: 10%;;
+}
+#logo{
+    width: 50%;
+    height: auto;
+    margin-top: -5px;
+    margin-bottom: 15%;;
+}
+#top_winners{
+    margin-bottom:10%;
+}
+#top_countries{
+    margin-bottom:10%;
+}
+#filter{
+    margin-bottom:10%;
+}
+#search{
+    margin-bottom:10%;
+    padding-left: 10%;
+    padding-right: 10%;
+}
+
+
+.leftboxes h2{
+    font-weight:normal;
+    color: rgb(254,192,54);
+}
+
 
 
 
 .column_2{
-    flex: 75%;
+    flex: 72%;
+    padding: 3%;
 }
+
+.row_1{
+    display: flex;
+    margin-bottom: 5%;
+}
+.miniboxes{
+    flex: 25%;
+}
+.row_1 h3{
+    font-weight:normal;
+    color: rgb(178,178,178);
+    font-size: 16px;
+}
+.row_4{
+    display: flex;
+}
+.boxes{
+    flex: 30%;
+}
+
+
+
