@@ -2,6 +2,8 @@ import pandas as pd
 import dash
 import dash_core_components as dcc
 import dash_html_components as html
+import plotly.offline as pyo
+import plotly.graph_objects as go
 import base64
 
 from dash.dependencies import Input, Output
@@ -9,7 +11,7 @@ from dash.dependencies import Input, Output
 import numpy as np
 import plotly.graph_objects as go
 
-from code import Code
+#from code import Code
 
 
 date_min= 1896  #TODO:  substituir pelo minimo da dataframe  df['year'].min(),
@@ -22,72 +24,6 @@ datedict =dict((date, str(date)) for date in dates)
 #--------------------------------------- Figure Top Countries ---------------------------------------------------------#
 # Import Data
 
-df = pd.read_excel('data/athlete_events.xlsx', sheet_name='athlete_events')
-
-athletes_medals = df[['Name', 'Medal']]
-athletes_medals['c'] = 1
-a_m = athletes_medals.groupby(by=['Name', 'Medal']).c.sum()
-a_m = a_m.to_frame().reset_index()
-
-athletes_names = a_m.Name.unique()
-
-athletes_names_ordered = a_m.groupby(by='Name').c.sum()
-athletes_names_ordered = athletes_names_ordered.to_frame().reset_index()
-athletes_names_ordered = athletes_names_ordered.sort_values(by=['c'], ascending=False)
-top_5_winners = athletes_names_ordered.head()
-
-
-
-# final_fig = make_subplots(rows=5, cols=1)
-# i = 1
-for athlete in top_5_winners.Name:
-    a_medals = a_m.loc[a_m['Name'] == athlete]
-
-    aux = pd.Series(dict(zip(a_medals.Medal, a_medals.c)))
-
-    Xlim = 29
-    Ylim = 1
-    Xpos = 0
-    Ypos = 1
-    series = []
-    for medal, count in aux.iteritems():
-        x = []
-        y = []
-        for j in range(0, count):
-            if Xpos == Xlim:
-                Xpos = 0
-                Ypos -= 1  ##change to positive for upwards
-            x.append(Xpos)
-            y.append(Ypos)
-            Xpos += 1
-        if (medal == 'Gold'):
-            series.append(go.Scatter(x=x, y=y, mode='markers',
-                                     marker={'symbol': 'circle', 'size': 6, 'color': 'rgb(255, 215, 0)'},
-                                     name=f'{medal} ({count})'))
-        elif (medal == 'Silver'):
-            series.append(go.Scatter(x=x, y=y, mode='markers',
-                                     marker={'symbol': 'circle', 'size': 6, 'color': 'rgb(192, 192, 192)'},
-                                     name=f'{medal} ({count})'))
-        elif (medal == 'Bronze'):
-            series.append(go.Scatter(x=x, y=y, mode='markers',
-                                     marker={'symbol': 'circle', 'size': 6, 'color': 'rgb(205, 127, 50)'},
-                                     name=f'{medal} ({count})'))
-
-    fig = go.Figure(dict(data=series, figsize=[6, 6], layout=go.Layout(
-        plot_bgcolor='rgba(0,0,0,0)',
-        xaxis=dict(showgrid=False, zeroline=False, showline=False, visible=False, showticklabels=False,
-                   range=[0.5, 30]),
-        yaxis=dict(showgrid=False, zeroline=False, showline=False, visible=False, showticklabels=False, tickvals=[1])
-    )))
-    fig.update_layout(showlegend=False,
-                      autosize=False,
-                      width=500,
-                      height=190,
-                      margin={'t': 0}
-                      )
-    # final_fig.append_trace(fig, i, 1)
-    # i = i + 1
-    fig.show()
 
 
 #Encode Image
@@ -138,7 +74,7 @@ app.layout = html.Div([
             # Div 1.1.2. HeatMap
             html.Div([
                 html.P('HEATMAP'),
-                dcc.Graph(id='heatmap', figure=map)
+                # dcc.Graph(id='heatmap', figure=map)
             ], id='HeatMap', className='row_1_2'
             ),  # end div 1.1.2.
 
@@ -151,9 +87,9 @@ app.layout = html.Div([
             # Div 1.2.1. - Top Winners
             html.Div([
                 html.P('Top Winners'),
-                dcc.Graph(
-                        id='top_contries_fig'
-                )
+                # dcc.Graph(
+                #         id='top_contries_fig'
+                # )
             ], id='top_winners', className='normalbox'
             ),  # end div 1.2.1.
 
@@ -203,21 +139,21 @@ app.layout = html.Div([
                 # Div 2.1.2.1. - Linechart Countries
                 html.Div([
                     html.P('Linechart Countries'),
-                    dcc.Graph(id='linechart', figure=line)
+                 #   dcc.Graph(id='linechart', figure=line)
                 ], id='countries_linechart', className='boxes'
                 ),  # end div 2.1.2.1.
 
                 # Div 2.1.2.2. - Barchart Sports
                 html.Div([
                     html.P('Barchart Sports'),
-                    dcc.Graph(id='linechart', figure=bar)
+                  #  dcc.Graph(id='linechart', figure=bar)
                 ], id='events_linechart', className='boxes'
                 ),  # end div 2.1.2.2.
 
                 # Div 2.1.2.3. - Areachart Men & Women
                 html.Div([
                     html.P('Athletes Men & Women'),
-                    dcc.Graph(id='linechart', figure=area)
+                  #  dcc.Graph(id='linechart', figure=area)
                 ], id='athletes_linechart', className='boxes'
                 ),  # end div 2.1.2.3.
 
