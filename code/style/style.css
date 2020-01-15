@@ -1,3 +1,10 @@
+
+
+
+
+
+
+
 body {
     background-color: #1e1e1e;
     font-family: 'Open Sans', sans-serif;
@@ -29,11 +36,23 @@ body {
 .row_1_1 {
     display: flex;
 }
+
 .title {
     flex: 60%;
     font-family: "Open Sans", sans-serif;
     color: #fec036;
     font-size: 1.8rem;
+    display: flex;
+}
+#logo{
+    width: 20%;
+    height: auto;
+    margin: 3%;
+    margin-
+
+}
+p .title{
+    flex: 70%;
 }
 .minibox {
     flex: 20%;
