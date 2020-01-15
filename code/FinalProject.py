@@ -28,9 +28,15 @@ encoded_image = base64.b64encode(open('images/Olympic-logo.png', 'rb').read())
 years_select = [dict(label=year, value=year) for year in df_participants['Year'].unique()]
 years_select = {str(i): '{}'.format(str(i)) for i in df_participants.Year.unique()}
 years_select[1892] = "All"
-print(years_select)
 
+nr_countries = df_athletes.Country.unique()
+nr_countries = len(nr_countries)
 
+nr_host_cities = df_participants.City.unique()
+nr_host_cities = len(nr_host_cities)
+
+nr_events = df_athletes.Event.unique()
+nr_events = len(nr_events)
 
 #----------------------------------------Layout------------------------------------------------------------------------#
 # Page Layout
