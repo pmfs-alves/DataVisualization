@@ -638,76 +638,116 @@ pyo.plot(bar)
 # Top 5 Winners
 # -----------------------------------------------------------------------------
 
-df = pd.read_excel('data/athlete_events.xlsx', sheet_name='athlete_events')
+athletes_medals = pd.read_excel(r'C:\Users\Sofia\OneDrive - NOVAIMS\Nova IMS\Mestrado\Cadeiras\Data_Visualization\Projeto DV\DataVisualization\code\data\tops_athletes.xlsx', sheet_name='Athletes Medals')
 
-athletes_medals = df[['Name', 'Medal']]
-athletes_medals['c'] = 1
-a_m = athletes_medals.groupby(by=['Name', 'Medal']).c.sum()
-a_m = a_m.to_frame().reset_index()
+athletes_medals.Year=athletes_medals.Year.astype(str)
+top5_athletes = athletes_medals[athletes_medals.Year=='1900']
+top5_athletes=top5_athletes.drop_duplicates()
 
-athletes_names = a_m.Name.unique()
+top5_athletes = top5_athletes.sort_values(by=['Total'], ascending=False)
+top5_athletes = top5_athletes.head()
+top5_athletes = top5_athletes.sort_values(by=['Total'], ascending=True)
 
-athletes_names_ordered = a_m.groupby(by='Name').c.sum()
-athletes_names_ordered = athletes_names_ordered.to_frame().reset_index()
-athletes_names_ordered = athletes_names_ordered.sort_values(by=['c'], ascending=False)
-top_5_winners = athletes_names_ordered.head()
+top5_athletes.drop(columns='Unnamed: 0', inplace=True)
 
+top5_athletes=top5_athletes.drop_duplicates()
 
+top5_athletes.Name = [(i.split()[0]+' '+i.split()[-1]) for i in top5_athletes.Name]
 
-# final_fig = make_subplots(rows=5, cols=1)
-# i = 1
-for athlete in top_5_winners.Name:
-    a_medals = a_m.loc[a_m['Name'] == athlete]
+top5_athletes=top5_athletes.reset_index(drop=True)
 
-    aux = pd.Series(dict(zip(a_medals.Medal, a_medals.c)))
+dfs = top5_athletes.copy()
+dfs.drop(dfs.index, inplace=True)
+for index, row in top5_athletes.iterrows():
+    if row.Bronze >= 1:
+        v = 0
+        while v < row.Bronze:
+            dfs = dfs.append({'Name': row.Name, 'Gold': 0, 'Silver': 0, 'Bronze': row.Bronze - v, 'Year': row.Year,
+                              'Sport': row.Sport, 'Team Sport': row['Team Sport'], 'Total': 0}, ignore_index=True)
+            v += 1
+    if row.Bronze == 0 and row.Silver > 1:
+        v = 0
+        while v < row.Silver:
+            dfs = dfs.append({'Name': row.Name, 'Gold': 0, 'Silver': row.Silver - v, 'Bronze': 0, 'Year': row.Year,
+                              'Sport': row.Sport, 'Team Sport': row['Team Sport'], 'Total': 0}, ignore_index=True)
+            v += 1
 
-    Xlim = 29
-    Ylim = 1
-    Xpos = 0
-    Ypos = 1
-    series = []
-    for medal, count in aux.iteritems():
-        x = []
-        y = []
-        for j in range(0, count):
-            if Xpos == Xlim:
-                Xpos = 0
-                Ypos -= 1  ##change to positive for upwards
-            x.append(Xpos)
-            y.append(Ypos)
-            Xpos += 1
-        if (medal == 'Gold'):
-            series.append(go.Scatter(x=x, y=y, mode='markers',
-                                     marker={'symbol': 'circle', 'size': 6, 'color': 'rgb(255, 215, 0)'},
-                                     name=f'{medal} ({count})'))
-        elif (medal == 'Silver'):
-            series.append(go.Scatter(x=x, y=y, mode='markers',
-                                     marker={'symbol': 'circle', 'size': 6, 'color': 'rgb(192, 192, 192)'},
-                                     name=f'{medal} ({count})'))
-        elif (medal == 'Bronze'):
-            series.append(go.Scatter(x=x, y=y, mode='markers',
-                                     marker={'symbol': 'circle', 'size': 6, 'color': 'rgb(205, 127, 50)'},
-                                     name=f'{medal} ({count})'))
+    if row.Bronze > 0 and row.Silver > 0:
+        a = abs(row.Silver - row.Bronze)
+        v = 0
+        j = 0
+        while v <= a:
+            dfs = dfs.append(
+                {'Name': row.Name, 'Gold': 0, 'Silver': row.Bronze + row.Silver - j, 'Bronze': 0, 'Year': row.Year,
+                 'Sport': row.Sport, 'Team Sport': row['Team Sport'], 'Total': 0}, ignore_index=True)
+            v += 1
+            j += 1
+    if (row.Bronze != 0 or row.Silver != 0) and row.Gold > 0:
+        v = row.Gold
+        j = 0
+        while v > 0:
+            dfs = dfs.append(
+                {'Name': row.Name, 'Gold': row.Bronze + row.Silver + row.Gold - j, 'Silver': 0, 'Bronze': 0,
+                 'Year': row.Year, 'Sport': row.Sport, 'Team Sport': row['Team Sport'], 'Total': 0}, ignore_index=True)
+            v -= 1
+            j += 1
 
-    fig = go.Figure(dict(data=series, figsize=[6, 6], layout=go.Layout(
-        plot_bgcolor='rgba(0,0,0,0)',
-        xaxis=dict(showgrid=False, zeroline=False, showline=False, visible=False, showticklabels=False,
-                   range=[0.5, 30]),
-        yaxis=dict(showgrid=False, zeroline=False, showline=False, visible=False, showticklabels=False, tickvals=[1])
-    )))
-    fig.update_layout(showlegend=False,
-                      autosize=False,
-                      width=500,
-                      height=190,
-                      margin={'t': 0}
-                      )
-    # final_fig.append_trace(fig, i, 1)
-    # i = i + 1
-    fig.show()
-    
-# final_fig.show()
+    if row.Gold > 0 and row.Bronze == 0 and row.Silver == 0:
+        v = 0
+        while v < row.Gold:
+            dfs = dfs.append(
+                {'Name': row.Name, 'Gold': row.Gold - v, 'Silver': 0, 'Bronze': 0, 'Year': row.Year, 'Sport': row.Sport,
+                 'Team Sport': row['Team Sport'], 'Total': 0}, ignore_index=True)
+            v += 1
 
+layout = dict(dragmode=False, title=dict(text="<b><i> The winner takes it all",
+                                         font=dict(family='Raleway',
+                                                   size=30,
+                                                   color='rgb(0, 0, 0)',
+                                                   ),
+                                         x=0.5,
+                                         ),
+              xaxis=dict(title=dict(text="<b>Medals Won",
+                                    font=dict(family='Arial',
+                                              size=16,
+                                              color='rgb(0, 0, 0)',
+                                              ),
 
+                                    ),
+                         range=[0.3, 30],
+                         tick0=0,
+
+                         dtick=5),  # which ticks to show - one by one
+
+              yaxis=dict(title=dict(text="<b>Athlete",
+                                    font=dict(family='Arial',
+                                              size=16,
+                                              color='rgb(0, 0, 0)',
+                                              ),
+                                    )
+                         ),
+
+              showlegend=False,
+              plot_bgcolor='white'
+              )
+fig = go.Figure(layout=layout)
+
+fig.add_trace(go.Scatter(x=dfs.Bronze.tolist(), y=dfs.Name.tolist(), mode='markers',
+                         hoverinfo='skip',
+
+                         marker={'symbol': 'circle', 'size': 16, 'color': 'rgb(205, 127, 50)'}, name='Bronze'))
+
+fig.add_trace(go.Scatter(x=dfs.Silver.tolist(), y=dfs.Name.tolist(), mode='markers',
+                         hoverinfo='skip',
+
+                         marker={'symbol': 'circle', 'size': 16, 'color': 'rgb(192,192,192)'}, name='Silver'))
+
+fig.add_trace(go.Scatter(x=dfs.Gold.tolist(), y=dfs.Name.tolist(), mode='markers',
+                         hoverinfo='skip',
+
+                         marker={'symbol': 'circle', 'size': 16, 'color': 'rgb(255, 206, 51)'}, name='Gold'))
+
+pyo.plot(fig)
 # -----------------------------------------------------------------------------
 # Top 5 Countries
 # -----------------------------------------------------------------------------
@@ -720,3 +760,5 @@ c_m = countries_medals.groupby(by=['Country', 'Medal']).c.sum()
 c_m = c_m.to_frame().reset_index()
 
 countries_names = c_m.Country.unique()
+
+
