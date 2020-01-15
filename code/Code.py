@@ -54,8 +54,7 @@ medals_country.fillna(0, inplace=True)
 #                                   text=np.array(medals_country),
 #                                   customdata=np.array(customdata),
 #                                   hovertemplate="<b>%{text[6]}</b><br><br>" +
-#                                                 "Host City: %{customdata}<br>"
-##                                               "Host City: %{customdata[1]}<br>" +
+#                                                 "Host City: %{customdata}<br>" +
 ##                                               "Edition: %{customdata[2]}<br>" +
 ##                                               "Hosting Year: %{customdata[3]:.0f}<br>" +
 #                                               "Total Number of Medals: %{text[4]:.0f}<br>" +
@@ -191,7 +190,7 @@ map.update_layout(
 pyo.plot(map)
 
 # -----------------------------------------------------------------------------
-# LINE CHART - DONE
+# LINE CHART
 # -----------------------------------------------------------------------------
 
 line = go.Figure(data=go.Scatter(x=df_participants['Year'],
@@ -348,7 +347,7 @@ point = go.Figure(data=go.Scatter(x=df_participants['Year'],
 pyo.plot(point)
 
 # -----------------------------------------------------------------------------
-# AREA CHART - DONE
+# AREA CHART
 # -----------------------------------------------------------------------------
 
 trace1 = go.Scatter(x=df_participants['Year'],
