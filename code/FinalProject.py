@@ -552,6 +552,8 @@ bar.add_trace(go.Scatter(
 
 app = dash.Dash(__name__, assets_folder='style')
 
+server = app.server
+
 app.layout = html.Div([
 
     # Div 1. - Title, Top Winners, Top countries, Filter, Search
