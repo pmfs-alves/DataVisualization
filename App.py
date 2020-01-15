@@ -4,12 +4,10 @@ import dash_core_components as dcc
 import dash_html_components as html
 import base64
 
-from dash.dependencies import Input, Output
+
 from dash.dependencies import Input, Output
 import numpy as np
-import plotly.offline as pyo
 import plotly.graph_objects as go
-import plotly.express as px
 
 
 #-------------------------------------------------------------------------------------------------------------------#
@@ -758,7 +756,7 @@ app.layout = html.Div([
 
 
 
-#----------------------------------------Callbacks---------------------------------------------------------------------#
+#------------------------------------------End of Callbacks------------------------------------------------------------#
 def update_graph (team, sport, year):
 
 
