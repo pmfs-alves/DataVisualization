@@ -292,7 +292,61 @@ line = go.Figure(data=go.Scatter(x=df_participants['Year'],
                             plot_bgcolor='white'
                             )
                  )
+line.add_annotation(
+    go.layout.Annotation(
+        x=1976,
+        y=92,
+        xref="x",
+        yref="y",
+        text="After New Zealand's rugby team broke the<br>international sports embargo on Apartheid<br>in South Africa, 28 African countries boycotted<br>the summer games in Montreal.",
+        showarrow=True,
+        font=dict(
+            family="Arial",
+            size=12,
+            color="#ffffff"
+            ),
+        align="left",
+        arrowhead=1,
+        arrowsize=1,
+        arrowwidth=1,
+        arrowcolor="#636363",
+        ax=-80,
+        ay=-190,
+        bordercolor="#619292",
+        borderwidth=1,
+        borderpad=4,
+        bgcolor="#619292",
+        opacity=0.8
+        )
+)
 
+line.add_annotation(
+    go.layout.Annotation(
+        x=1980,
+        y=80,
+        xref="x",
+        yref="y",
+        text="Led by the United States, 66 countries boycotted<br>the games because of the Soviet–Afghan War.",
+        showarrow=True,
+        font=dict(
+            family="Arial",
+            size=12,
+            color="#ffffff"
+            ),
+        align="left",
+        arrowhead=1,
+        arrowsize=1,
+        arrowwidth=1,
+        arrowcolor="#636363",
+        ax=200,
+        ay=-50,
+        bordercolor="#619292",
+        borderwidth=1,
+        borderpad=4,
+        bgcolor="#619292",
+        opacity=0.8
+        )
+)
 pyo.plot(line)
 
 # -----------------------------------------------------------------------------
@@ -454,6 +508,7 @@ layout= dict(title=dict(text="<b><i> Sports is only for Men?",
                         showspikes=True,
                         spikecolor='rgb(0, 0, 0)',
                         spikethickness=2,
+                        range=[1895,2016]
                         ),
               yaxis=dict(title=dict(text="<b>Number of Athletes",
                                    font=dict(family='Arial',
@@ -478,8 +533,92 @@ layout= dict(title=dict(text="<b><i> Sports is only for Men?",
             showlegend=False,
             plot_bgcolor='white'
             )
-                                           
-area = go.Figure(data=[trace1, trace2], layout=layout) 
+
+area = go.Figure(data=[trace1, trace2], layout=layout)
+
+area.add_annotation(
+    go.layout.Annotation(
+        x=1932,
+        y=1332,
+        xref="x",
+        yref="y",
+        text="The Games were held during the worldwide Great Depression and<br>some teams were unable to pay for the trip to Los Angeles.",
+        showarrow=True,
+        font=dict(
+            family="Arial",
+            size=12,
+            color="#ffffff"
+            ),
+        align="left",
+        arrowhead=1,
+        arrowsize=1,
+        arrowwidth=1,
+        arrowcolor="#636363",
+        ax=-50,
+        ay=-130,
+        bordercolor="#619292",
+        borderwidth=1,
+        borderpad=4,
+        bgcolor="#619292",
+        opacity=0.8
+        )
+)
+
+area.add_annotation(
+    go.layout.Annotation(
+        x=1956,
+        y=3314,
+        xref="x",
+        yref="y",
+        text="Several teams boycotted the Games in protest<br>of the IOC's rejection to suspend the<br>USSR after their invasion of Hungary.",
+        showarrow=True,
+        font=dict(
+            family="Arial",
+            size=12,
+            color="#ffffff"
+            ),
+        align="left",
+        arrowhead=1,
+        arrowsize=1,
+        arrowwidth=1,
+        arrowcolor="#636363",
+        ax=-75,
+        ay=-150,
+        bordercolor="#619292",
+        borderwidth=1,
+        borderpad=4,
+        bgcolor="#619292",
+        opacity=0.8
+        )
+)
+
+area.add_annotation(
+    go.layout.Annotation(
+        x=1980,
+        y=5179,
+        xref="x",
+        yref="y",
+        text="Led by the United States, 66 countries boycotted<br>the games because of the Soviet–Afghan War.",
+        showarrow=True,
+        font=dict(
+            family="Arial",
+            size=12,
+            color="#ffffff"
+            ),
+        align="left",
+        arrowhead=1,
+        arrowsize=1,
+        arrowwidth=1,
+        arrowcolor="#636363",
+        ax=-60,
+        ay=-155,
+        bordercolor="#619292",
+        borderwidth=1,
+        borderpad=4,
+        bgcolor="#619292",
+        opacity=0.8
+        )
+)
 
 pyo.plot(area)
 
