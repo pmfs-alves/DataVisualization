@@ -643,7 +643,7 @@ layout= dict(xaxis=dict(title=dict(text="Year",
 
 bar = go.Figure(data=[
     go.Bar(name='Maintained Sports', x=df_participants['Year'], y=df_participants['Maintained Sports_Count'],
-           text=df_participants['Lost Sports'], marker=dict(color='rgb(0, 34, 102)', line_color='rgb(0, 34, 102)'),
+           text=df_participants['Lost Sports'], marker=dict(color='rgb(0, 34, 102)'),
            hovertemplate="<b>Maintained Sports:</b> %{y:.0f}<br><b>Lost Sports:</b> %{text}",
            hoverlabel=dict(bgcolor='rgb(242, 242, 242)',
                                     bordercolor='rgb(242, 242, 242)',
@@ -655,7 +655,6 @@ bar = go.Figure(data=[
 
     go.Bar(x=df_participants['Year'], y=df_participants['Returning Sports_Count'], name='Returning Sports',
            text= df_participants['Returning Sports'], marker=dict(color='rgb(230, 230, 230)'),
-           line=dict(color='rgb(230, 230, 230)'),
            hovertemplate="<b>Returning Sports:'</b> %{y:.0f}<br>%{text}", #Total Sports: %{text}<br>
            hoverlabel=dict(bgcolor='rgb(242, 242, 242)',
                                     bordercolor='rgb(242, 242, 242)',
