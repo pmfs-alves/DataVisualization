@@ -17,13 +17,13 @@ body {
     margin-top: -10px;
     margin-left: -10px;
     height: 100%;
-    flex: 28%;
+    flex: 25%;
     background-color: #2b2b2b;
 
 }
 #title p{
     color: rgb(255,255,255);
-    font-size: 40px;
+    font-size: 38px;
     color: #fff;
     font-family: ATrebuchet MS, sans-serif ;
     margin-top: 20%;
@@ -63,10 +63,8 @@ p#p2{
 }
 
 
-
-
 .column_2{
-    flex: 72%;
+    flex: 75%;
     padding: 3%;
 }
 
@@ -86,7 +84,13 @@ p#p2{
     display: flex;
 }
 .boxes{
-    flex: 30%;
+    flex: 33%;
+}
+#countries_linechart{
+    height:auto;
+}
+.svg-container{
+    width: 50px;
 }
 
 

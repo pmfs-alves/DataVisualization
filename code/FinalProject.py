@@ -7,6 +7,7 @@ import base64
 from dash.dependencies import Input, Output
 from dash.dependencies import Input, Output
 import numpy as np
+import plotly.offline as pyo
 import plotly.graph_objects as go
 
 #--------------------------------------- Get Data ---------------------------------------------------------#
@@ -41,6 +42,363 @@ nr_host_cities = len(nr_host_cities)
 
 nr_events = df_athletes.Event.unique()
 nr_events = len(nr_events)
+
+
+
+
+#--------------------------------------- LineChart Countries ---------------------------------------------------------#
+
+line = go.Figure(data=go.Scatter(x=df_participants['Year'],
+                                 y=df_participants['Countries'],
+                                 mode="lines+markers",
+                                 text=df_participants['Edition'],
+                                 hovertemplate="<b>%{y:,.0f}</b> countries participated in the %{text} Summer Olympics",
+                                 hoverlabel=dict(bgcolor='rgb(242, 242, 242)',
+                                                 bordercolor='rgb(242, 242, 242)',
+                                                 font=dict(size=13,
+                                                           color='black',
+                                                           ),
+                                                 namelength=0,
+                                                 ),
+                                 line=dict(color='rgb(244, 212, 77)',
+                                           width=3,
+                                           dash='solid'),
+                                 marker=dict(symbol="circle-dot",
+                                             size=10, color='rgb(230, 230, 230)'),
+                                 showlegend=False
+                                 ),
+                 layout=dict(title=dict(text="<i> Olympics getting Popular",
+                                        font=dict(family='Raleway',
+                                                  size=30,
+                                                  color='white',
+                                                  ),
+                                        x=0.5,
+                                        ),
+                             xaxis=dict(title=dict(text="Year",
+                                                   font=dict(family='Arial',
+                                                             size=16,
+                                                             color='white',
+                                                             ),
+                                                   ),
+                                        showline=True,
+                                        showgrid=False,
+                                        showticklabels=True,
+                                        linecolor='white',
+                                        linewidth=1.5,
+                                        ticks='outside',
+                                        tickfont=dict(
+                                            family='Arial',
+                                            size=14,
+                                            color='white',
+                                        ),
+
+                                        tickvals=df_participants['Year'].unique().tolist(),
+                                        dtick=4,
+                                        tickangle=45,
+                                        showspikes=True,
+                                        spikecolor='rgb(179, 203, 203)'
+                                        ),
+                             yaxis=dict(title=dict(text="Number of Countries",
+                                                   font=dict(family='Arial',
+                                                             size=16,
+                                                             color='white',
+                                                             ),
+                                                   ),
+                                        showgrid=False,
+                                        showline=True,
+                                        showticklabels=True,
+                                        linecolor='white',
+                                        linewidth=1.5,
+                                        ticks='outside',
+                                        tickfont=dict(family='Arial',
+                                                      size=14,
+                                                      color='white',
+                                                      ),
+                                        # tick0 = 0,
+                                        dtick=50,
+                                        range=[0, 250],
+                                        ),
+                             autosize=False,
+                             margin=dict(
+                                 autoexpand=False,
+                                 l=100,
+                                 r=20,
+                                 t=110
+                             ),
+                             showlegend=False,
+                             paper_bgcolor='rgb(30, 30, 30)',
+                             plot_bgcolor='rgb(30, 30, 30)',
+                             )
+                 )
+
+line.add_annotation(
+    go.layout.Annotation(
+        x=1976,
+        y=92,
+        xref="x",
+        yref="y",
+        text="After New Zealand's rugby team broke the<br>international sports embargo on Apartheid<br>in South Africa, 28 African countries boycotted<br>the summer games in Montreal.",
+        showarrow=True,
+        font=dict(
+            family="Arial",
+            size=12,
+            color="#ffffff"
+        ),
+        align="left",
+        arrowhead=1,
+        arrowsize=1,
+        arrowwidth=1,
+        arrowcolor="#636363",
+        ax=-80,
+        ay=-190,
+        bordercolor="#619292",
+        borderwidth=1,
+        borderpad=4,
+        bgcolor="#619292",
+        opacity=0.8
+    )
+)
+
+line.add_annotation(
+    go.layout.Annotation(
+        x=1980,
+        y=80,
+        xref="x",
+        yref="y",
+        text="Led by the United States, 66 countries boycotted<br>the games because of the Soviet–Afghan War.",
+        showarrow=True,
+        font=dict(
+            family="Arial",
+            size=12,
+            color="#ffffff"
+        ),
+        align="left",
+        arrowhead=1,
+        arrowsize=1,
+        arrowwidth=1,
+        arrowcolor="#636363",
+        ax=200,
+        ay=-50,
+        bordercolor="#619292",
+        borderwidth=1,
+        borderpad=4,
+        bgcolor="#619292",
+        opacity=0.8
+    )
+)
+
+fig_countries_linechart = line
+
+# -----------------------------------------------------------------------------
+# AREA CHART
+# -----------------------------------------------------------------------------
+
+trace1 = go.Scatter(x=df_participants['Year'],
+                    y=df_participants['Men'],
+                    mode="lines+markers",
+                    fill="tonexty",  # "none" | "tozeroy" | "tozerox" | "tonexty" | "tonextx" | "toself" | "tonext"
+                    fillcolor='rgb(179, 204, 204)',
+                    stackgroup='one',
+                    text=df_participants['Participants'],
+                    hovertemplate="Total: %{text:.0f}<br>Men: %{y:.0f}",
+                    hoverlabel=dict(bgcolor='rgb(242, 242, 242)',
+                                    bordercolor='rgb(242, 242, 242)',
+                                    font=dict(size=13,
+                                              color='rgb(0, 0, 0)',
+                                              ),
+                                    namelength=0,
+                                    ),
+                    line=dict(color='rgb(102, 153, 153)',
+                              width=3,
+                              dash='solid',
+                              shape="linear"),  # "linear" | "spline"
+                    marker=dict(symbol='x-dot',
+                                size=5, color='rgb(31, 46, 46)'),
+                    showlegend=False,
+                    )
+
+trace2 = go.Scatter(x=df_participants['Year'],
+                    y=df_participants['Women'],
+                    mode="lines+markers",
+                    fill="tonexty",  # "tozeroy" |"tonexty" | "tonextx" | "toself" | "tonext"
+                    fillcolor='rgb(255, 217, 179)',
+                    stackgroup='one',
+                    text=df_participants['Participants'],
+                    hovertemplate="Total: %{text:.0f}<br>Women: %{y:.0f}",
+                    hoverlabel=dict(bgcolor='rgb(242, 242, 242)',
+                                    bordercolor='rgb(242, 242, 242)',
+                                    font=dict(size=13,
+                                              color='rgb(0, 0, 0)',
+                                              ),
+                                    namelength=0,
+                                    ),
+                    line=dict(color='rgb(255, 191, 128)',
+                              width=3,
+                              dash='solid',
+                              shape="linear"),  # "linear" | "spline"
+                    marker=dict(symbol='x-dot',
+                                size=5, color='rgb(153, 77, 0)'),
+                    showlegend=False,
+                    )
+
+layout = dict(title=dict(text="<b><i> Sports is only for Men?",
+                         font=dict(family='Raleway',
+                                   size=30,
+                                   color='rgb(0, 0, 0)',
+                                   ),
+                         x=0.5,
+                         ),
+              xaxis=dict(title=dict(text="<b>Year",
+                                    font=dict(family='Arial',
+                                              size=16,
+                                              color='rgb(0, 0, 0)',
+                                              ),
+                                    ),
+                         showline=True,
+                         showgrid=False,
+                         showticklabels=True,
+                         linecolor='rgb(0, 0, 0)',
+                         linewidth=2,
+                         ticks='outside',
+                         tickfont=dict(
+                             family='Arial',
+                             size=14,
+                             color='rgb(0, 0, 0)',
+                         ),
+                         tickvals=df_participants['Year'].unique().tolist(),
+                         dtick=4,
+                         tickangle=45,
+                         showspikes=True,
+                         spikecolor='rgb(0, 0, 0)',
+                         spikethickness=2,
+                         ),
+              yaxis=dict(title=dict(text="<b>Number of Athletes",
+                                    font=dict(family='Arial',
+                                              size=16,
+                                              color='rgb(0, 0, 0)',
+                                              ),
+                                    ),
+                         showgrid=True,
+                         showline=True,
+                         showticklabels=True,
+                         linecolor='rgb(0, 0, 0)',
+                         linewidth=2,
+                         ticks='outside',
+                         tickfont=dict(family='Arial',
+                                       size=14,
+                                       color='rgb(0, 0, 0)',
+                                       ),
+                         tick0=0,
+                         range=[0, 12000],
+                         side='right',
+                         ),
+              showlegend=False,
+              paper_bgcolor='rgba(0,0,0,0)',
+              plot_bgcolor='rgba(0,0,0,0)'
+              )
+
+area = go.Figure(data=[trace1, trace2], layout=layout)
+
+area.update_layout(
+    autosize=False,
+    width=500,
+    height=500,
+    margin=go.layout.Margin(
+        l=50,
+        r=50,
+        b=100,
+        t=100,
+        pad=4
+    )
+)
+
+area.add_annotation(
+    go.layout.Annotation(
+        x=1932,
+        y=1332,
+        xref="x",
+        yref="y",
+        text="The Games were held during the worldwide Great Depression and<br>some teams were unable to pay for the trip to Los Angeles.",
+        showarrow=True,
+        font=dict(
+            family="Arial",
+            size=12,
+            color="#ffffff"
+        ),
+        align="left",
+        arrowhead=1,
+        arrowsize=1,
+        arrowwidth=1,
+        arrowcolor="#636363",
+        ax=-50,
+        ay=-130,
+        bordercolor="#619292",
+        borderwidth=1,
+        borderpad=4,
+        bgcolor="#619292",
+        opacity=0.8
+    )
+)
+
+area.add_annotation(
+    go.layout.Annotation(
+        x=1956,
+        y=3314,
+        xref="x",
+        yref="y",
+        text="Several teams boycotted the Games in protest<br>of the IOC's rejection to suspend the<br>USSR after their invasion of Hungary.",
+        showarrow=True,
+        font=dict(
+            family="Arial",
+            size=12,
+            color="#ffffff"
+        ),
+        align="left",
+        arrowhead=1,
+        arrowsize=1,
+        arrowwidth=1,
+        arrowcolor="#636363",
+        ax=-75,
+        ay=-150,
+        bordercolor="#619292",
+        borderwidth=1,
+        borderpad=4,
+        bgcolor="#619292",
+        opacity=0.8
+    )
+)
+
+area.add_annotation(
+    go.layout.Annotation(
+        x=1980,
+        y=5179,
+        xref="x",
+        yref="y",
+        text="Led by the United States, 66 countries boycotted<br>the games because of the Soviet–Afghan War.",
+        showarrow=True,
+        font=dict(
+            family="Arial",
+            size=12,
+            color="#ffffff"
+        ),
+        align="left",
+        arrowhead=1,
+        arrowsize=1,
+        arrowwidth=1,
+        arrowcolor="#636363",
+        ax=-60,
+        ay=-155,
+        bordercolor="#619292",
+        borderwidth=1,
+        borderpad=4,
+        bgcolor="#619292",
+        opacity=0.8
+    )
+)
+
+
+
+
 
 
 #-------------------------------------------------------------------------------------------------------#
@@ -190,21 +548,27 @@ app.layout = html.Div([
             # Div 2.4.1. - Linechart Countries
             html.Div([
                 html.P('Linechart Countries'),
-             #   dcc.Graph(id='linechart', figure=line)
+                dcc.Graph(
+                    id='c_linechart',
+                    figure=fig_countries_linechart
+                )
             ], id='countries_linechart', className='boxes'
             ),  # end div 2.4.1.
 
             # Div 2.4.2. - Barchart Sports
-            html.Div([
-                html.P('Barchart Sports'),
-              #  dcc.Graph(id='linechart', figure=bar)
-            ], id='events_linechart', className='boxes'
-            ),  # end div 2.4.2.
+            # html.Div([
+            #     html.P('Barchart Sports'),
+            #
+            # ], id='sports_linechart', className='boxes'
+            # ),  # end div 2.4.2.
 
             # Div 2.4.3. - Areachart Men & Women
             html.Div([
                 html.P('Athletes Men & Women'),
-              #  dcc.Graph(id='linechart', figure=area)
+                dcc.Graph(
+                    id='a_linechart',
+                    figure=area
+                )
             ], id='athletes_linechart', className='boxes'
             ),  # end div 2.4.3.
 
@@ -292,6 +656,8 @@ for athlete in top_5_winners.Name:
             series.append(go.Scatter(x=x, y=y, mode='markers',
                                      marker={'symbol': 'circle', 'size': 8, 'color': 'rgb(205, 127, 50)'},
                                      name=f'{medal} ({count})'))
+
+
 
 
 
