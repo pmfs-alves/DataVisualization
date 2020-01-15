@@ -26,8 +26,9 @@ encoded_image = base64.b64encode(open('images/Olympic-logo.png', 'rb').read())
 
 
 years_select = [dict(label=year, value=year) for year in df_participants['Year'].unique()]
-years_select={str(i): '{}'.format(str(i)) for i in [df_participants.Year.unique()]}
-years_select['all']="all"
+years_select = {str(i): '{}'.format(str(i)) for i in df_participants.Year.unique()}
+years_select[1892] = "All"
+print(years_select)
 
 
 
@@ -123,8 +124,8 @@ app.layout = html.Div([
                 html.P('SLIDER'),
                 dcc.Slider(
                     id='year-slider',
-                    min=df_athletes['year'].min(),
-                    max=df_athletes['year'].max(),
+                    min=1892,
+                    max=2016,
                     #step=4,
                     #marks=datedict,
                     marks=years_select, #.insert(0, 'All')
@@ -198,9 +199,9 @@ app.layout = html.Div([
 
 @app.callback(
     [
-        Output("bar_graph", "figure"),
-        Output("choropleth", "figure"),
-        Output("countries_linechart", "figure"),
+        # Output("bar_graph", "figure"),
+        # Output("choropleth", "figure"),
+        # Output("countries_linechart", "figure"),
     ],
     [
         Input("sport_type", "value"),
@@ -208,9 +209,10 @@ app.layout = html.Div([
         # Input("gas_option", "value"),
 
     ]
+    )
 
-
-
+def teste (teste):
+    return
 #--------------------------------------- Figure Top Countries ---------------------------------------------------------#
 
 
