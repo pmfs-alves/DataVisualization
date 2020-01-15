@@ -24,16 +24,15 @@ df_participants = pd.read_excel('data/athlete_events.xlsx', sheet_name='particip
 
 encoded_image = base64.b64encode(open('images/Olympic-logo.png', 'rb').read())
 
-
-years_select = [dict(label=year, value=year) for year in df_participants['Year'].unique()]
+#create years dict
 years_select = {str(i): '{}'.format(str(i)) for i in df_participants.Year.unique()}
 years_select[1892] = "All"
 
-# sports_select = [{str(i): '{}'.format(str(i)) for i in df_athletes.Sport.unique()}]
-# print(sports_select)
+#create sports dict
 sports_select = [dict(label=sport.replace('_', ' '), value=sport) for sport in df_athletes.Sport.unique()]
 print(sports_select)
 
+#calculate numbers
 nr_countries = df_athletes.Country.unique()
 nr_countries = len(nr_countries)
 
