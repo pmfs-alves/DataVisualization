@@ -8,11 +8,8 @@ from collections import Counter
 # DATAFRAMES
 #df_athletes = pd.read_excel(r'C:\Users\Sofia\OneDrive - NOVAIMS\Nova IMS\Mestrado\Cadeiras\Data_Visualization\Projeto DV\DataVisualization\code\data\athlete_events.xlsx', 'athlete_events')
 #df_participants = pd.read_excel(r'C:\Users\Sofia\OneDrive - NOVAIMS\Nova IMS\Mestrado\Cadeiras\Data_Visualization\Projeto DV\DataVisualization\code\data\athlete_events.xlsx', 'participants')
-#df_athletes = pd.read_excel(r'C:\Users\TITA\OneDrive\Faculdade\2 Mestrado\1º semestre\Data Visualization\Project\DataVisualization\code\data\athlete_events.xlsx', 'athlete_events')
-#df_participants = pd.read_excel(r'C:\Users\TITA\OneDrive\Faculdade\2 Mestrado\1º semestre\Data Visualization\Project\DataVisualization\code\data\athlete_events.xlsx', 'participants')
-
-df_athletes = pd.read_excel('data/athlete_events.xlsx', sheet_name='athlete_events')
-df_participants = pd.read_excel('data/athlete_events.xlsx', sheet_name='participants')
+df_athletes = pd.read_excel(r'C:\Users\TITA\OneDrive\Faculdade\2 Mestrado\1º semestre\Data Visualization\Project\DataVisualization\code\data\athlete_events.xlsx', 'athlete_events')
+df_participants = pd.read_excel(r'C:\Users\TITA\OneDrive\Faculdade\2 Mestrado\1º semestre\Data Visualization\Project\DataVisualization\code\data\athlete_events.xlsx', 'participants')
 
 df_participants['Edition'] = df_participants['Edition'].astype(str)
 
@@ -39,8 +36,6 @@ def count_rows_same_country(df):
             new_dict.update({key:value})
     return new_dict
 
-l = count_rows_same_country(medals_country)
-
 medals_country['Year'] = medals_country['Year'].astype(str)
 medals_country['concat'] = medals_country[['Country','Year','Sport','Team Sport']].apply(lambda x: '_'.join(x), axis=1)
 
@@ -53,64 +48,37 @@ for idx,i in enumerate(medals_country['concat']):
     new.loc[j,'Silver'] = medals_country[medals_country['concat'] == i].Silver.sum() 
     new.loc[j,'Bronze'] = medals_country[medals_country['concat'] == i].Bronze.sum() 
     new.loc[j,'Year'] = medals_country.loc[idx,'Year']
-    new.loc[j,'Sport'] = medals_country.loc[idx,'Country']
+    new.loc[j,'Sport'] = medals_country.loc[idx,'Sport']
     new.loc[j,'Team Sport'] = medals_country.loc[idx,'Team Sport']
     j+=1
 
 new.drop_duplicates(inplace=True) 
 
-new['Total'] = new['Bronze'] + new['Gold'] + new['Silver']
+new['concat'] = new[['Country','Year','Sport','Team Sport']].apply(lambda x: '_'.join(x), axis=1)
+count_rows_same_country(new)
 
+new.drop(columns='concat', inplace=True)
+
+new['Total'] = new['Bronze'] + new['Gold'] + new['Silver']
 
 
 # PUT ISO3, CITY, YEAR, EDITION, SPORT, INDIVIDUAL
 
-medals_country = medals_country.merge(df_athletes[['ISO3','Country']], on='Country', how='left')
-medals_country.drop_duplicates(inplace=True)
+new = new.merge(df_athletes[['ISO3','Country']], on='Country', how='left')
+new.drop_duplicates(inplace=True)
 
-medals_country = medals_country.merge(df_participants[['City','Country','Year','Edition']], how='outer', on=['Country','Year'])
-medals_country.fillna('No host', inplace=True)
+new['Year'] = new['Year'].astype(str)
+df_participants['Year'] = df_participants['Year'].astype(str)
+new = new.merge(df_participants[['City','Country','Year','Edition']], how='outer', on=['Country','Year'])
+new.fillna('No host', inplace=True)
 
-#medals_country.drop(columns='Multiple', inplace=True)
-#medals_country['Year'] = medals_country['Year'].astype(int)
-#
-#medals_country = medals_country.merge(df_athletes[['ISO3','City','Country','Edition','Year']], on=['Country','Year'])
-#
-#medals_country = pd.DataFrame(data=df_athletes.groupby(["ISO3", "Medal"])["Medal"].count())
-#medals_country = medals_country.unstack(level=['Medal'])
-#medals_country.columns = medals_country.columns.droplevel()
-#medals_country['ISO3'] = medals_country.index
-#medals_country.reset_index(drop=True, inplace=True)
-#medals_country['Total'] = medals_country.iloc[:,0:3].sum(axis=1)
-#
-#
-#medals_country.drop_duplicates(inplace=True)
+new.to_excel(r'C:\Users\TITA\OneDrive\Faculdade\2 Mestrado\1º semestre\Data Visualization\Project\DataVisualization\code\data\tops.xlsx', sheet_name='Countries')
+
+
 
 # -----------------------------------------------------------------------------
 # CHOROPLETH
 # -----------------------------------------------------------------------------
-#medals_country['Hosting_City'] = medals_country['City']
-#medals_country['Hosting_Edition'] = medals_country['Edition']
-#medals_country['Hosting_Year'] = medals_country['Year']
-#
-#uniques = df_participants['ISO3'].unique().tolist()
-#
-#medals_country.reset_index(drop=True, inplace=True)
-#
-#row = 0
-#for i in medals_country['ISO3']:
-#    if i not in uniques:
-#        medals_country.loc[row, 'Hosting_City'] = 'No host'
-#        medals_country.loc[row, 'Hosting_Edition'] = 'No host'
-#        medals_country.loc[row, 'Hosting_Year'] = 'No host'
-#    
-#    row+=1
-#    
-#del row, i, uniques
-    
-#medals_country['c'].fillna(0, inplace=True)
-#customdata = df_participants[['ISO3','City','Edition','Year']].copy()
-
 
 #map = go.Figure(data=go.Choropleth(locations=medals_country['ISO3'],
 #                                   locationmode='ISO-3',
@@ -148,7 +116,7 @@ map = go.Figure()
 # Add Traces
 map.add_trace(go.Choropleth(locations=medals_country['ISO3'],
                              locationmode='ISO-3',
-                             z=medals_country['Total'],
+                             z=new['Total'],
                              text=np.array(medals_country),
                              name='Total',
                              hovertemplate="<b>%{text[6]}</b><br>" +
