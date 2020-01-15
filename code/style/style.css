@@ -1,89 +1,21 @@
-
-
-
-
-
-
-
 body {
-    background-color: #1e1e1e;
+    background-color: #2b2b2b;
     font-family: 'Open Sans', sans-serif;
     font-size: 0.8rem;
     color: #f3f6fa;
 }
 
-#outer_div {
-  background-color: #1e1e1e;
-}
-
-
-.row_1 {
+#outer_div{
     display: flex;
-    flex-direction: row;
-    justify-content: center;
-    border-style: solid;
-    border-color: red;
+    background-color: #2b2b2b;
 }
-
 
 .column_1{
-    flex: 60%;
-    order: 1;
-    border-style: solid;
-    border-color: green;
+    flex: 25%;
 }
 
-.row_1_1 {
-    display: flex;
-}
 
-.title {
-    flex: 60%;
-    font-family: "Open Sans", sans-serif;
-    color: #fec036;
-    font-size: 1.8rem;
-    display: flex;
-}
-#logo{
-    width: 20%;
-    height: auto;
-    margin: 3%;
-    margin-
-
-}
-p .title{
-    flex: 70%;
-}
-.minibox {
-    flex: 20%;
-}
-#details{
-    display: flex;
-}
-P #details{
-    flex : 50%
-}
-.nr #details{
-    flex : 50%
-}
 
 .column_2{
-    flex: 30%;
-    order: 2;
-    background-color: #2b2b2b;
+    flex: 75%;
 }
-
-
-.row_2{
-    display: flex;
-}
-
-.row_2_2{
-    display: flex;
-}
-.boxes{
-    flex: 30%;
-    background-color: #2b2b2b;
-    margin: 2.3%
-}
-
