@@ -18,6 +18,7 @@ year=2000
 team='Individual'
 sport=[]
 
+# FILTERING
 def countries(year, sport, team):
     if (year == 1892) & (len(sport) == 0) & (team == 'both'):
         df = df_countries
@@ -51,64 +52,11 @@ def countries(year, sport, team):
     
     return df
     
-#medals_country['Hosting_City'] = medals_country['City']
-#medals_country['Hosting_Edition'] = medals_country['Edition']
-#medals_country['Hosting_Year'] = medals_country['Year']
-#
-#uniques = df_participants['ISO3'].unique().tolist()
-#
-#medals_country.reset_index(drop=True, inplace=True)
-#
-#row = 0
-#for i in medals_country['ISO3']:
-#    if i not in uniques:
-#        medals_country.loc[row, 'Hosting_City'] = 'No host'
-#        medals_country.loc[row, 'Hosting_Edition'] = 'No host'
-#        medals_country.loc[row, 'Hosting_Year'] = 'No host'
-#    
-#    row+=1
-#    
-#del row, i, uniques
-    
-#customdata = df_participants[['ISO3','City','Edition','Year']].copy()
-
-
-#map = go.Figure(data=go.Choropleth(locations=medals_country['ISO3'],
-#                                   locationmode='ISO-3',
-#                                   z=medals_country['Total'], # Gold, Silver, Bronze
-#                                   text=np.array(medals_country),
-#                                   customdata=np.array(customdata),
-#                                   hovertemplate="<b>%{text[6]}</b><br><br>" +
-#                                                 "Host City: %{customdata}<br>" +
-##                                               "Edition: %{customdata[2]}<br>" +
-##                                               "Hosting Year: %{customdata[3]:.0f}<br>" +
-#                                               "Total Number of Medals: %{text[4]:.0f}<br>" +
-#                                               "    Gold: %{text[1]:.0f}<br>" +
-#                                               "    Silver: %{text[2]:.0f}<br>" +
-#                                               "    Bronze: %{text[0]:.0f}<br>",
-#                                   hoverlabel=dict(bgcolor='rgb(242, 242, 242)',
-#                                                 bordercolor='rgb(242, 242, 242)',
-#                                                 font=dict(size=15,
-#                                                           color='rgb(0, 0, 0)',
-#                                                           ),
-#                                                 namelength=0,
-#                                                ),
-#                                   colorscale='fall',
-#                                   colorbar={'title': 'Total Number<br>of Medals'}
-#                                   ),
-#                layout=dict(geo=dict(landcolor='rgb(255, 255, 255)',
-#                                     showframe=False,
-#                                     projection={'type': 'equirectangular'})
-#                            )
-#                )
-#
-#pyo.plot(map)
 
 df = countries(year, sport, team)
 
+# MAP
 map = go.Figure()
-
-# Add Traces
 
 map.add_trace(go.Choropleth(locations=df['ISO3'],
                              locationmode='ISO-3',
@@ -116,19 +64,17 @@ map.add_trace(go.Choropleth(locations=df['ISO3'],
                              text=np.array(df),
                              name='Total',
                              hovertemplate="<b>%{text[0]}</b><br>" +
-                                           "Host City: %{customdata}<br>" +
-                                           "Edition: %{customdata[2]}<br>" +
-                                           "Hosting Year: %{customdata[3]:.0f}<br>" +
+                                           "Host City: %{text[6]}<br>" +
+                                           "Edition: %{text[7]}<br>" +
                                              "Total Number of Medals: %{text[4]:.0f}<br>",
                              hoverlabel=dict(bgcolor='rgb(242, 242, 242)',
                                              bordercolor='rgb(242, 242, 242)',
-                                             font=dict(size=15,
+                                             font=dict(size=13,
                                                        color='rgb(0, 0, 0)',
                                                        ),
                                              namelength=0,
                                             ),
                              autocolorscale=False,
-                             #reversescale=True,
                              marker=dict(line=dict(width=0)),
                              colorscale='Cividis',
                              colorbar=dict(title=dict(text='Total Number<br>of Medals \n',
@@ -140,17 +86,18 @@ map.add_trace(go.Choropleth(locations=df['ISO3'],
                              text=np.array(df),
                              name='Gold',
                              hovertemplate="<b>%{text[0]}</b><br>" +
+                                           "Host City: %{text[6]}<br>" +
+                                           "Edition: %{text[7]}<br>" +
                                              "Total Number of Medals: %{text[4]:.0f}<br>" +
                                             "   Gold:  %{text[1]:.0f}",
                              hoverlabel=dict(bgcolor='rgb(242, 242, 242)',
                                              bordercolor='rgb(242, 242, 242)',
-                                             font=dict(size=15,
+                                             font=dict(size=13,
                                                        color='rgb(0, 0, 0)',
                                                        ),
                                              namelength=0,
                                             ),
                              autocolorscale=False,
-                             #reversescale=True,
                              marker=dict(line=dict(width=0)),
                              colorscale='Cividis',
                              colorbar=dict(title=dict(text='Total Number<br>of Golden Medals \n',
@@ -162,17 +109,18 @@ map.add_trace(go.Choropleth(locations=df['ISO3'],
                              text=np.array(df),
                              name='Silver',
                              hovertemplate="<b>%{text[0]}</b><br>" +
+                                           "Host City: %{text[6]}<br>" +
+                                           "Edition: %{text[7]}<br>" +
                                              "Total Number of Medals: %{text[4]:.0f}<br>" +
                                             "   Silver:  %{text[2]:.0f}",
                              hoverlabel=dict(bgcolor='rgb(242, 242, 242)',
                                              bordercolor='rgb(242, 242, 242)',
-                                             font=dict(size=15,
+                                             font=dict(size=13,
                                                        color='rgb(0, 0, 0)',
                                                        ),
                                              namelength=0,
                                              ),
                              autocolorscale=False,
-                             #reversescale=True,
                              marker=dict(line=dict(width=0)),
                              colorscale='Cividis',
                              colorbar=dict(title=dict(text='Total Number<br>of Silver Medals \n',
@@ -181,20 +129,21 @@ map.add_trace(go.Choropleth(locations=df['ISO3'],
 map.add_trace(go.Choropleth(locations=df['ISO3'],
                              locationmode='ISO-3',
                              z=df['Bronze'],
-                             text=np.array(df)
+                             text=np.array(df),
                              name='Bronze',
                              hovertemplate="<b>%{text[0]}</b><br>" +
+                                           "Host City: %{text[6]}<br>" +
+                                           "Edition: %{text[7]}<br>" +
                                              "Total Number of Medals: %{text[4]:.0f}<br>" +
                                             "   Bronze:  %{text[3]:.0f}",
                              hoverlabel=dict(bgcolor='rgb(242, 242, 242)',
                                              bordercolor='rgb(242, 242, 242)',
-                                             font=dict(size=15,
+                                             font=dict(size=13,
                                                        color='rgb(0, 0, 0)',
                                                        ),
                                                        namelength=0,
                                             ),
                              autocolorscale=False,
-                             #reversescale=True,
                              marker=dict(line=dict(width=0)),
                              colorscale='Cividis',
                              colorbar=dict(title=dict(text='Total Number<br>of Bronze Medals \n',
@@ -202,7 +151,8 @@ map.add_trace(go.Choropleth(locations=df['ISO3'],
                                             tickfont=dict(color='white'))))
 map.update_layout(geo=dict(landcolor='rgb(43, 43, 43)',
                            showcountries=False,
-                           showframe=False,
+                           #showframe=False,
+                           framewidth=0,
                            coastlinecolor='rgb(43, 43, 43)',
                            showcoastlines=True,
                            showland=True,
