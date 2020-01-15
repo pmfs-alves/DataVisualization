@@ -3,13 +3,12 @@ import numpy as np
 import plotly.offline as pyo
 import plotly.graph_objects as go
 from plotly.subplots import make_subplots
-from collections import Counter
 
 # DATAFRAMES
-#df_athletes = pd.read_excel(r'C:\Users\Sofia\OneDrive - NOVAIMS\Nova IMS\Mestrado\Cadeiras\Data_Visualization\Projeto DV\DataVisualization\code\data\athlete_events.xlsx', 'athlete_events')
-#df_participants = pd.read_excel(r'C:\Users\Sofia\OneDrive - NOVAIMS\Nova IMS\Mestrado\Cadeiras\Data_Visualization\Projeto DV\DataVisualization\code\data\athlete_events.xlsx', 'participants')
-df_athletes = pd.read_excel(r'C:\Users\TITA\OneDrive\Faculdade\2 Mestrado\1º semestre\Data Visualization\Project\DataVisualization\code\data\athlete_events.xlsx', 'athlete_events')
-df_participants = pd.read_excel(r'C:\Users\TITA\OneDrive\Faculdade\2 Mestrado\1º semestre\Data Visualization\Project\DataVisualization\code\data\athlete_events.xlsx', 'participants')
+df_athletes = pd.read_excel(r'C:\Users\Sofia\OneDrive - NOVAIMS\Nova IMS\Mestrado\Cadeiras\Data_Visualization\Projeto DV\DataVisualization\code\data\athlete_events.xlsx', 'athlete_events')
+df_participants = pd.read_excel(r'C:\Users\Sofia\OneDrive - NOVAIMS\Nova IMS\Mestrado\Cadeiras\Data_Visualization\Projeto DV\DataVisualization\code\data\athlete_events.xlsx', 'participants')
+#df_athletes = pd.read_excel(r'C:\Users\TITA\OneDrive\Faculdade\2 Mestrado\1º semestre\Data Visualization\Project\DataVisualization\code\data\athlete_events.xlsx', 'athlete_events')
+#df_participants = pd.read_excel(r'C:\Users\TITA\OneDrive\Faculdade\2 Mestrado\1º semestre\Data Visualization\Project\DataVisualization\code\data\athlete_events.xlsx', 'participants')
 
 df_participants['Edition'] = df_participants['Edition'].astype(str)
 
@@ -19,6 +18,28 @@ df_totals = pd.read_excel(r'C:\Users\TITA\OneDrive\Faculdade\2 Mestrado\1º seme
 # -----------------------------------------------------------------------------
 # CHOROPLETH
 # -----------------------------------------------------------------------------
+#medals_country['Hosting_City'] = medals_country['City']
+#medals_country['Hosting_Edition'] = medals_country['Edition']
+#medals_country['Hosting_Year'] = medals_country['Year']
+#
+#uniques = df_participants['ISO3'].unique().tolist()
+#
+#medals_country.reset_index(drop=True, inplace=True)
+#
+#row = 0
+#for i in medals_country['ISO3']:
+#    if i not in uniques:
+#        medals_country.loc[row, 'Hosting_City'] = 'No host'
+#        medals_country.loc[row, 'Hosting_Edition'] = 'No host'
+#        medals_country.loc[row, 'Hosting_Year'] = 'No host'
+#    
+#    row+=1
+#    
+#del row, i, uniques
+    
+medals_country.fillna(0, inplace=True)
+#customdata = df_participants[['ISO3','City','Edition','Year']].copy()
+
 
 #map = go.Figure(data=go.Choropleth(locations=medals_country['ISO3'],
 #                                   locationmode='ISO-3',
@@ -564,7 +585,7 @@ layout= dict(title=dict(text="<b><i> Even Sports need to qualify?",
 bar = go.Figure(data=[
     go.Bar(name='Maintained Sports', x=df_participants['Year'], y=df_participants['Maintained Sports_Count'],
            text=df_participants['Lost Sports'], marker=dict(color='rgb(0, 153, 204)'),
-           hovertemplate="Maintained Sports: %{y:.0f}<br>Lost Sports: %{text}",
+           hovertemplate="<b>Maintained Sports:</b> %{y:.0f}<br><b>Lost Sports:</b> %{text}",
            hoverlabel=dict(bgcolor='rgb(242, 242, 242)',
                                     bordercolor='rgb(242, 242, 242)',
                                     font=dict(size=15,
@@ -575,7 +596,7 @@ bar = go.Figure(data=[
 
     go.Bar(x=df_participants['Year'], y=df_participants['Returned Sports_Count'], name='Returned Sports',
            text= df_participants['Returned Sports'], marker=dict(color='rgb(255, 153, 102)'),
-           hovertemplate="Returned Sports: %{y:.0f}<br>%{text}", #Total Sports: %{text}<br>
+           hovertemplate="<b>Returned Sports:'</b> %{y:.0f}<br>%{text}", #Total Sports: %{text}<br>
            hoverlabel=dict(bgcolor='rgb(242, 242, 242)',
                                     bordercolor='rgb(242, 242, 242)',
                                     font=dict(size=15,
@@ -585,7 +606,7 @@ bar = go.Figure(data=[
                                     )),
     go.Bar(name='New Sports', x=df_participants['Year'], y=df_participants['New Sports_Count'],
            text=df_participants['New Sports'], marker=dict(color='rgb(0, 204, 153)'),#color='time',
-           hovertemplate="New Sports: %{y:.0f}<br>%{text}", #Total Sports: %{text}<br>
+           hovertemplate="<b>New Sports:</b> %{y:.0f}<br>%{text}", #Total Sports: %{text}<br>
            hoverlabel=dict(bgcolor='rgb(242, 242, 242)',
                                     bordercolor='rgb(242, 242, 242)',
                                     font=dict(size=15,
@@ -609,7 +630,7 @@ bar.add_trace(go.Scatter(
     showlegend=False,
     hoverinfo='skip'
 ))
-pyo.plot(fig)
+pyo.plot(bar)
 
 
 
@@ -617,7 +638,9 @@ pyo.plot(fig)
 # Top 5 Winners
 # -----------------------------------------------------------------------------
 
-athletes_medals = df_athletes[['Name', 'Medal']]
+df = pd.read_excel('data/athlete_events.xlsx', sheet_name='athlete_events')
+
+athletes_medals = df[['Name', 'Medal']]
 athletes_medals['c'] = 1
 a_m = athletes_medals.groupby(by=['Name', 'Medal']).c.sum()
 a_m = a_m.to_frame().reset_index()
@@ -689,14 +712,11 @@ for athlete in top_5_winners.Name:
 # Top 5 Countries
 # -----------------------------------------------------------------------------
 
-countries_medals = df_athletes[['Country','Medal']]
+df = pd.read_excel('data/athlete_events.xlsx', sheet_name='athlete_events')
+
+countries_medals = df[['Country', 'Medal']]
 countries_medals['c'] = 1
 c_m = countries_medals.groupby(by=['Country', 'Medal']).c.sum()
 c_m = c_m.to_frame().reset_index()
-
-c_m = c_m.pivot(index='Country',columns='Medal')['c']
-c_m['Country'] = c_m.index
-c_m.reset_index(drop=True, inplace=True)
-
 
 countries_names = c_m.Country.unique()
