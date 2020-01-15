@@ -2,6 +2,8 @@ import pandas as pd
 import dash
 import dash_core_components as dcc
 import dash_html_components as html
+import plotly.offline as pyo
+import plotly.graph_objects as go
 import base64
 
 from dash.dependencies import Input, Output
@@ -9,7 +11,7 @@ from dash.dependencies import Input, Output
 import numpy as np
 import plotly.graph_objects as go
 
-from code import Code
+#from code import Code
 
 
 date_min= 1896  #TODO:  substituir pelo minimo da dataframe  df['year'].min(),
@@ -138,7 +140,7 @@ app.layout = html.Div([
             # Div 1.1.2. HeatMap
             html.Div([
                 html.P('HEATMAP'),
-                dcc.Graph(id='heatmap', figure=map)
+                # dcc.Graph(id='heatmap', figure=map)
             ], id='HeatMap', className='row_1_2'
             ),  # end div 1.1.2.
 
@@ -151,9 +153,9 @@ app.layout = html.Div([
             # Div 1.2.1. - Top Winners
             html.Div([
                 html.P('Top Winners'),
-                dcc.Graph(
-                        id='top_contries_fig'
-                )
+                # dcc.Graph(
+                #         id='top_contries_fig'
+                # )
             ], id='top_winners', className='normalbox'
             ),  # end div 1.2.1.
 
@@ -203,21 +205,21 @@ app.layout = html.Div([
                 # Div 2.1.2.1. - Linechart Countries
                 html.Div([
                     html.P('Linechart Countries'),
-                    dcc.Graph(id='linechart', figure=line)
+                 #   dcc.Graph(id='linechart', figure=line)
                 ], id='countries_linechart', className='boxes'
                 ),  # end div 2.1.2.1.
 
                 # Div 2.1.2.2. - Barchart Sports
                 html.Div([
                     html.P('Barchart Sports'),
-                    dcc.Graph(id='linechart', figure=bar)
+                  #  dcc.Graph(id='linechart', figure=bar)
                 ], id='events_linechart', className='boxes'
                 ),  # end div 2.1.2.2.
 
                 # Div 2.1.2.3. - Areachart Men & Women
                 html.Div([
                     html.P('Athletes Men & Women'),
-                    dcc.Graph(id='linechart', figure=area)
+                  #  dcc.Graph(id='linechart', figure=area)
                 ], id='athletes_linechart', className='boxes'
                 ),  # end div 2.1.2.3.
 
