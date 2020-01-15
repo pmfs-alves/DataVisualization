@@ -2,18 +2,14 @@ import pandas as pd
 import numpy as np
 import plotly.offline as pyo
 import plotly.graph_objects as go
-from plotly.subplots import make_subplots
 
 # DATAFRAMES
-df_athletes = pd.read_excel(r'C:\Users\Sofia\OneDrive - NOVAIMS\Nova IMS\Mestrado\Cadeiras\Data_Visualization\Projeto DV\DataVisualization\code\data\athlete_events.xlsx', 'athlete_events')
-df_participants = pd.read_excel(r'C:\Users\Sofia\OneDrive - NOVAIMS\Nova IMS\Mestrado\Cadeiras\Data_Visualization\Projeto DV\DataVisualization\code\data\athlete_events.xlsx', 'participants')
-#df_athletes = pd.read_excel(r'C:\Users\TITA\OneDrive\Faculdade\2 Mestrado\1º semestre\Data Visualization\Project\DataVisualization\code\data\athlete_events.xlsx', 'athlete_events')
-#df_participants = pd.read_excel(r'C:\Users\TITA\OneDrive\Faculdade\2 Mestrado\1º semestre\Data Visualization\Project\DataVisualization\code\data\athlete_events.xlsx', 'participants')
+df_athletes = pd.read_excel(r'C:\Users\TITA\OneDrive\Faculdade\2 Mestrado\1º semestre\Data Visualization\Project\DataVisualization\code\data\athlete_events.xlsx', 'athlete_events')
+df_participants = pd.read_excel(r'C:\Users\TITA\OneDrive\Faculdade\2 Mestrado\1º semestre\Data Visualization\Project\DataVisualization\code\data\athlete_events.xlsx', 'participants')
 
 df_participants['Edition'] = df_participants['Edition'].astype(str)
 
-df_countries = pd.read_excel(r'C:\Users\TITA\OneDrive\Faculdade\2 Mestrado\1º semestre\Data Visualization\Project\DataVisualization\code\data\tops.xlsx','Countries')
-df_totals = pd.read_excel(r'C:\Users\TITA\OneDrive\Faculdade\2 Mestrado\1º semestre\Data Visualization\Project\DataVisualization\code\data\total_countries.xlsx')
+df_countries = pd.read_excel(r'C:\Users\TITA\OneDrive\Faculdade\2 Mestrado\1º semestre\Data Visualization\Project\DataVisualization\code\data\tops_countries.xlsx','Countries')
 
 # -----------------------------------------------------------------------------
 # CHOROPLETH
@@ -21,6 +17,8 @@ df_totals = pd.read_excel(r'C:\Users\TITA\OneDrive\Faculdade\2 Mestrado\1º seme
 year=2000
 team='Individual'
 sport=[]
+
+# FILTERING
 def countries(year, sport, team):
     if (year == 1892) & (len(sport) == 0) & (team == 'both'):
         df = df_countries
@@ -52,137 +50,120 @@ def countries(year, sport, team):
     df = df.groupby('Country').agg({'Gold':'first','Silver':'first','Bronze':'first','Total':'first',
                                    'ISO3':'first','City': ', '.join, 'Edition': ', '.join}).reset_index()
     
-#medals_country['Hosting_City'] = medals_country['City']
-#medals_country['Hosting_Edition'] = medals_country['Edition']
-#medals_country['Hosting_Year'] = medals_country['Year']
-#
-#uniques = df_participants['ISO3'].unique().tolist()
-#
-#medals_country.reset_index(drop=True, inplace=True)
-#
-#row = 0
-#for i in medals_country['ISO3']:
-#    if i not in uniques:
-#        medals_country.loc[row, 'Hosting_City'] = 'No host'
-#        medals_country.loc[row, 'Hosting_Edition'] = 'No host'
-#        medals_country.loc[row, 'Hosting_Year'] = 'No host'
-#    
-#    row+=1
-#    
-#del row, i, uniques
+    return df
     
-#customdata = df_participants[['ISO3','City','Edition','Year']].copy()
 
+df = countries(year, sport, team)
 
-#map = go.Figure(data=go.Choropleth(locations=medals_country['ISO3'],
-#                                   locationmode='ISO-3',
-#                                   z=medals_country['Total'], # Gold, Silver, Bronze
-#                                   text=np.array(medals_country),
-#                                   customdata=np.array(customdata),
-#                                   hovertemplate="<b>%{text[6]}</b><br><br>" +
-#                                                 "Host City: %{customdata}<br>" +
-##                                               "Edition: %{customdata[2]}<br>" +
-##                                               "Hosting Year: %{customdata[3]:.0f}<br>" +
-#                                               "Total Number of Medals: %{text[4]:.0f}<br>" +
-#                                               "    Gold: %{text[1]:.0f}<br>" +
-#                                               "    Silver: %{text[2]:.0f}<br>" +
-#                                               "    Bronze: %{text[0]:.0f}<br>",
-#                                   hoverlabel=dict(bgcolor='rgb(242, 242, 242)',
-#                                                 bordercolor='rgb(242, 242, 242)',
-#                                                 font=dict(size=15,
-#                                                           color='rgb(0, 0, 0)',
-#                                                           ),
-#                                                 namelength=0,
-#                                                ),
-#                                   colorscale='fall',
-#                                   colorbar={'title': 'Total Number<br>of Medals'}
-#                                   ),
-#                layout=dict(geo=dict(landcolor='rgb(255, 255, 255)',
-#                                     showframe=False,
-#                                     projection={'type': 'equirectangular'})
-#                            )
-#                )
-#
-#pyo.plot(map)
-
+# MAP
 map = go.Figure()
-
-# Add Traces
 
 map.add_trace(go.Choropleth(locations=df['ISO3'],
                              locationmode='ISO-3',
                              z=df['Total'],
                              text=np.array(df),
                              name='Total',
-                             hovertemplate="<b>%{text[6]}</b><br>" +
+                             hovertemplate="<b>%{text[0]}</b><br>" +
+                                           "Host City: %{text[6]}<br>" +
+                                           "Edition: %{text[7]}<br>" +
                                              "Total Number of Medals: %{text[4]:.0f}<br>",
                              hoverlabel=dict(bgcolor='rgb(242, 242, 242)',
                                              bordercolor='rgb(242, 242, 242)',
-                                             font=dict(size=15,
+                                             font=dict(size=13,
                                                        color='rgb(0, 0, 0)',
                                                        ),
                                              namelength=0,
                                             ),
-                             colorscale='fall',
-                             colorbar={'title': '<b>Total Number<br>of Medals'}))
-map.add_trace(go.Choropleth(locations=medals_country['ISO3'],
+                             autocolorscale=False,
+                             marker=dict(line=dict(width=0)),
+                             colorscale='Cividis',
+                             colorbar=dict(title=dict(text='Total Number<br>of Medals \n',
+                                                      font=dict(color='white')),
+                                         tickfont=dict(color='white'))))
+map.add_trace(go.Choropleth(locations=df['ISO3'],
                              locationmode='ISO-3',
-                             z=medals_country['Gold'],
-                             text=np.array(medals_country),
+                             z=df['Gold'],
+                             text=np.array(df),
                              name='Gold',
-                             hovertemplate="<b>%{text[6]}</b><br>" +
+                             hovertemplate="<b>%{text[0]}</b><br>" +
+                                           "Host City: %{text[6]}<br>" +
+                                           "Edition: %{text[7]}<br>" +
                                              "Total Number of Medals: %{text[4]:.0f}<br>" +
                                             "   Gold:  %{text[1]:.0f}",
                              hoverlabel=dict(bgcolor='rgb(242, 242, 242)',
                                              bordercolor='rgb(242, 242, 242)',
-                                             font=dict(size=15,
+                                             font=dict(size=13,
                                                        color='rgb(0, 0, 0)',
                                                        ),
                                              namelength=0,
                                             ),
-                             colorscale='fall',
-                             colorbar={'title': '<b>Total Number<br>of Golden Medals \n' }))
-
-map.add_trace(go.Choropleth(locations=medals_country['ISO3'],
+                             autocolorscale=False,
+                             marker=dict(line=dict(width=0)),
+                             colorscale='Cividis',
+                             colorbar=dict(title=dict(text='Total Number<br>of Golden Medals \n',
+                                                      font=dict(color='white')),
+                                         tickfont=dict(color='white'))))
+map.add_trace(go.Choropleth(locations=df['ISO3'],
                              locationmode='ISO-3',
-                             z=medals_country['Silver'],
-                             text=np.array(medals_country),
+                             z=df['Silver'],
+                             text=np.array(df),
                              name='Silver',
-                             hovertemplate="<b>%{text[6]}</b><br>" +
+                             hovertemplate="<b>%{text[0]}</b><br>" +
+                                           "Host City: %{text[6]}<br>" +
+                                           "Edition: %{text[7]}<br>" +
                                              "Total Number of Medals: %{text[4]:.0f}<br>" +
                                             "   Silver:  %{text[2]:.0f}",
                              hoverlabel=dict(bgcolor='rgb(242, 242, 242)',
                                              bordercolor='rgb(242, 242, 242)',
-                                             font=dict(size=15,
+                                             font=dict(size=13,
                                                        color='rgb(0, 0, 0)',
                                                        ),
                                              namelength=0,
                                              ),
-                             colorscale='Geyser',
-                             colorbar={'title': '<b>Total Number<br>of Silver Medals'}))
-
-map.add_trace(go.Choropleth(locations=medals_country['ISO3'],
+                             autocolorscale=False,
+                             marker=dict(line=dict(width=0)),
+                             colorscale='Cividis',
+                             colorbar=dict(title=dict(text='Total Number<br>of Silver Medals \n',
+                                                      font=dict(color='white')),
+                                         tickfont=dict(color='white'))))
+map.add_trace(go.Choropleth(locations=df['ISO3'],
                              locationmode='ISO-3',
-                             z=medals_country['Bronze'],
-                             text=np.array(medals_country),
+                             z=df['Bronze'],
+                             text=np.array(df),
                              name='Bronze',
-                             hovertemplate="<b>%{text[6]}</b><br>" +
+                             hovertemplate="<b>%{text[0]}</b><br>" +
+                                           "Host City: %{text[6]}<br>" +
+                                           "Edition: %{text[7]}<br>" +
                                              "Total Number of Medals: %{text[4]:.0f}<br>" +
-                                            "   Bronze:  %{text[0]:.0f}",
+                                            "   Bronze:  %{text[3]:.0f}",
                              hoverlabel=dict(bgcolor='rgb(242, 242, 242)',
                                              bordercolor='rgb(242, 242, 242)',
-                                             font=dict(size=15,
+                                             font=dict(size=13,
                                                        color='rgb(0, 0, 0)',
                                                        ),
                                                        namelength=0,
                                             ),
-                             colorscale='Geyser',
-                             colorbar={'title': '<b>Total Number<br>of Bronze Medals'}))
-
-map.update_layout(geo=dict(landcolor='rgb(255, 255, 255)',
-                    showframe=False,
-                    projection={'type': 'equirectangular'})
-           )
+                             autocolorscale=False,
+                             marker=dict(line=dict(width=0)),
+                             colorscale='Cividis',
+                             colorbar=dict(title=dict(text='Total Number<br>of Bronze Medals \n',
+                                                      font=dict(color='white')), 
+                                            tickfont=dict(color='white'))))
+map.update_layout(geo=dict(landcolor='rgb(43, 43, 43)',
+                           showcountries=False,
+                           #showframe=False,
+                           framewidth=0,
+                           coastlinecolor='rgb(43, 43, 43)',
+                           showcoastlines=True,
+                           showland=True,
+                           showocean=True,
+                           oceancolor='rgb(30, 30, 30)',
+                           showlakes=True,
+                           lakecolor='rgb(30, 30, 30)',                          
+                           projection={'type': 'equirectangular'}),
+                 paper_bgcolor='rgb(30, 30, 30)',
+                 plot_bgcolor='rgb(30, 30, 30)',
+                 )
 
 map.update_layout(
     updatemenus=[
@@ -190,7 +171,7 @@ map.update_layout(
             visible=True,
             type='buttons',
             direction="right",
-            active=None,
+            active=0,
             buttons=list([
                 dict(args=[{"visible": [True, False, False, False]}],
                      label="Total", method="update"),
@@ -205,12 +186,14 @@ map.update_layout(
             x=0,
             xanchor="left",
             y=0,
-            yanchor="top"
+            yanchor="top",
+            bgcolor='rgb(30, 30, 30)',
+            font=dict(color='rgb(165, 149, 1)')
         )
     ],
     annotations=[
-        go.layout.Annotation(text="<b>Medals Type", showarrow=False,
-                             x=0, y=0, yref="paper", align="left")
+        go.layout.Annotation(text="Medals Type", showarrow=False,
+                             x=0, y=0, yref="paper", align="left",font=dict(color='white'))
     ]
 )
 
@@ -227,41 +210,41 @@ line = go.Figure(data=go.Scatter(x=df_participants['Year'],
                                  hovertemplate="<b>%{y:,.0f}</b> countries participated in the %{text} Summer Olympics",
                                  hoverlabel=dict(bgcolor='rgb(242, 242, 242)',
                                                  bordercolor='rgb(242, 242, 242)',
-                                                 font=dict(size=15,
-                                                           color='rgb(0, 0, 0)',
+                                                 font=dict(size=13,
+                                                           color='black',
                                                            ),
                                                  namelength=0,
                                                 ),
-                                 line=dict(color='cadetblue',
+                                 line=dict(color='rgb(244, 212, 77)',
                                            width=3,
                                            dash='solid'),
-                                 marker=dict(symbol="diamond",
-                                             size=12, color='rgb(61, 92, 92)'),
+                                 marker=dict(symbol="circle-dot",
+                                             size=10, color='rgb(230, 230, 230)'),
                                  showlegend=False
                                  ),
-                 layout=dict(title=dict(text="<b><i> Olympics getting Popular",
+                 layout=dict(title=dict(text="<i> Olympics getting Popular",
                                         font=dict(family='Raleway',
                                                   size=30,
-                                                  color='rgb(0, 0, 0)',
+                                                  color='white',
                                                   ),
                                         x=0.5,
                                         ),
-                             xaxis=dict(title=dict(text="<b>Year",
+                             xaxis=dict(title=dict(text="Year",
                                                    font=dict(family='Arial',
                                                              size=16,
-                                                             color='rgb(0, 0, 0)',
+                                                             color='white',
                                                            ),
                                                    ),
                                         showline=True,
                                         showgrid=False,
                                         showticklabels=True,
-                                        linecolor='rgb(0, 0, 0)',
-                                        linewidth=2,
+                                        linecolor='white',
+                                        linewidth=1.5,
                                         ticks='outside',
                                         tickfont=dict(
                                                 family='Arial',
                                                 size=14,
-                                                color='rgb(0, 0, 0)',
+                                                color='white',
                                                 ),
                                         
                                         tickvals=df_participants['Year'].unique().tolist(),
@@ -270,108 +253,89 @@ line = go.Figure(data=go.Scatter(x=df_participants['Year'],
                                         showspikes=True,
                                         spikecolor='rgb(179, 203, 203)'
                                         ),
-                            yaxis=dict(title=dict(text="<b>Number of Countries",
+                            yaxis=dict(title=dict(text="Number of Countries",
                                                    font=dict(family='Arial',
                                                              size=16,
-                                                             color='rgb(0, 0, 0)',
+                                                             color='white',
                                                            ),
                                                    ),
-                                       showgrid=True,
+                                       showgrid=False,
                                        showline=True,
                                        showticklabels=True,
-                                       linecolor='rgb(0, 0, 0)',
-                                       linewidth=2,
+                                       linecolor='white',
+                                       linewidth=1.5,
                                        ticks='outside',
                                        tickfont=dict(family='Arial',
                                                      size=14,
-                                                     color='rgb(0, 0, 0)',
+                                                     color='white',
                                                      ),
-                                       tick0 = 0,
+                                       #tick0 = 0,
                                        dtick = 50,
+                                       range=[0,250],
                                        ),
                             showlegend=False,
-                            plot_bgcolor='white'
+                            paper_bgcolor='rgb(30, 30, 30)',
+                            plot_bgcolor='rgb(30, 30, 30)',
                             )
                  )
+
+line.add_annotation(
+    go.layout.Annotation(
+        x=1976,
+        y=92,
+        xref="x",
+        yref="y",
+        text="After New Zealand's rugby team broke the<br>international sports embargo on Apartheid<br>in South Africa, 28 African countries boycotted<br>the summer games in Montreal.",
+        showarrow=True,
+        font=dict(
+            family="Arial",
+            size=12,
+            color="#ffffff"
+            ),
+        align="left",
+        arrowhead=1,
+        arrowsize=1,
+        arrowwidth=1,
+        arrowcolor="#636363",
+        ax=-80,
+        ay=-190,
+        bordercolor="#619292",
+        borderwidth=1,
+        borderpad=4,
+        bgcolor="#619292",
+        opacity=0.8
+        )
+)
+
+line.add_annotation(
+    go.layout.Annotation(
+        x=1980,
+        y=80,
+        xref="x",
+        yref="y",
+        text="Led by the United States, 66 countries boycotted<br>the games because of the Soviet–Afghan War.",
+        showarrow=True,
+        font=dict(
+            family="Arial",
+            size=12,
+            color="#ffffff"
+            ),
+        align="left",
+        arrowhead=1,
+        arrowsize=1,
+        arrowwidth=1,
+        arrowcolor="#636363",
+        ax=200,
+        ay=-50,
+        bordercolor="#619292",
+        borderwidth=1,
+        borderpad=4,
+        bgcolor="#619292",
+        opacity=0.8
+        )
+)
 
 pyo.plot(line)
-
-# -----------------------------------------------------------------------------
-# LINE POINT CHART WITH NUMBER ON POINTS
-# -----------------------------------------------------------------------------
-
-point = go.Figure(data=go.Scatter(x=df_participants['Year'],
-                                 y=df_participants['Sports'],
-                                 mode="lines+markers+text",
-                                 text=df_participants['Sports'],
-                                 textposition="top center",
-                                 textfont=dict(family="Arial",
-                                               size=18,
-                                               color="rgb(0, 0, 0)"),
-                                 hovertemplate="In %{x:.0f} the Olympic Summer Games featured <b>%{y:,.0f}</b> different sports.",
-                                 hoverlabel=dict(bgcolor='rgb(242, 242, 242)',
-                                                 bordercolor='rgb(242, 242, 242)',
-                                                 font=dict(size=15,
-                                                           color='rgb(0, 0, 0)',
-                                                           ),
-                                                 namelength=0,
-                                                ),          
-                                 line=dict(color='rgb(255, 159, 128)',
-                                           width=3,
-                                           dash='solid'),
-                                 marker=dict(symbol=200,
-                                             size=10, color='rgb(51, 51, 51)'),
-                                 showlegend=False,
-                                 ),
-                 layout=dict(title=dict(text="<b><i> Even Sports need to qualify?",
-                                        font=dict(family='Raleway',
-                                                  size=30,
-                                                  color='rgb(0, 0, 0)',
-                                                  ),
-                                        x=0.5,
-                                        ),
-                             xaxis=dict(title=dict(text="<b>Year",
-                                                   font=dict(family='Arial',
-                                                             size=16,
-                                                             color='rgb(0, 0, 0)',
-                                                           ),
-                                                   ),
-                                        showline=True,
-                                        showgrid=False,
-                                        showticklabels=True,
-                                        linecolor='rgb(0, 0, 0)',
-                                        linewidth=2,
-                                        ticks='outside',
-                                        tickfont=dict(
-                                                family='Arial',
-                                                size=14,
-                                                color='rgb(0, 0, 0)',
-                                                ),
-                                        tickvals=df_participants['Year'].unique().tolist(),
-                                        dtick = 4,
-                                        tickangle=45,
-                                        showspikes=True,
-                                        spikecolor='rgb(0, 0, 0)',
-                                        spikethickness=2,
-                                        ),
-                              yaxis=dict(title=dict(text="<b>Number of Sports",
-                                                   font=dict(family='Arial',
-                                                             size=16,
-                                                             color='rgb(0, 0, 0)',
-                                                           ),
-                                                   ),
-                                       showgrid=True,
-                                       showline=True,
-                                       showticklabels=False,
-                                       linecolor='rgb(0, 0, 0)',
-                                       linewidth=2,
-                                       ),
-                            showlegend=False,
-                            plot_bgcolor='white'
-                            )
-                 )
-
-pyo.plot(point)
 
 # -----------------------------------------------------------------------------
 # AREA CHART
@@ -387,7 +351,7 @@ trace1 = go.Scatter(x=df_participants['Year'],
                     hovertemplate="Total: %{text:.0f}<br>Men: %{y:.0f}",
                     hoverlabel=dict(bgcolor='rgb(242, 242, 242)',
                                     bordercolor='rgb(242, 242, 242)',
-                                    font=dict(size=15,
+                                    font=dict(size=13,
                                               color='rgb(0, 0, 0)',
                                            ),
                                     namelength=0,
@@ -411,7 +375,7 @@ trace2 = go.Scatter(x=df_participants['Year'],
                     hovertemplate="Total: %{text:.0f}<br>Women: %{y:.0f}",
                     hoverlabel=dict(bgcolor='rgb(242, 242, 242)',
                                     bordercolor='rgb(242, 242, 242)',
-                                    font=dict(size=15,
+                                    font=dict(size=13,
                                               color='rgb(0, 0, 0)',
                                               ),
                                     namelength=0,
@@ -479,7 +443,91 @@ layout= dict(title=dict(text="<b><i> Sports is only for Men?",
             showlegend=False,
             plot_bgcolor='white'
             )
-                                           
+
++area = go.Figure(data=[trace1, trace2], layout=layout)
+
+area.add_annotation(
+    go.layout.Annotation(
+        x=1932,
+        y=1332,
+        xref="x",
+        yref="y",
+        text="The Games were held during the worldwide Great Depression and<br>some teams were unable to pay for the trip to Los Angeles.",
+        showarrow=True,
+        font=dict(
+            family="Arial",
+            size=12,
+            color="#ffffff"
+            ),
+        align="left",
+        arrowhead=1,
+        arrowsize=1,
+        arrowwidth=1,
+        arrowcolor="#636363",
+        ax=-50,
+        ay=-130,
+        bordercolor="#619292",
+        borderwidth=1,
+        borderpad=4,
+        bgcolor="#619292",
+        opacity=0.8
+        )
+)
+
+area.add_annotation(
+    go.layout.Annotation(
+        x=1956,
+        y=3314,
+        xref="x",
+        yref="y",
+        text="Several teams boycotted the Games in protest<br>of the IOC's rejection to suspend the<br>USSR after their invasion of Hungary.",showarrow=True,
+        font=dict(
+            family="Arial",
+            size=12,
+            color="#ffffff"
+            ),
+        align="left",
+        arrowhead=1,
+        arrowsize=1,
+        arrowwidth=1,
+        arrowcolor="#636363",
+        ax=-75,
+        ay=-150,
+        bordercolor="#619292",
+        borderwidth=1,
+        borderpad=4,
+        bgcolor="#619292",
+        opacity=0.8
+        )
+)
+
+area.add_annotation(
+    go.layout.Annotation(
+        x=1980,
+        y=5179,
+        xref="x",
+        yref="y",
+        text="Led by the United States, 66 countries boycotted<br>the games because of the Soviet–Afghan War.",showarrow=True,
+        font=dict(
+            family="Arial",
+            size=12,
+            color="#ffffff"
+            ),
+        align="left",
+        arrowhead=1,
+        arrowsize=1,
+        arrowwidth=1,
+        arrowcolor="#636363",
+        ax=-60,
+        ay=-155,
+        bordercolor="#619292",
+        borderwidth=1,
+        borderpad=4,
+        bgcolor="#619292",
+        opacity=0.8
+        )
+)
+
 area = go.Figure(data=[trace1, trace2], layout=layout) 
 
 pyo.plot(area)
@@ -615,7 +663,7 @@ bar = go.Figure(data=[
            hovertemplate="<b>Maintained Sports:</b> %{y:.0f}<br><b>Lost Sports:</b> %{text}",
            hoverlabel=dict(bgcolor='rgb(242, 242, 242)',
                                     bordercolor='rgb(242, 242, 242)',
-                                    font=dict(size=15,
+                                    font=dict(size=13,
                                               color='rgb(0, 0, 0)',
                                               ),
                                     namelength=0,
@@ -626,7 +674,7 @@ bar = go.Figure(data=[
            hovertemplate="<b>Returned Sports:'</b> %{y:.0f}<br>%{text}", #Total Sports: %{text}<br>
            hoverlabel=dict(bgcolor='rgb(242, 242, 242)',
                                     bordercolor='rgb(242, 242, 242)',
-                                    font=dict(size=15,
+                                    font=dict(size=13,
                                               color='rgb(0, 0, 0)',
                                               ),
                                     namelength=0,
@@ -636,7 +684,7 @@ bar = go.Figure(data=[
            hovertemplate="<b>New Sports:</b> %{y:.0f}<br>%{text}", #Total Sports: %{text}<br>
            hoverlabel=dict(bgcolor='rgb(242, 242, 242)',
                                     bordercolor='rgb(242, 242, 242)',
-                                    font=dict(size=15,
+                                    font=dict(size=13,
                                               color='rgb(0, 0, 0)',
                                               ),
                                     namelength=0,
