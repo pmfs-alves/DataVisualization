@@ -20,6 +20,21 @@ df_participants = pd.read_excel('data/athlete_events.xlsx', sheet_name='particip
 #df_athletes = pd.read_excel('code/data/athlete_events.xlsx', sheet_name='athlete_events')
 #df_participants = pd.read_excel('code/data/athlete_events.xlsx', sheet_name='participants')
 
+
+#--------------------------------------- Calculations ----------------------------------------------------#
+nr_countries = df_athletes.Country.unique()
+nr_countries = len(nr_countries)
+
+nr_host_cities = df_participants.City.unique()
+nr_host_cities = len(nr_host_cities)
+
+nr_events = df_athletes.Event.unique()
+nr_events = len(nr_events)
+
+
+
+
+
 #Encode Image
 
 encoded_image = base64.b64encode(open('images/Olympic-logo.png', 'rb').read())
@@ -66,8 +81,11 @@ app.layout = html.Div([
                 # Div 1.1.1.3. Cities Countries
                 html.Div([
                     html.P('Number of Countries: '),
+                    str(nr_countries),
                     html.P('Number of Host Cities: '),
-                    html.P('Number of Sports: ')
+                    str(nr_host_cities),
+                    html.P('Number of Events: '),
+                    str(nr_events)
                 ], id='details', className='minibox'
                 ),  # end div 1.1.1.3.
 
@@ -215,54 +233,54 @@ def teste (teste):
     return
 #--------------------------------------- Figure Top Countries ---------------------------------------------------------#
 
-
-athletes_medals = df_athletes[['Name', 'Medal']]
-athletes_medals['c'] = 1
-a_m = athletes_medals.groupby(by=['Name', 'Medal']).c.sum()
-a_m = a_m.to_frame().reset_index()
-
-athletes_names = a_m.Name.unique()
-
-athletes_names_ordered = a_m.groupby(by='Name').c.sum()
-athletes_names_ordered = athletes_names_ordered.to_frame().reset_index()
-athletes_names_ordered = athletes_names_ordered.sort_values(by=['c'], ascending=False)
-top_5_winners = athletes_names_ordered.head()
-
-for athlete in top_5_winners.Name:
-    a_medals = a_m.loc[a_m['Name'] == athlete]
-
-    aux = pd.Series(dict(zip(a_medals.Medal, a_medals.c)))
-
-    Xlim = 29
-    Ylim = 1
-    Xpos = 0
-    Ypos = 1
-    series = []
-    for medal, count in aux.iteritems():
-        x = []
-        y = []
-        for j in range(0, count):
-            if Xpos == Xlim:
-                Xpos = 0
-                Ypos -= 1  ##change to positive for upwards
-            x.append(Xpos)
-            y.append(Ypos)
-            Xpos += 1
-        if (medal == 'Gold'):
-            #pass
-            series.append(go.Scatter(x=x, y=y, mode='markers',
-                                     marker={'symbol': 'circle', 'size': 8, 'color': 'rgb(255, 215, 0)'},
-                                     name=f'{medal} ({count})'))
-        elif (medal == 'Silver'):
-            # pass
-            series.append(go.Scatter(x=x, y=y, mode='markers',
-                                     marker={'symbol': 'circle', 'size': 8, 'color': 'rgb(192, 192, 192)'},
-                                     name=f'{medal} ({count})'))
-        elif (medal == 'Bronze'):
-            # pass
-            series.append(go.Scatter(x=x, y=y, mode='markers',
-                                     marker={'symbol': 'circle', 'size': 8, 'color': 'rgb(205, 127, 50)'},
-                                     name=f'{medal} ({count})'))
+#
+# athletes_medals = df_athletes[['Name', 'Medal']]
+# athletes_medals['c'] = 1
+# a_m = athletes_medals.groupby(by=['Name', 'Medal']).c.sum()
+# a_m = a_m.to_frame().reset_index()
+#
+# athletes_names = a_m.Name.unique()
+#
+# athletes_names_ordered = a_m.groupby(by='Name').c.sum()
+# athletes_names_ordered = athletes_names_ordered.to_frame().reset_index()
+# athletes_names_ordered = athletes_names_ordered.sort_values(by=['c'], ascending=False)
+# top_5_winners = athletes_names_ordered.head()
+#
+# for athlete in top_5_winners.Name:
+#     a_medals = a_m.loc[a_m['Name'] == athlete]
+#
+#     aux = pd.Series(dict(zip(a_medals.Medal, a_medals.c)))
+#
+#     Xlim = 29
+#     Ylim = 1
+#     Xpos = 0
+#     Ypos = 1
+#     series = []
+#     for medal, count in aux.iteritems():
+#         x = []
+#         y = []
+#         for j in range(0, count):
+#             if Xpos == Xlim:
+#                 Xpos = 0
+#                 Ypos -= 1  ##change to positive for upwards
+#             x.append(Xpos)
+#             y.append(Ypos)
+#             Xpos += 1
+#         if (medal == 'Gold'):
+#             #pass
+#             series.append(go.Scatter(x=x, y=y, mode='markers',
+#                                      marker={'symbol': 'circle', 'size': 8, 'color': 'rgb(255, 215, 0)'},
+#                                      name=f'{medal} ({count})'))
+#         elif (medal == 'Silver'):
+#             # pass
+#             series.append(go.Scatter(x=x, y=y, mode='markers',
+#                                      marker={'symbol': 'circle', 'size': 8, 'color': 'rgb(192, 192, 192)'},
+#                                      name=f'{medal} ({count})'))
+#         elif (medal == 'Bronze'):
+#             # pass
+#             series.append(go.Scatter(x=x, y=y, mode='markers',
+#                                      marker={'symbol': 'circle', 'size': 8, 'color': 'rgb(205, 127, 50)'},
+#                                      name=f'{medal} ({count})'))
 
 
 
