@@ -86,7 +86,7 @@ app.layout = html.Div([
                 dcc.Graph(
                         id='top_contries_fig'
                 )
-            ], id='top_winers', className='normalbox'
+            ], id='top_winners', className='normalbox'
             ),  # end div 1.2.1.
 
             # Div 1.2.2. - Top Countries
@@ -114,7 +114,6 @@ app.layout = html.Div([
             # Div 2.1.1. - Slider
             html.Div([
                 html.P('SLIDER'),
-                html.P('PEDRO'),
                 dcc.Slider(
                     id='my-slider',
                     min=date_min,
@@ -136,7 +135,6 @@ app.layout = html.Div([
                 # Div 2.1.2.1. - Linechart Countries
                 html.Div([
                     html.P('Linechart Countries'),
-                    html.P('RITA'),
                     dcc.Graph(id='linechart', figure=line)
                 ], id='countries_linechart', className='boxes'
                 ),  # end div 2.1.2.1.
@@ -144,7 +142,6 @@ app.layout = html.Div([
                 # Div 2.1.2.2. - Barchart Sports
                 html.Div([
                     html.P('Barchart Sports'),
-                    html.P('SOFIA'),
                     dcc.Graph(id='linechart', figure=bar)
                 ], id='events_linechart', className='boxes'
                 ),  # end div 2.1.2.2.
@@ -152,7 +149,6 @@ app.layout = html.Div([
                 # Div 2.1.2.3. - Areachart Men & Women
                 html.Div([
                     html.P('Athletes Men & Women'),
-                    html.P('RITA'),
                     dcc.Graph(id='linechart', figure=area)
                 ], id='athletes_linechart', className='boxes'
                 ),  # end div 2.1.2.3.
