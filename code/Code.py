@@ -2,7 +2,6 @@ import pandas as pd
 import numpy as np
 import plotly.offline as pyo
 import plotly.graph_objects as go
-from plotly.subplots import make_subplots
 
 # DATAFRAMES
 #df_athletes = pd.read_excel(r'C:\Users\Sofia\OneDrive - NOVAIMS\Nova IMS\Mestrado\Cadeiras\Data_Visualization\Projeto DV\DataVisualization\code\data\athlete_events.xlsx', 'athlete_events')
@@ -11,12 +10,39 @@ df_athletes = pd.read_excel(r'C:\Users\TITA\OneDrive\Faculdade\2 Mestrado\1º se
 df_participants = pd.read_excel(r'C:\Users\TITA\OneDrive\Faculdade\2 Mestrado\1º semestre\Data Visualization\Project\DataVisualization\code\data\athlete_events.xlsx', 'participants')
 
 df_participants['Edition'] = df_participants['Edition'].astype(str)
-
-medals_country = pd.DataFrame(data=df_athletes.groupby(["ISO3", "Medal"])["Medal"].count())
+  
+medals_country = pd.DataFrame(data=df_athletes.groupby(["ISO3","Medal","Year"])["Medal"].count())
 medals_country = medals_country.unstack(level=['Medal'])
-medals_country.columns = medals_country.columns.droplevel()
-medals_country['ISO3'] = medals_country.index
+medals_country.rename(columns={"('Medal', 'Bronze')":'Bronze', "('Medal', 'Gold')":'Gold', "('Medal', 'Silver')":'Silver'}, inplace=True)
+
+medals_country['Multiple'] = medals_country.index
 medals_country.reset_index(drop=True, inplace=True)
+medals_country['Multiple'] = medals_country['Multiple'].astype(str)
+medals_country.index = medals_country['Medal']
+
+medals_country[['ISO3','Medal','Year']] = medals_country['Multiple'].str.split(',', 2,expand=True)
+medals_country.drop(columns='Multiple', inplace=True)
+
+medals_country['Medal'] = medals_country['Medal'].str.replace("'",'')
+medals_country['ISO3'] = medals_country['ISO3'].str.replace("'",'')
+medals_country['ISO3'] = medals_country['ISO3'].str.replace("(",'')
+medals_country['Year'] = medals_country['Year'].str.replace(")",'')
+
+medals_country['Value'] = medals_country.index
+medals_country.reset_index(drop=True, inplace=True)
+
+medals_country[['ISO3','Medal','Year']] = medals_country[['ISO3','Medal','Year']].astype(str)
+
+
+
+medals_country = medals_country.set_index(['ISO3','Year','q'])['v'].unstack().reset_index()
+
+
+medals_country= medals_country.loc[:,:].T
+
+medals_country = medals_country.unstack(level=['Year'])
+medals_country = medals_country.unstack(level=['Year'])
+medals_country.columns = medals_country.columns.droplevel()
 medals_country['Total'] = medals_country.iloc[:,0:3].sum(axis=1)
 
 medals_country = medals_country.merge(df_athletes[['ISO3','City','Country','Edition','Year']], on='ISO3')
@@ -630,79 +656,4 @@ bar.add_trace(go.Scatter(
     showlegend=False,
     hoverinfo='skip'
 ))
-pyo.plot(fig)
-
-
-
-# -----------------------------------------------------------------------------
-# Top 5 Winners
-# -----------------------------------------------------------------------------
-
-df = pd.read_excel('data/athlete_events.xlsx', sheet_name='athlete_events')
-
-athletes_medals = df[['Name', 'Medal']]
-athletes_medals['c'] = 1
-a_m = athletes_medals.groupby(by=['Name', 'Medal']).c.sum()
-a_m = a_m.to_frame().reset_index()
-
-athletes_names = a_m.Name.unique()
-
-athletes_names_ordered = a_m.groupby(by='Name').c.sum()
-athletes_names_ordered = athletes_names_ordered.to_frame().reset_index()
-athletes_names_ordered = athletes_names_ordered.sort_values(by=['c'], ascending=False)
-top_5_winners = athletes_names_ordered.head()
-
-
-
-# final_fig = make_subplots(rows=5, cols=1)
-# i = 1
-for athlete in top_5_winners.Name:
-    a_medals = a_m.loc[a_m['Name'] == athlete]
-
-    aux = pd.Series(dict(zip(a_medals.Medal, a_medals.c)))
-
-    Xlim = 29
-    Ylim = 1
-    Xpos = 0
-    Ypos = 1
-    series = []
-    for medal, count in aux.iteritems():
-        x = []
-        y = []
-        for j in range(0, count):
-            if Xpos == Xlim:
-                Xpos = 0
-                Ypos -= 1  ##change to positive for upwards
-            x.append(Xpos)
-            y.append(Ypos)
-            Xpos += 1
-        if (medal == 'Gold'):
-            series.append(go.Scatter(x=x, y=y, mode='markers',
-                                     marker={'symbol': 'circle', 'size': 6, 'color': 'rgb(255, 215, 0)'},
-                                     name=f'{medal} ({count})'))
-        elif (medal == 'Silver'):
-            series.append(go.Scatter(x=x, y=y, mode='markers',
-                                     marker={'symbol': 'circle', 'size': 6, 'color': 'rgb(192, 192, 192)'},
-                                     name=f'{medal} ({count})'))
-        elif (medal == 'Bronze'):
-            series.append(go.Scatter(x=x, y=y, mode='markers',
-                                     marker={'symbol': 'circle', 'size': 6, 'color': 'rgb(205, 127, 50)'},
-                                     name=f'{medal} ({count})'))
-
-    fig = go.Figure(dict(data=series, figsize=[6, 6], layout=go.Layout(
-        plot_bgcolor='rgba(0,0,0,0)',
-        xaxis=dict(showgrid=False, zeroline=False, showline=False, visible=False, showticklabels=False,
-                   range=[0.5, 30]),
-        yaxis=dict(showgrid=False, zeroline=False, showline=False, visible=False, showticklabels=False, tickvals=[1])
-    )))
-    fig.update_layout(showlegend=False,
-                      autosize=False,
-                      width=500,
-                      height=190,
-                      margin={'t': 0}
-                      )
-    # final_fig.append_trace(fig, i, 1)
-    # i = i + 1
-    fig.show()
-    
-# final_fig.show()
+pyo.plot(bar)
