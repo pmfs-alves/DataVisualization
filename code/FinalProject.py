@@ -24,11 +24,15 @@ df_participants = pd.read_excel('data/athlete_events.xlsx', sheet_name='particip
 
 encoded_image = base64.b64encode(open('images/Olympic-logo.png', 'rb').read())
 
-
-years_select = [dict(label=year, value=year) for year in df_participants['Year'].unique()]
+#create years dict
 years_select = {str(i): '{}'.format(str(i)) for i in df_participants.Year.unique()}
 years_select[1892] = "All"
 
+#create sports dict
+sports_select = [dict(label=sport.replace('_', ' '), value=sport) for sport in df_athletes.Sport.unique()]
+print(sports_select)
+
+#calculate numbers
 nr_countries = df_athletes.Country.unique()
 nr_countries = len(nr_countries)
 
@@ -38,171 +42,180 @@ nr_host_cities = len(nr_host_cities)
 nr_events = df_athletes.Event.unique()
 nr_events = len(nr_events)
 
-#----------------------------------------Layout------------------------------------------------------------------------#
-# Page Layout
 
-# Page Layout
-app = dash.Dash(__name__, assets_folder='style')
+#-------------------------------------------------------------------------------------------------------#
+#----------------------------------------------LAYOUT---------------------------------------------------#
+#-------------------------------------------------------------------------------------------------------#
+
+app = dash.Dash(__name__)
 
 app.layout = html.Div([
 
-    # Div 1. - Title, Heatmap, Top Winers, Top countries
+    # Div 1. - Title, Top Winners, Top countries, Filter, Search
     html.Div([
 
-        # Div 1.1. Title, Heatmap
+        # Div 1.1. - Title
         html.Div([
-
-            # Div 1.1.1. Title, Nr of Editions, Cities, Countr
-            html.Div([
-                # Div 1.1.1.1. Title
-                html.Div([
-                    html.Img(src='data:image/png;base64,{}'.format(encoded_image.decode()), style={'height':'20%', 'width':'10%'}),
-                    #html.Img(src=app.get_asset_url( '/images/Olympic-logo.png')),
-                    html.P('Summer Olympics Games'),
-                ], id='title', className='title', style={'display': 'inline-block'},
-                ),  # end div 1.1.1.1.
-
-                # Div 1.1.1.2. Nr of Editions
-                html.Div([
-                    html.P('Number of Editions:'),
-                    html.P('XXXI')
-                ], id='nr_editions', className='minibox'
-                ),  # end div 1.1.1.2.
-
-                # Div 1.1.1.3. Cities Countries
-                html.Div([
-                    html.P('Number of Countries: '),
-                    html.Div([str(nr_countries)], className='nr'),
-                    html.P('Number of Host Cities: '),
-                    html.Div([str(nr_host_cities)], className='nr'),
-                    html.P('Number of Events: '),
-                    html.Div([str(nr_events)], className='nr')
-                ], id='details', className='minibox'
-                ),  # end div 1.1.1.3.
-
-            ], id='header', className='row_1_1'
-            ),  # end div 1.1.1.
-
-
-            # Div 1.1.2. HeatMap
-            html.Div([
-                html.P('HEATMAP'),
-                # dcc.Graph(id='heatmap', figure=map)
-            ], id='HeatMap', className='row_1_2'
-            ),  # end div 1.1.2.
-
-        ], id='inner_div_1', className='column_1'
+            html.Img(src='data:image/png;base64,{}'.format(encoded_image.decode()), id='logo'),
+            #html.Img(src=app.get_asset_url( '/images/Olympic-logo.png')),
+            html.P('Summer Olympics Games')
+        ], id='title', className='title leftboxes'
         ),  # end div 1.1.
 
-
-        # Div 1.2. - Top Winners, Top Countries
+        # Div 1.2. - Top Winners
         html.Div([
-            # Div 1.2.1. - Top Winners
-            html.Div([
-                html.P('Top Winners'),
-                # dcc.Graph(
-                #         id='top_contries_fig'
-                # )
-            ], id='top_winners', className='normalbox'
-            ),  # end div 1.2.1.
-
-            # Div 1.2.2. - Top Countries
-            html.Div([
-
-                html.P('Top Countries'),
-
-            ], id='top_countries', className='normalbox'
-            ),  # end div 1.2.2.
-
-        ], id='inner_div_2', className='column_2'
+            html.P('Top Winners'),
+            # dcc.Graph(
+            #         id='top_contries_fig'
+            # )
+        ], id='top_winners', className='leftboxes'
         ),  # end div 1.2.
 
-    ], className='row_1'
+        # Div 1.3. - Top Countries
+        html.Div([
+
+            html.P('Top Countries')
+
+        ], id='top_countries', className='leftboxes'
+        ),  # end div 1.3.
+
+        # Div 1.4. - Search, Filter
+        html.Div([
+            # Div 1.4.1. - Filter
+            html.Div([
+                html.P('What Type of Sports do you want to see?'),
+                dcc.RadioItems(
+                    id='sport_type',
+                    options=[
+                        {'label': 'Colective', 'value': 'colective'},
+                        {'label': 'Individual', 'value': 'individual'},
+                        {'label': 'Both', 'value': 'both'},
+
+                    ],
+                    value='both',
+                    labelStyle={'display': 'inline-block'}
+                )
+            ], id='filter'
+            ),  # end div 1.4.1
+
+            # Div 1.4.2. - Search
+            html.Div([
+                html.P(),
+                html.P("Do you want to select particular sports?"),
+                dcc.Dropdown(
+                    id='sport_select',
+                    options=sports_select,
+                    value=[],
+                    multi=True
+                )
+            ], id='search'
+            )  # end div 1.4.2.
+
+        ], id='filters', className='leftboxes'
+        )  # end div 1.4.
+
+
+    ], id='div_1', className='column_1'
     ),  # end div 1.
 
 
 
-    # Div 2. - Slider, Linecharts (Countries, Events, Athletes), Filter, Search
+    # Div 2. - Nr of Editions, HeatMap, Slider, Linecharts (Countries, Events, Athletes)
     html.Div([
 
-        # Div 2.1. - Slider, Linecharts (Countries, Events, Athletes)
+        # Div 2.1. - Nr of Editions, Nr Countries, Nr Cities, Nr Events
         html.Div([
-
-            # Div 2.1.1. - Slider
+            # Div 2.1.1. - Nr of Editions
             html.Div([
-                html.P('SLIDER'),
-                dcc.Slider(
-                    id='year-slider',
-                    min=1892,
-                    max=2016,
-                    #step=4,
-                    #marks=datedict,
-                    marks=years_select, #.insert(0, 'All')
-                    #tooltip=str(value),
-                    value=2016,
-                    included=False,
-                    persistence_type='session',
-                )
-
-
-            ], id='slider', className='row_2_1',
+                html.P('Number of Editions:'),
+                html.P('XXXI')
+            ], id='nr_editions', className='miniboxes'
             ),  # end div 2.1.1.
 
-
-            # Div 2.1.2. - Linechart/Barchart/Areachart - Countries, Sports, Athletes
+            # Div 2.1.2. - Nr Countries
             html.Div([
-                # Div 2.1.2.1. - Linechart Countries
-                html.Div([
-                    html.P('Linechart Countries'),
-                 #   dcc.Graph(id='linechart', figure=line)
-                ], id='countries_linechart', className='boxes'
-                ),  # end div 2.1.2.1.
-
-                # Div 2.1.2.2. - Barchart Sports
-                html.Div([
-                    html.P('Barchart Sports'),
-                  #  dcc.Graph(id='linechart', figure=bar)
-                ], id='events_linechart', className='boxes'
-                ),  # end div 2.1.2.2.
-
-                # Div 2.1.2.3. - Areachart Men & Women
-                html.Div([
-                    html.P('Athletes Men & Women'),
-                  #  dcc.Graph(id='linechart', figure=area)
-                ], id='athletes_linechart', className='boxes'
-                ),  # end div 2.1.2.3.
-
-            ], id='linecharts', className='row_2_2'
+                html.P('Number of Countries: '),
+                html.Div([str(nr_countries)], className='nr')
+            ], id='nr_countries', className='miniboxes'
             ),  # end div 2.1.2.
 
-        ], id='inner_div_3', className='column_1'
-        ),  # end div 2.1
+            # Div 2.1.2. - Nr Cities
+            html.Div([
+                html.P('Number of Host Cities: '),
+                html.Div([str(nr_host_cities)], className='nr'),
+            ], id='nr_cities', className='miniboxes'
+            ),  # end div 2.1.2.
+
+            # Div 2.1.3. - Nr Events
+            html.Div([
+                html.P('Number of Events: '),
+                html.Div([str(nr_events)], className='nr')
+            ], id='nr_events', className='miniboxes'
+            ),  # end div 2.1.3.
+
+        ], id='counts', className='row_1'
+        ),  # end div 2.1.
 
 
-        # Div 2.2. - Filter, Search
+        # Div 2.2. - HeatMap
         html.Div([
-            html.P('What Type of Sports do you want to see?'),
-            dcc.RadioItems(
-                id='sport_type',
-                options=[
-                    {'label': 'Colective', 'value': 'colective'},
-                    {'label': 'Individual', 'value': 'individual'},
-                    {'label': 'Both', 'value': 'both'},
+            html.P('HEATMAP'),
+            html.P('Rita'),
+            # dcc.Graph(id='heatmap', figure=map)
+        ], id='heatmap', className='row_2'
+        ),  # end div 2.2.
 
-                ],
-                value='both',
-                labelStyle={'display': 'inline-block'}
-            ),
-        ], id='inner_div_4', className='column_2'
-        ),  # end div 2.2
+        # Div 2.3. - Slider
+        html.Div([
+            html.P('SLIDER'),
+            dcc.Slider(
+                id='year-slider',
+                min=1892,
+                max=2016,
+                #step=4,
+                #marks=datedict,
+                marks=years_select, #.insert(0, 'All')
+                #tooltip=str(value),
+                value=2016,
+                included=False,
+                persistence_type='session',
+            )
+        ], id='slider', className='row_3'
+        ),  # end div 2.3.
+
+        # Div 2.4. - Linechart/Barchart/Areachart - Countries, Sports, Athletes
+        html.Div([
+            # Div 2.4.1. - Linechart Countries
+            html.Div([
+                html.P('Linechart Countries'),
+             #   dcc.Graph(id='linechart', figure=line)
+            ], id='countries_linechart', className='boxes'
+            ),  # end div 2.4.1.
+
+            # Div 2.4.2. - Barchart Sports
+            html.Div([
+                html.P('Barchart Sports'),
+              #  dcc.Graph(id='linechart', figure=bar)
+            ], id='events_linechart', className='boxes'
+            ),  # end div 2.4.2.
+
+            # Div 2.4.3. - Areachart Men & Women
+            html.Div([
+                html.P('Athletes Men & Women'),
+              #  dcc.Graph(id='linechart', figure=area)
+            ], id='athletes_linechart', className='boxes'
+            ),  # end div 2.4.3.
+
+        ], id='linecharts', className='row_4'
+        )  # end div 2.4.
 
 
-    ], className='row_2'
-    ),  # end div 2.
+    ], id='div_2', className='column_2'
+    )  # end div 2.
 
-
-], id='outer_div'
+], id='outer_div',
 )
+
 
 #----------------------------------------Callbacks---------------------------------------------------------------------#
 
@@ -214,8 +227,8 @@ app.layout = html.Div([
     ],
     [
         Input("sport_type", "value"),
-        Input("year-slider", "value"),
-        # Input("gas_option", "value"),
+        Input("year_slider", "value"),
+        Input("sport_type", "value"),
 
     ]
     )
