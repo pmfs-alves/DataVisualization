@@ -10,20 +10,10 @@ df_participants = pd.read_excel(r'C:\Users\Sofia\OneDrive - NOVAIMS\Nova IMS\Mes
 #df_athletes = pd.read_excel(r'C:\Users\TITA\OneDrive\Faculdade\2 Mestrado\1º semestre\Data Visualization\Project\DataVisualization\code\data\athlete_events.xlsx', 'athlete_events')
 #df_participants = pd.read_excel(r'C:\Users\TITA\OneDrive\Faculdade\2 Mestrado\1º semestre\Data Visualization\Project\DataVisualization\code\data\athlete_events.xlsx', 'participants')
 
-df_athletes = pd.read_excel('data/athlete_events.xlsx', sheet_name='athlete_events')
-df_participants = pd.read_excel('data/athlete_events.xlsx', sheet_name='participants')
-
 df_participants['Edition'] = df_participants['Edition'].astype(str)
 
-medals_country = pd.DataFrame(data=df_athletes.groupby(["ISO3", "Medal"])["Medal"].count())
-medals_country = medals_country.unstack(level=['Medal'])
-medals_country.columns = medals_country.columns.droplevel()
-medals_country['ISO3'] = medals_country.index
-medals_country.reset_index(drop=True, inplace=True)
-medals_country['Total'] = medals_country.iloc[:,0:3].sum(axis=1)
-
-medals_country = medals_country.merge(df_athletes[['ISO3','City','Country','Edition','Year']], on='ISO3')
-medals_country.drop_duplicates(inplace=True)
+df_countries = pd.read_excel(r'C:\Users\TITA\OneDrive\Faculdade\2 Mestrado\1º semestre\Data Visualization\Project\DataVisualization\code\data\tops.xlsx','Countries')
+df_totals = pd.read_excel(r'C:\Users\TITA\OneDrive\Faculdade\2 Mestrado\1º semestre\Data Visualization\Project\DataVisualization\code\data\total_countries.xlsx')
 
 # -----------------------------------------------------------------------------
 # CHOROPLETH
@@ -85,10 +75,17 @@ medals_country.fillna(0, inplace=True)
 map = go.Figure()
 
 # Add Traces
-map.add_trace(go.Choropleth(locations=medals_country['ISO3'],
+year=1892
+if year == '1892':
+    df = df_totals
+else:
+    df = df_countries.loc[df['Year'] == year]
+
+
+map.add_trace(go.Choropleth(locations=df['ISO3'],
                              locationmode='ISO-3',
-                             z=medals_country['Total'],
-                             text=np.array(medals_country),
+                             z=df['Total'],
+                             text=np.array(df),
                              name='Total',
                              hovertemplate="<b>%{text[6]}</b><br>" +
                                              "Total Number of Medals: %{text[4]:.0f}<br>",
