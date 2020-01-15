@@ -40,7 +40,7 @@ app.layout = html.Div([
             html.Div([
                 # Div 1.1.1.1. Title
                 html.Div([
-                    html.Img(src='data:image/png;base64,{}'.format(encoded_image.decode())),
+                    html.Img(src='data:image/png;base64,{}'.format(encoded_image.decode()), style={'height':'20%', 'width':'10%'}),
                     #html.Img(src=app.get_asset_url( '/images/Olympic-logo.png')),
                     html.P('Olympic Games Statistics')
                 ], id='title', className='title'
@@ -89,7 +89,7 @@ app.layout = html.Div([
 
             # Div 1.2.2. - Top Countries
             html.Div([
-                
+
                 html.P('Top Countries'),
 
             ], id='top_countries', className='normalbox'
