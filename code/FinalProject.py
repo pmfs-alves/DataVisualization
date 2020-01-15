@@ -20,27 +20,17 @@ df_participants = pd.read_excel('data/athlete_events.xlsx', sheet_name='particip
 #df_athletes = pd.read_excel('code/data/athlete_events.xlsx', sheet_name='athlete_events')
 #df_participants = pd.read_excel('code/data/athlete_events.xlsx', sheet_name='participants')
 
-
-#--------------------------------------- Calculations ----------------------------------------------------#
-nr_countries = df_athletes.Country.unique()
-nr_countries = len(nr_countries)
-
-nr_host_cities = df_participants.City.unique()
-nr_host_cities = len(nr_host_cities)
-
-nr_events = df_athletes.Event.unique()
-nr_events = len(nr_events)
-
-
-
-
-
 #Encode Image
 
 encoded_image = base64.b64encode(open('images/Olympic-logo.png', 'rb').read())
 
 
-#temp
+years_select = [dict(label=year, value=year) for year in df_participants['Year'].unique()]
+years_select = {str(i): '{}'.format(str(i)) for i in df_participants.Year.unique()}
+years_select[1892] = "All"
+print(years_select)
+
+
 
 #----------------------------------------Layout------------------------------------------------------------------------#
 # Page Layout
@@ -76,11 +66,11 @@ app.layout = html.Div([
                 # Div 1.1.1.3. Cities Countries
                 html.Div([
                     html.P('Number of Countries: '),
-                    str(nr_countries),
+                    html.Div([str(nr_countries)], className='nr'),
                     html.P('Number of Host Cities: '),
-                    str(nr_host_cities),
+                    html.Div([str(nr_host_cities)], className='nr'),
                     html.P('Number of Events: '),
-                    str(nr_events)
+                    html.Div([str(nr_events)], className='nr')
                 ], id='details', className='minibox'
                 ),  # end div 1.1.1.3.
 
@@ -136,12 +126,12 @@ app.layout = html.Div([
             html.Div([
                 html.P('SLIDER'),
                 dcc.Slider(
-                    id='my-slider',
-                    #min=df_athletes['year'].min(),
-                    #max=df_athletes['year'].max(),
+                    id='year-slider',
+                    min=1892,
+                    max=2016,
                     #step=4,
                     #marks=datedict,
-                    marks={str(i): '{}'.format(str(i)) for i in [df_athletes.Year.unique()]}, #.insert(0, 'All')
+                    marks=years_select, #.insert(0, 'All')
                     #tooltip=str(value),
                     value=2016,
                     included=False,
@@ -187,14 +177,14 @@ app.layout = html.Div([
         html.Div([
             html.P('What Type of Sports do you want to see?'),
             dcc.RadioItems(
-                id='Sport_type',
+                id='sport_type',
                 options=[
-                    {'label': 'Colective', 'value': 'Colective'},
-                    {'label': 'Individual', 'value': 'Individual'},
-                    {'label': 'Both', 'value': 'Both'},
+                    {'label': 'Colective', 'value': 'colective'},
+                    {'label': 'Individual', 'value': 'individual'},
+                    {'label': 'Both', 'value': 'both'},
 
                 ],
-                value='Both',
+                value='both',
                 labelStyle={'display': 'inline-block'}
             ),
         ], id='inner_div_4', className='column_2'
@@ -208,60 +198,74 @@ app.layout = html.Div([
 ], id='outer_div'
 )
 
+#----------------------------------------Callbacks---------------------------------------------------------------------#
 
+@app.callback(
+    [
+        # Output("bar_graph", "figure"),
+        # Output("choropleth", "figure"),
+        # Output("countries_linechart", "figure"),
+    ],
+    [
+        Input("sport_type", "value"),
+        Input("year-slider", "value"),
+        # Input("gas_option", "value"),
 
+    ]
+    )
 
-
+def teste (teste):
+    return
 #--------------------------------------- Figure Top Countries ---------------------------------------------------------#
 
-#
-# athletes_medals = df_athletes[['Name', 'Medal']]
-# athletes_medals['c'] = 1
-# a_m = athletes_medals.groupby(by=['Name', 'Medal']).c.sum()
-# a_m = a_m.to_frame().reset_index()
-#
-# athletes_names = a_m.Name.unique()
-#
-# athletes_names_ordered = a_m.groupby(by='Name').c.sum()
-# athletes_names_ordered = athletes_names_ordered.to_frame().reset_index()
-# athletes_names_ordered = athletes_names_ordered.sort_values(by=['c'], ascending=False)
-# top_5_winners = athletes_names_ordered.head()
-#
-# for athlete in top_5_winners.Name:
-#     a_medals = a_m.loc[a_m['Name'] == athlete]
-#
-#     aux = pd.Series(dict(zip(a_medals.Medal, a_medals.c)))
-#
-#     Xlim = 29
-#     Ylim = 1
-#     Xpos = 0
-#     Ypos = 1
-#     series = []
-#     for medal, count in aux.iteritems():
-#         x = []
-#         y = []
-#         for j in range(0, count):
-#             if Xpos == Xlim:
-#                 Xpos = 0
-#                 Ypos -= 1  ##change to positive for upwards
-#             x.append(Xpos)
-#             y.append(Ypos)
-#             Xpos += 1
-#         if (medal == 'Gold'):
-#             #pass
-#             series.append(go.Scatter(x=x, y=y, mode='markers',
-#                                      marker={'symbol': 'circle', 'size': 8, 'color': 'rgb(255, 215, 0)'},
-#                                      name=f'{medal} ({count})'))
-#         elif (medal == 'Silver'):
-#             # pass
-#             series.append(go.Scatter(x=x, y=y, mode='markers',
-#                                      marker={'symbol': 'circle', 'size': 8, 'color': 'rgb(192, 192, 192)'},
-#                                      name=f'{medal} ({count})'))
-#         elif (medal == 'Bronze'):
-#             # pass
-#             series.append(go.Scatter(x=x, y=y, mode='markers',
-#                                      marker={'symbol': 'circle', 'size': 8, 'color': 'rgb(205, 127, 50)'},
-#                                      name=f'{medal} ({count})'))
+
+athletes_medals = df_athletes[['Name', 'Medal']]
+athletes_medals['c'] = 1
+a_m = athletes_medals.groupby(by=['Name', 'Medal']).c.sum()
+a_m = a_m.to_frame().reset_index()
+
+athletes_names = a_m.Name.unique()
+
+athletes_names_ordered = a_m.groupby(by='Name').c.sum()
+athletes_names_ordered = athletes_names_ordered.to_frame().reset_index()
+athletes_names_ordered = athletes_names_ordered.sort_values(by=['c'], ascending=False)
+top_5_winners = athletes_names_ordered.head()
+
+for athlete in top_5_winners.Name:
+    a_medals = a_m.loc[a_m['Name'] == athlete]
+
+    aux = pd.Series(dict(zip(a_medals.Medal, a_medals.c)))
+
+    Xlim = 29
+    Ylim = 1
+    Xpos = 0
+    Ypos = 1
+    series = []
+    for medal, count in aux.iteritems():
+        x = []
+        y = []
+        for j in range(0, count):
+            if Xpos == Xlim:
+                Xpos = 0
+                Ypos -= 1  ##change to positive for upwards
+            x.append(Xpos)
+            y.append(Ypos)
+            Xpos += 1
+        if (medal == 'Gold'):
+            #pass
+            series.append(go.Scatter(x=x, y=y, mode='markers',
+                                     marker={'symbol': 'circle', 'size': 8, 'color': 'rgb(255, 215, 0)'},
+                                     name=f'{medal} ({count})'))
+        elif (medal == 'Silver'):
+            # pass
+            series.append(go.Scatter(x=x, y=y, mode='markers',
+                                     marker={'symbol': 'circle', 'size': 8, 'color': 'rgb(192, 192, 192)'},
+                                     name=f'{medal} ({count})'))
+        elif (medal == 'Bronze'):
+            # pass
+            series.append(go.Scatter(x=x, y=y, mode='markers',
+                                     marker={'symbol': 'circle', 'size': 8, 'color': 'rgb(205, 127, 50)'},
+                                     name=f'{medal} ({count})'))
 
 
 
