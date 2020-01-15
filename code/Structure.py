@@ -20,59 +20,6 @@ datedict =dict((date, str(date)) for date in dates)
 
 #--------------------------------------- Figure Top Countries ---------------------------------------------------------#
 # Import Data
-df = pd.read_excel('data/athlete_events.xlsx', sheet_name='athlete_events')
-available_indicators = df.columns
-
-top_countries = df[['Country', 'Medal']]
-
-for country in 
-mydict = dict(zip(top_countries.Country, top_countries.Medal))
-
-Xlim = 16
-Ylim = 13
-Xpos = 0
-Ypos = 12
-series = []
-for name, count in mydict.iteritems():
-    x = []
-    y = []
-    for j in range(0, count):
-        if Xpos == Xlim:
-            Xpos = 0
-            Ypos -= 1 ##change to positive for upwards
-        x.append(Xpos)
-        y.append(Ypos)
-        Xpos += 1
-    series.append(go.Scatter(x=x, y=y, mode='markers', marker={'symbol': 'square', 'size': 15}, name=f'{name} ({count})'))
-
-
-fig = go.Figure(dict(data=series, layout=go.Layout(
-    title={'text': title, 'x': 0.5, 'xanchor': 'center'},
-    paper_bgcolor='rgba(255,255,255,1)',
-    plot_bgcolor='rgba(0,0,0,0)',
-    xaxis=dict(showgrid=False,zeroline= False, showline=False, visible=False, showticklabels=False),
-    yaxis=dict(showgrid=False,zeroline= False, showline=False, visible=False, showticklabels=False),
-)))
-fig.show()
-
-data_scatter = [go.Scatter(dict(
-    y=df_emission_0.loc[df_emission_0['continent'] == i]['CO2_emissions'],
-    x=df_emission_0.loc[df_emission_0['continent'] == i]['CH4_emissions'],
-    text=df_emission_0.loc[df_emissions['continent'] == i]['country_name'],
-    mode='markers',
-    opacity=.75,
-    marker=dict(size=15, line=dict(width=.5, color='white')),
-    name=i
-)) for i in df_emission_0['continent'].unique()]
-
-layout_scatter = dict(title=dict(text='Continent Emissions', x=.5),
-                      yaxis=dict(type='log', title='CO2 Emissions'),
-                      xaxis=dict(type='log', title='CH4 Emissions'),
-                      margin=dict(l=40, b=40, t=50, r=40),
-                      legend=dict(x=1, y=0)
-                      )
-
-fig_top_countries = go.Figure(data=data_scatter, layout=layout_scatter)
 
 
 #Encode Image
@@ -135,13 +82,21 @@ app.layout = html.Div([
         html.Div([
             # Div 1.2.1. - Top Winners
             html.Div([
-                html.P('Top Countries'),
+                html.P('Top Winners'),
                 dcc.Graph(
-                        id='top_contries_fig',
-                        figure=fig_top_countries
+                        id='top_contries_fig'
                 )
-            ], id='top_countries', className='normalbox'
+            ], id='top_winers', className='normalbox'
             ),  # end div 1.2.1.
+
+            # Div 1.2.2. - Top Countries
+            html.Div([
+                
+                html.P('Top Countries'),
+
+            ], id='top_countries', className='normalbox'
+            ),  # end div 1.2.2.
+
         ], id='inner_div_2', className='column_2'
         ),  # end div 1.2.
 
