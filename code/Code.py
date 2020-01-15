@@ -706,3 +706,17 @@ for athlete in top_5_winners.Name:
     fig.show()
     
 # final_fig.show()
+
+
+# -----------------------------------------------------------------------------
+# Top 5 Countries
+# -----------------------------------------------------------------------------
+
+df = pd.read_excel('data/athlete_events.xlsx', sheet_name='athlete_events')
+
+countries_medals = df[['Country', 'Medal']]
+countries_medals['c'] = 1
+c_m = countries_medals.groupby(by=['Country', 'Medal']).c.sum()
+c_m = c_m.to_frame().reset_index()
+
+countries_names = c_m.Country.unique()
