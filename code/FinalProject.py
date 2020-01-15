@@ -142,6 +142,7 @@ app.layout = html.Div([
                     #step=4,
                     #marks=datedict,
                     marks={str(i): '{}'.format(str(i)) for i in [df_athletes.Year.unique()]}, #.insert(0, 'All')
+
                     #tooltip=str(value),
                     value=2016,
                     included=False,
