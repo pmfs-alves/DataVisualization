@@ -3,6 +3,7 @@ import numpy as np
 import plotly.offline as pyo
 import plotly.graph_objects as go
 from plotly.subplots import make_subplots
+from collections import Counter
 
 # DATAFRAMES
 #df_athletes = pd.read_excel(r'C:\Users\Sofia\OneDrive - NOVAIMS\Nova IMS\Mestrado\Cadeiras\Data_Visualization\Projeto DV\DataVisualization\code\data\athlete_events.xlsx', 'athlete_events')
@@ -12,15 +13,75 @@ df_participants = pd.read_excel(r'C:\Users\TITA\OneDrive\Faculdade\2 Mestrado\1Â
 
 df_participants['Edition'] = df_participants['Edition'].astype(str)
 
-medals_country = pd.DataFrame(data=df_athletes.groupby(["ISO3", "Medal"])["Medal"].count())
-medals_country = medals_country.unstack(level=['Medal'])
-medals_country.columns = medals_country.columns.droplevel()
-medals_country['ISO3'] = medals_country.index
-medals_country.reset_index(drop=True, inplace=True)
-medals_country['Total'] = medals_country.iloc[:,0:3].sum(axis=1)
+countries_medals = df_athletes[['Country','Medal','Sport','Team Sport','Year']]
+countries_medals['c'] = 1
 
-medals_country = medals_country.merge(df_athletes[['ISO3','City','Country','Edition','Year']], on='ISO3')
+medals_country= countries_medals.groupby(by=['Country','Medal','Year','Sport','Team Sport']).c.sum()
+medals_country = medals_country.to_frame().reset_index()
+temp = medals_country[['Country', 'Year','Sport','Team Sport']]
+medals_country.drop(columns=['Country','Year'], inplace=True)
+medals_country = medals_country.pivot(index=medals_country.index,columns='Medal')['c']
+medals_country.fillna(0, inplace=True)
+
+medals_country = medals_country.merge(temp, how='outer', left_index=True, right_index=True)
+
+def count_rows_same_country(df):
+    '''Check if rows are the same with different values in Gold, Silver, Bronze.'''
+    
+    contador = Counter(df['concat'].tolist())
+
+    new_dict = {}
+    for key, value in contador.items():
+        if value > 1:
+            new_dict.update({key:value})
+    return new_dict
+
+l = count_rows_same_country(medals_country)
+
+medals_country['Year'] = medals_country['Year'].astype(str)
+medals_country['concat'] = medals_country[['Country','Year','Sport','Team Sport']].apply(lambda x: '_'.join(x), axis=1)
+
+
+j=0
+new=pd.DataFrame(columns=['Country','Gold','Silver','Bronze','Year', 'Sport','Team Sport'])
+for idx,i in enumerate(medals_country['concat']):
+    new.loc[j,'Country'] = medals_country.loc[idx,'Country']
+    new.loc[j,'Gold'] = medals_country[medals_country['concat'] == i].Gold.sum() 
+    new.loc[j,'Silver'] = medals_country[medals_country['concat'] == i].Silver.sum() 
+    new.loc[j,'Bronze'] = medals_country[medals_country['concat'] == i].Bronze.sum() 
+    new.loc[j,'Year'] = medals_country.loc[idx,'Year']
+    new.loc[j,'Sport'] = medals_country.loc[idx,'Country']
+    new.loc[j,'Team Sport'] = medals_country.loc[idx,'Team Sport']
+    j+=1
+
+new.drop_duplicates(inplace=True) 
+
+new['Total'] = new['Bronze'] + new['Gold'] + new['Silver']
+
+
+
+# PUT ISO3, CITY, YEAR, EDITION, SPORT, INDIVIDUAL
+
+medals_country = medals_country.merge(df_athletes[['ISO3','Country']], on='Country', how='left')
 medals_country.drop_duplicates(inplace=True)
+
+medals_country = medals_country.merge(df_participants[['City','Country','Year','Edition']], how='outer', on=['Country','Year'])
+medals_country.fillna('No host', inplace=True)
+
+#medals_country.drop(columns='Multiple', inplace=True)
+#medals_country['Year'] = medals_country['Year'].astype(int)
+#
+#medals_country = medals_country.merge(df_athletes[['ISO3','City','Country','Edition','Year']], on=['Country','Year'])
+#
+#medals_country = pd.DataFrame(data=df_athletes.groupby(["ISO3", "Medal"])["Medal"].count())
+#medals_country = medals_country.unstack(level=['Medal'])
+#medals_country.columns = medals_country.columns.droplevel()
+#medals_country['ISO3'] = medals_country.index
+#medals_country.reset_index(drop=True, inplace=True)
+#medals_country['Total'] = medals_country.iloc[:,0:3].sum(axis=1)
+#
+#
+#medals_country.drop_duplicates(inplace=True)
 
 # -----------------------------------------------------------------------------
 # CHOROPLETH
@@ -44,7 +105,7 @@ medals_country.drop_duplicates(inplace=True)
 #    
 #del row, i, uniques
     
-medals_country.fillna(0, inplace=True)
+#medals_country['c'].fillna(0, inplace=True)
 #customdata = df_participants[['ISO3','City','Edition','Year']].copy()
 
 
@@ -638,9 +699,7 @@ pyo.plot(fig)
 # Top 5 Winners
 # -----------------------------------------------------------------------------
 
-df = pd.read_excel('data/athlete_events.xlsx', sheet_name='athlete_events')
-
-athletes_medals = df[['Name', 'Medal']]
+athletes_medals = df_athletes[['Name', 'Medal']]
 athletes_medals['c'] = 1
 a_m = athletes_medals.groupby(by=['Name', 'Medal']).c.sum()
 a_m = a_m.to_frame().reset_index()
@@ -712,11 +771,14 @@ for athlete in top_5_winners.Name:
 # Top 5 Countries
 # -----------------------------------------------------------------------------
 
-df = pd.read_excel('data/athlete_events.xlsx', sheet_name='athlete_events')
-
-countries_medals = df[['Country', 'Medal']]
+countries_medals = df_athletes[['Country','Medal']]
 countries_medals['c'] = 1
 c_m = countries_medals.groupby(by=['Country', 'Medal']).c.sum()
 c_m = c_m.to_frame().reset_index()
+
+c_m = c_m.pivot(index='Country',columns='Medal')['c']
+c_m['Country'] = c_m.index
+c_m.reset_index(drop=True, inplace=True)
+
 
 countries_names = c_m.Country.unique()
