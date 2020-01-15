@@ -448,8 +448,8 @@ app.layout = html.Div([
                 dcc.RadioItems(
                     id='sport_type',
                     options=[
-                        {'label': 'Colective', 'value': 'colective'},
-                        {'label': 'Individual', 'value': 'individual'},
+                        {'label': 'Team', 'value': 'Team'},
+                        {'label': 'Individual', 'value': 'Individual'},
                         {'label': 'Both', 'value': 'both'},
 
                     ],
