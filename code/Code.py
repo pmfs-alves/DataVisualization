@@ -18,6 +18,40 @@ df_totals = pd.read_excel(r'C:\Users\TITA\OneDrive\Faculdade\2 Mestrado\1º seme
 # -----------------------------------------------------------------------------
 # CHOROPLETH
 # -----------------------------------------------------------------------------
+year=2000
+team='Individual'
+sport=[]
+def countries(year, sport, team):
+    if (year == 1892) & (len(sport) == 0) & (team == 'both'):
+        df = df_countries
+    elif (year != 1892) & (len(sport) == 0) & (team == 'both'):
+        df = df_countries.loc[df_countries['Year']==year,:]
+    elif (year != 1892) & (len(sport) != 0) & (team == 'both'):
+        df = df_countries.loc[(df_countries['Year']==year) & (df_countries['Sport'].isin(sport)),:]
+    elif (year != 1892) & (len(sport) != 0) & (team != 'both'):
+        df = df_countries.loc[(df_countries['Year']==year) & (df_countries['Sport'].isin(sport)) & (df_countries['Team Sport']==team),:]
+    elif (year == 1892) & (len(sport) != 0) & (team == 'both'):
+        df = df_countries.loc[df_countries['Sport'].isin(sport),:]  
+    elif (year == 1892) & (len(sport) == 0) & (team != 'both'):
+        df = df_countries.loc[df_countries['Team Sport']==team,:]
+    elif (year == 1892) & (len(sport) != 0) & (team != 'both'):
+        df = df_countries.loc[(df_countries['Sport'].isin(sport)) & (df_countries['Team Sport']==team),:]
+    elif (year != 1892) & (len(sport) == 0) & (team != 'both'):
+        df = df_countries.loc[(df_countries['Year']==year) & (df_countries['Team Sport']==team),:]
+    
+    df= df.groupby(by=['Country'])['Gold','Silver','Bronze','Total'].sum()
+    df['Country'] = df.index
+    df.reset_index(drop=True, inplace=True)
+    
+    df = df.merge(df_athletes[['ISO3','Country']], on='Country', how='left')
+    df.drop_duplicates(inplace=True)
+    
+    df = df.merge(df_participants[['City','Country','Edition']], how='outer', on='Country')
+    df.fillna('No host', inplace=True)
+    
+    df = df.groupby('Country').agg({'Gold':'first','Silver':'first','Bronze':'first','Total':'first',
+                                   'ISO3':'first','City': ', '.join, 'Edition': ', '.join}).reset_index()
+    
 #medals_country['Hosting_City'] = medals_country['City']
 #medals_country['Hosting_Edition'] = medals_country['Edition']
 #medals_country['Hosting_Year'] = medals_country['Year']
@@ -37,7 +71,6 @@ df_totals = pd.read_excel(r'C:\Users\TITA\OneDrive\Faculdade\2 Mestrado\1º seme
 #    
 #del row, i, uniques
     
-medals_country.fillna(0, inplace=True)
 #customdata = df_participants[['ISO3','City','Edition','Year']].copy()
 
 
@@ -75,12 +108,6 @@ medals_country.fillna(0, inplace=True)
 map = go.Figure()
 
 # Add Traces
-year=1892
-if year == '1892':
-    df = df_totals
-else:
-    df = df_countries.loc[df['Year'] == year]
-
 
 map.add_trace(go.Choropleth(locations=df['ISO3'],
                              locationmode='ISO-3',
