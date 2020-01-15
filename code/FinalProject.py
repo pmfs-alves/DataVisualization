@@ -57,7 +57,7 @@ line = go.Figure(data=go.Scatter(x=df_participants['Year'],
                                  hovertemplate="<b>%{y:,.0f}</b> countries participated in the %{text} Summer Olympics",
                                  hoverlabel=dict(bgcolor='rgb(242, 242, 242)',
                                                  bordercolor='rgb(242, 242, 242)',
-                                                 font=dict(size=13,
+                                                 font=dict(size=12,
                                                            color='black',
                                                            ),
                                                  namelength=0,
@@ -71,14 +71,14 @@ line = go.Figure(data=go.Scatter(x=df_participants['Year'],
                                  ),
                  layout=dict(title=dict(text="<i> Olympics getting Popular",
                                         font=dict(family='Raleway',
-                                                  size=30,
+                                                  size=20,
                                                   color='white',
                                                   ),
                                         x=0.5,
                                         ),
                              xaxis=dict(title=dict(text="Year",
                                                    font=dict(family='Arial',
-                                                             size=16,
+                                                             size=12,
                                                              color='white',
                                                              ),
                                                    ),
@@ -90,7 +90,7 @@ line = go.Figure(data=go.Scatter(x=df_participants['Year'],
                                         ticks='outside',
                                         tickfont=dict(
                                             family='Arial',
-                                            size=14,
+                                            size=12,
                                             color='white',
                                         ),
 
@@ -102,7 +102,7 @@ line = go.Figure(data=go.Scatter(x=df_participants['Year'],
                                         ),
                              yaxis=dict(title=dict(text="Number of Countries",
                                                    font=dict(family='Arial',
-                                                             size=16,
+                                                             size=12,
                                                              color='white',
                                                              ),
                                                    ),
@@ -113,20 +113,18 @@ line = go.Figure(data=go.Scatter(x=df_participants['Year'],
                                         linewidth=1.5,
                                         ticks='outside',
                                         tickfont=dict(family='Arial',
-                                                      size=14,
+                                                      size=12,
                                                       color='white',
                                                       ),
                                         # tick0 = 0,
                                         dtick=50,
                                         range=[0, 250],
                                         ),
+
                              autosize=False,
-                             margin=dict(
-                                 autoexpand=False,
-                                 l=100,
-                                 r=20,
-                                 t=110
-                             ),
+                             margin=dict(autoexpand=False,
+                                         l=50, r=5, t=60, b=70
+                                         ),
                              showlegend=False,
                              paper_bgcolor='rgb(30, 30, 30)',
                              plot_bgcolor='rgb(30, 30, 30)',
@@ -152,7 +150,7 @@ line.add_annotation(
         arrowwidth=1,
         arrowcolor="#636363",
         ax=-80,
-        ay=-190,
+        ay=-120,
         bordercolor="#619292",
         borderwidth=1,
         borderpad=4,
@@ -167,7 +165,7 @@ line.add_annotation(
         y=80,
         xref="x",
         yref="y",
-        text="Led by the United States, 66 countries boycotted<br>the games because of the Soviet–Afghan War.",
+        text="Led by the United States, 66 countries<br>boycotted the games because<br>of the Soviet–Afghan War.",
         showarrow=True,
         font=dict(
             family="Arial",
@@ -179,8 +177,8 @@ line.add_annotation(
         arrowsize=1,
         arrowwidth=1,
         arrowcolor="#636363",
-        ax=200,
-        ay=-50,
+        ax=50,
+        ay=40,
         bordercolor="#619292",
         borderwidth=1,
         borderpad=4,
@@ -188,6 +186,7 @@ line.add_annotation(
         opacity=0.8
     )
 )
+
 
 fig_countries_linechart = line
 
@@ -416,7 +415,7 @@ app.layout = html.Div([
 
         # Div 1.1. - Title
         html.Div([
-            html.P('OLYMPIC GAMES'),
+            html.P('Olympic Games'),
             html.P('Summer', id='p2'),
             html.Img(src='data:image/png;base64,{}'.format(encoded_image.decode()), id='logo')
             #html.Img(src=app.get_asset_url( '/images/Olympic-logo.png')),
@@ -550,7 +549,7 @@ app.layout = html.Div([
         html.Div([
             # Div 2.4.1. - Linechart Countries
             html.Div([
-                html.P('Linechart Countries'),
+                html.P('Olympics getting Popular'),
                 dcc.Graph(
                     id='c_linechart',
                     figure=fig_countries_linechart
