@@ -29,6 +29,11 @@ years_select = [dict(label=year, value=year) for year in df_participants['Year']
 years_select = {str(i): '{}'.format(str(i)) for i in df_participants.Year.unique()}
 years_select[1892] = "All"
 
+# sports_select = [{str(i): '{}'.format(str(i)) for i in df_athletes.Sport.unique()}]
+# print(sports_select)
+sports_select = [dict(label=sport.replace('_', ' '), value=sport) for sport in df_athletes.Sport.unique()]
+print(sports_select)
+
 nr_countries = df_athletes.Country.unique()
 nr_countries = len(nr_countries)
 
@@ -132,14 +137,11 @@ app.layout = html.Div([
             html.Div([
                 html.P('SLIDER'),
                 dcc.Slider(
-                    id='year-slider',
-                    min=1892,
+                    id='year_slider',
+                    min=1892,   #1892 is a fake year signifying all years
                     max=2016,
-                    #step=4,
-                    #marks=datedict,
-                    marks=years_select, #.insert(0, 'All')
-                    #tooltip=str(value),
-                    value=2016,
+                    marks=years_select,
+                    value=1892,
                     included=False,
                     persistence_type='session',
                 )
@@ -193,6 +195,14 @@ app.layout = html.Div([
                 value='both',
                 labelStyle={'display': 'inline-block'}
             ),
+            html.P(),
+            html.P("Do you want to select particular sports?"),
+            dcc.Dropdown(
+                id='sport_select',
+                options=sports_select,
+                value=[],
+                multi=True
+            )
         ], id='inner_div_4', className='column_2'
         ),  # end div 2.2
 
@@ -214,8 +224,8 @@ app.layout = html.Div([
     ],
     [
         Input("sport_type", "value"),
-        Input("year-slider", "value"),
-        # Input("gas_option", "value"),
+        Input("year_slider", "value"),
+        Input("sport_type", "value"),
 
     ]
     )
