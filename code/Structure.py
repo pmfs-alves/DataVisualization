@@ -9,8 +9,10 @@ from dash.dependencies import Input, Output
 import numpy as np
 import plotly.graph_objects as go
 
+from code import Code
+
 date_min= 1896  #TODO:  substituir pelo minimo da dataframe  df['year'].min(),
-date_max= 2016#TODO:  substituir pelo maximo da dataframe df['year'].max()
+date_max= 2016  #TODO:  substituir pelo maximo da dataframe df['year'].max()
 dates = range(date_min,date_max+4,4)
 datedict =dict((date, str(date)) for date in dates)
 
@@ -95,7 +97,7 @@ app.layout = html.Div([
                 html.Div([
                     html.Img(src='data:image/png;base64,{}'.format(encoded_image.decode())),
                     #html.Img(src=app.get_asset_url( '/images/Olympic-logo.png')),
-                    html.P('Olympic Games Statistics')
+                    html.P('Summer Olympics Games')
                 ], id='title', className='title'
                 ),  # end div 1.1.1.1.
 
@@ -121,7 +123,7 @@ app.layout = html.Div([
             # Div 1.1.2. HeatMap
             html.Div([
                 html.P('HEATMAP'),
-                html.P('RITA')
+                dcc.Graph(id='heatmap', figure=map)
             ], id='HeatMap', className='row_1_2'
             ),  # end div 1.1.2.
 
@@ -129,9 +131,9 @@ app.layout = html.Div([
         ),  # end div 1.1.
 
 
-        # Div 1.2. - Top Winers, Top Countries
+        # Div 1.2. - Top Winners, Top Countries
         html.Div([
-            # Div 1.2.1. - Top Winers
+            # Div 1.2.1. - Top Winners
             html.Div([
                 html.P('Top Countries'),
                 dcc.Graph(
@@ -174,26 +176,29 @@ app.layout = html.Div([
             ),  # end div 2.1.1.
 
 
-            # Div 2.1.2. - Linecharts - Countries, Events, Athletes
+            # Div 2.1.2. - Linechart/Barchart/Areachart - Countries, Sports, Athletes
             html.Div([
                 # Div 2.1.2.1. - Linechart Countries
                 html.Div([
                     html.P('Linechart Countries'),
-                    html.P('RITA')
+                    html.P('RITA'),
+                    dcc.Graph(id='linechart', figure=line)
                 ], id='countries_linechart', className='boxes'
                 ),  # end div 2.1.2.1.
 
-                # Div 2.1.2.2. - Linechart Events
+                # Div 2.1.2.2. - Barchart Sports
                 html.Div([
-                    html.P('Linechart Events'),
-                    html.P('RITA')
+                    html.P('Barchart Sports'),
+                    html.P('SOFIA'),
+                    dcc.Graph(id='linechart', figure=bar)
                 ], id='events_linechart', className='boxes'
                 ),  # end div 2.1.2.2.
 
-                # Div 2.1.2.3. - Linechart Athletes
+                # Div 2.1.2.3. - Areachart Men & Women
                 html.Div([
-                    html.P('Athletes Events'),
-                    html.P('RITA')
+                    html.P('Athletes Men & Women'),
+                    html.P('RITA'),
+                    dcc.Graph(id='linechart', figure=area)
                 ], id='athletes_linechart', className='boxes'
                 ),  # end div 2.1.2.3.
 
