@@ -4,8 +4,8 @@ import plotly.offline as pyo
 import plotly.graph_objects as go
 
 # DATAFRAMES
-df_athletes = pd.read_excel(r'C:\Users\TITA\OneDrive\Faculdade\2 Mestrado\1º semestre\Data Visualization\Project\DataVisualization\code\data\athlete_events.xlsx', 'athlete_events')
-df_participants = pd.read_excel(r'C:\Users\TITA\OneDrive\Faculdade\2 Mestrado\1º semestre\Data Visualization\Project\DataVisualization\code\data\athlete_events.xlsx', 'participants')
+df_athletes = pd.read_excel(r'C:\Users\Sofia\OneDrive - NOVAIMS\Nova IMS\Mestrado\Cadeiras\Data_Visualization\Projeto DV\DataVisualization\code\data\athlete_events.xlsx', 'athlete_events')
+df_participants = pd.read_excel(r'C:\Users\Sofia\OneDrive - NOVAIMS\Nova IMS\Mestrado\Cadeiras\Data_Visualization\Projeto DV\DataVisualization\code\data\athlete_events.xlsx', 'participants')
 
 df_participants['Edition'] = df_participants['Edition'].astype(str)
 
@@ -417,3 +417,178 @@ layout= dict(title=dict(text="<b><i> Sports is only for Men?",
 area = go.Figure(data=[trace1, trace2], layout=layout) 
 
 pyo.plot(area)
+
+
+# -----------------------------------------------------------------------------
+# STACKED BAR FOR SPORTS
+# -----------------------------------------------------------------------------
+
+years=df_participants['Year']
+
+df_participants['New Sports']=""
+df_participants['Returned Sports']=""
+df_participants['Maintained Sports']=""
+df_participants['Lost Sports']=""
+
+all_sports = []
+previous_list=[]
+for idx, x in enumerate(years):
+    if (idx!=0):
+        previous_list.extend(df_participants.at[idx-1,'New Sports'])
+        previous_list.extend(df_participants.at[idx-1,'Returned Sports'])
+        previous_list.extend(df_participants.at[idx-1,'Maintained Sports'])
+        df_participants.at[idx, 'Lost Sports'] = [a for a in previous_list
+                                                  if a not in df_athletes[
+                                                      df_athletes['Year'] == x].Sport.unique().tolist()]
+
+    if (idx == 0):
+        df_participants.at[idx, 'New Sports'] = df_athletes[df_athletes['Year'] == years[0]].Sport.unique().tolist()
+        df_participants.at[idx, 'Returned Sports'] = []
+        df_participants.at[idx, 'Maintained Sports'] = []
+        df_participants.at[idx, 'Lost Sports'] = []
+    elif (idx == 1):
+        df_participants.at[idx, 'New Sports'] = [a for a in df_athletes[df_athletes['Year'] == x].Sport.unique().tolist() if a not in df_participants['New Sports'][idx - 1]]
+        df_participants.at[idx, 'Returned Sports'] = []
+        df_participants.at[idx, 'Maintained Sports'] = [a for a in df_athletes[df_athletes['Year'] == x].Sport.unique().tolist() if a in df_participants['New Sports'][idx - 1]]
+    else:
+        df_participants.at[idx, 'New Sports'] = [a for a in df_athletes[df_athletes['Year'] == x].Sport.unique().tolist() if a not in all_sports]
+        df_participants.at[idx, 'Returned Sports'] = [a for a in df_athletes[df_athletes['Year'] == x].Sport.unique().tolist()
+                                                        if a not in df_participants['New Sports'][idx - 1] and a in all_sports and
+                                                             a not in df_participants['Maintained Sports'][idx - 1] and a not in
+                                                             df_participants['Returned Sports'][idx - 1]]
+        df_participants.at[idx, 'Maintained Sports'] = [a for a in df_athletes[df_athletes['Year'] == x].Sport.unique().tolist()
+                                                       if a in df_participants['New Sports'][idx - 1]
+                                                       or a in df_participants['Returned Sports'][idx - 1]
+                                                       or a in df_participants['Maintained Sports'][idx - 1]]
+
+    previous_list=[]
+    all_sports.extend(df_participants.at[idx,'New Sports'])
+
+df_participants['New Sports_Count']=""
+df_participants['Returned Sports_Count']=""
+df_participants['Maintained Sports_Count']=""
+
+for idx, x in enumerate(years):
+    df_participants.at[idx,'New Sports_Count'] = len(df_participants.at[idx,'New Sports'])
+    df_participants.at[idx,'Returned Sports_Count'] = len(df_participants.at[idx,'Returned Sports'])
+    df_participants.at[idx,'Maintained Sports_Count'] = len(df_participants.at[idx,'Maintained Sports'])
+
+for idx, x in enumerate(years):
+    df_participants.at[idx,'New Sports'] = [' {0}'.format(elem) if idx!=0 else '{0}'.format(elem) for idx, elem in enumerate(df_participants.at[idx,'New Sports'])]
+    df_participants.at[idx,'Returned Sports'] = [' {0}'.format(elem) if idx!=0 else '{0}'.format(elem) for idx, elem in enumerate(df_participants.at[idx,'Returned Sports'])]
+    df_participants.at[idx,'Maintained Sports'] = [' {0}'.format(elem) if idx!=0 else '{0}'.format(elem) for idx, elem in enumerate(df_participants.at[idx,'Maintained Sports'])]
+    df_participants.at[idx,'Lost Sports'] = [' {0}'.format(elem) if idx!=0 else '{0}'.format(elem) for elem in df_participants.at[idx, 'Lost Sports']]
+
+for idx, x in enumerate(years):
+    if df_participants.at[idx,'Lost Sports'] == []:
+        df_participants.at[idx, 'Lost Sports'] = 0
+
+layout= dict(title=dict(text="<b><i> Even Sports need to qualify?",
+                        font=dict(family='Raleway',
+                                  size=30,
+                                  color='rgb(0, 0, 0)',
+                                  ),
+                        x=0.5,
+                        ),
+             xaxis=dict(title=dict(text="<b>Year",
+                                   font=dict(family='Arial',
+                                             size=16,
+                                             color='rgb(0, 0, 0)',
+                                           ),
+                                   ),
+                        showline=True,
+                        showgrid=False,
+                        showticklabels=True,
+                        linecolor='rgb(0, 0, 0)',
+                        linewidth=2,
+                        ticks='outside',
+                        range=[1894,2018],
+                        tickfont=dict(
+                                family='Arial',
+                                size=14,
+                                color='rgb(0, 0, 0)',
+                                ),
+                        tickvals=df_participants['Year'].unique().tolist(),
+                        dtick = 4,
+                        tickangle=45
+                        ),
+              yaxis=dict(title=dict(text="<b>Number of Sports",
+                                   font=dict(family='Arial',
+                                             size=16,
+                                             color='rgb(0, 0, 0)',
+                                           ),
+                                   ),
+                         showgrid=True,
+                         showline=True,
+                         showticklabels=True,
+                         linecolor='rgb(0, 0, 0)',
+                         linewidth=2,
+                         ticks='outside',
+                         tickfont=dict(family='Arial',
+                                       size=14,
+                                       color='rgb(0, 0, 0)',
+                                       ),
+                         tick0 = 0
+
+                       ),
+            showlegend=True,
+
+            template='plotly_white'  # added to show grid
+            #plot_bgcolor='white' erased to enable grid
+            ,legend=dict(
+             uirevision=False
+    )
+)
+
+
+
+
+fig = go.Figure(data=[
+    go.Bar(name='Maintained Sports', x=df_participants['Year'], y=df_participants['Maintained Sports_Count'],
+           text=df_participants['Lost Sports'], marker=dict(color='rgb(0, 153, 204)'),
+           hovertemplate="Maintained Sports: %{y:.0f}<br>Lost Sports: %{text}",
+           hoverlabel=dict(bgcolor='rgb(242, 242, 242)',
+                                    bordercolor='rgb(242, 242, 242)',
+                                    font=dict(size=15,
+                                              color='rgb(0, 0, 0)',
+                                              ),
+                                    namelength=0,
+                                    )),
+
+    go.Bar(x=df_participants['Year'], y=df_participants['Returned Sports_Count'], name='Returned Sports',
+           text= df_participants['Returned Sports'], marker=dict(color='rgb(255, 153, 102)'),
+           hovertemplate="Returned Sports: %{y:.0f}<br>%{text}", #Total Sports: %{text}<br>
+           hoverlabel=dict(bgcolor='rgb(242, 242, 242)',
+                                    bordercolor='rgb(242, 242, 242)',
+                                    font=dict(size=15,
+                                              color='rgb(0, 0, 0)',
+                                              ),
+                                    namelength=0,
+                                    )),
+    go.Bar(name='New Sports', x=df_participants['Year'], y=df_participants['New Sports_Count'],
+           text=df_participants['New Sports'], marker=dict(color='rgb(0, 204, 153)'),#color='time',
+           hovertemplate="New Sports: %{y:.0f}<br>%{text}", #Total Sports: %{text}<br>
+           hoverlabel=dict(bgcolor='rgb(242, 242, 242)',
+                                    bordercolor='rgb(242, 242, 242)',
+                                    font=dict(size=15,
+                                              color='rgb(0, 0, 0)',
+                                              ),
+                                    namelength=0,
+                                    ))],
+    layout=layout)
+
+# Change the bar mode
+fig.update_layout(barmode='stack')
+
+# Add totals at the top of the bars
+fig.add_trace(go.Scatter(
+    x=df_participants['Year'],
+    y=df_participants['Sports'],
+    mode="text",
+   # name="Lines, Markers and Text",
+    text=df_participants['Sports'],
+    textposition="top center",
+    showlegend=False,
+    hoverinfo='skip'
+))
+pyo.plot(fig)
