@@ -55,6 +55,9 @@ p#p2{
     padding-left: 10%;
     padding-right: 10%;
 }
+#sport_select{
+    background-color: DodgerBlue;
+}
 
 
 .leftboxes h2{
@@ -80,18 +83,22 @@ p#p2{
     color: rgb(178,178,178);
     font-size: 16px;
 }
+.row_3{
+    margin-bottom: 8%;
+}
 .row_4{
     display: flex;
 }
 .boxes{
-    flex: 33%;
+    flex: 3%;
+    background-color: rgb(43,43,43);
 }
 #countries_linechart{
     height:auto;
 }
-.svg-container{
-    width: 50px;
+.boxes p {
+    font-size: 20px;
+    margin-bottom: -40px;
 }
-
 
 
