@@ -67,11 +67,11 @@ df_participants['Year'] = df_participants['Year'].astype(str)
 new = new.merge(df_participants[['City','Country','Year','Edition']], how='outer', on=['Country','Year'])
 new.fillna('No host', inplace=True)
 
-new.to_excel(r'C:\Users\TITA\OneDrive\Faculdade\2 Mestrado\1º semestre\Data Visualization\Project\DataVisualization\code\data\tops.xlsx', sheet_name='Countries')
+new.to_excel(r'C:\Users\TITA\OneDrive\Faculdade\2 Mestrado\1º semestre\Data Visualization\Project\DataVisualization\code\data\tops_countries.xlsx', sheet_name='Countries')
 
 # TOTALS DATAFRAME
 
-df_countries = pd.read_excel(r'C:\Users\TITA\OneDrive\Faculdade\2 Mestrado\1º semestre\Data Visualization\Project\DataVisualization\code\data\tops.xlsx', 'Countries')
+df_countries = pd.read_excel(r'C:\Users\TITA\OneDrive\Faculdade\2 Mestrado\1º semestre\Data Visualization\Project\DataVisualization\code\data\tops_countries.xlsx', 'Countries')
 
 temp= df_countries[['Country','Sport','Team Sport','Gold','Silver','Bronze']]
 
