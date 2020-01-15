@@ -76,11 +76,11 @@ app.layout = html.Div([
                 # Div 1.1.1.3. Cities Countries
                 html.Div([
                     html.P('Number of Countries: '),
-                    str(nr_countries),
+                    html.Div([str(nr_countries)], className='nr'),
                     html.P('Number of Host Cities: '),
-                    str(nr_host_cities),
+                    html.Div([str(nr_host_cities)], className='nr'),
                     html.P('Number of Events: '),
-                    str(nr_events)
+                    html.Div([str(nr_events)], className='nr')
                 ], id='details', className='minibox'
                 ),  # end div 1.1.1.3.
 

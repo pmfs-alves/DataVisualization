@@ -38,6 +38,15 @@ body {
 .minibox {
     flex: 20%;
 }
+#details{
+    display: flex;
+}
+P #details{
+    flex : 50%
+}
+.nr #details{
+    flex : 50%
+}
 
 .column_2{
     flex: 30%;
