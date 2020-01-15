@@ -51,6 +51,413 @@ nr_events = len(nr_events)
 
 
 
+
+
+
+
+
+
+
+
+#--------------------------------------------------------------------------------------------------------------------#
+#---------------------------------------------------LAYOUT-----------------------------------------------------------#
+#--------------------------------------------------------------------------------------------------------------------#
+
+app = dash.Dash(__name__, assets_folder='style')
+
+server = app.server
+
+app.layout = html.Div([
+
+    # Div 1. - Title, Top Winners, Top countries, Filter, Search
+    html.Div([
+
+        # Div 1.1. - Title
+        html.Div([
+            html.P('Olympic Games'),
+            html.P('Summer', id='p2'),
+            html.Img(src='data:image/png;base64,{}'.format(encoded_image.decode()), id='logo')
+            #html.Img(src=app.get_asset_url( '/images/Olympic-logo.png')),
+
+        ], id='title', className='title leftboxes'
+        ),  # end div 1.1.
+
+        # Div 1.2. - Top Winners
+        html.Div([
+            html.H2('Top Winners'),
+            # dcc.Graph(
+            #         id='top_contries_fig'
+            # )
+        ], id='top_winners', className='leftboxes'
+        ),  # end div 1.2.
+
+        # Div 1.3. - Top Countries
+        html.Div([
+
+            html.H2('Top Countries')
+
+        ], id='top_countries', className='leftboxes'
+        ),  # end div 1.3.
+
+        # Div 1.4. - Search, Filter
+        html.Div([
+            # Div 1.4.1. - Filter
+            html.Div([
+                html.P('What Type of Sports do you want to see?'),
+                dcc.RadioItems(
+                    id='sport_type',
+                    options=[
+                        {'label': 'Team', 'value': 'Team'},
+                        {'label': 'Individual', 'value': 'Individual'},
+                        {'label': 'Both', 'value': 'both'},
+
+                    ],
+                    value='both',
+                    labelStyle={'display': 'inline-block'}
+                )
+            ], id='filter'
+            ),  # end div 1.4.1
+
+            # Div 1.4.2. - Search
+            html.Div([
+                html.P(),
+                html.P("Do you want to select particular sports?"),
+                dcc.Dropdown(
+                    id='sport_select',
+                    options=sports_select,
+                    value=[],
+                    multi=True
+                )
+            ], id='search'
+            )  # end div 1.4.2.
+
+        ], id='filters', className='leftboxes'
+        )  # end div 1.4.
+
+
+    ], id='div_1', className='column_1'
+    ),  # end div 1.
+
+
+
+    # Div 2. - Nr of Editions, HeatMap, Slider, Linecharts (Countries, Events, Athletes)
+    html.Div([
+
+        # Div 2.1. - Nr of Editions, Nr Countries, Nr Cities, Nr Events
+        html.Div([
+            # Div 2.1.1. - Nr of Editions
+            html.Div([
+                html.H3('Number of Editions:'),
+                html.P('XXXI')
+            ], id='nr_editions', className='miniboxes'
+            ),  # end div 2.1.1.
+
+            # Div 2.1.2. - Nr Countries
+            html.Div([
+                html.H3('Number of Countries: '),
+                html.Div([str(nr_countries)], className='nr')
+            ], id='nr_countries', className='miniboxes'
+            ),  # end div 2.1.2.
+
+            # Div 2.1.2. - Nr Cities
+            html.Div([
+                html.H3('Number of Host Cities: '),
+                html.Div([str(nr_host_cities)], className='nr'),
+            ], id='nr_cities', className='miniboxes'
+            ),  # end div 2.1.2.
+
+            # Div 2.1.3. - Nr Events
+            html.Div([
+                html.H3('Number of Events: '),
+                html.Div([str(nr_events)], className='nr')
+            ], id='nr_events', className='miniboxes'
+            ),  # end div 2.1.3.
+
+        ], id='counts', className='row_1'
+        ),  # end div 2.1.
+
+
+        # Div 2.2. - HeatMap
+        html.Div([
+            html.Div([dcc.Graph(id='map_choroplet',config={'displayModeBar':False})], className='nice_choro'),
+            # dcc.Graph(id='heatmap', figure=map)
+        ], id='heatmap', className='row_2'
+        ),  # end div 2.2.
+
+        # Div 2.3. - Slider
+        html.Div([
+            dcc.Slider(
+                id='year_slider',
+                min=1892,
+                max=2016,
+                step=4,
+                #marks=datedict,
+                marks=years_select, #.insert(0, 'All')
+                #tooltip=str(value),
+                value=1892,
+                included=False,
+                persistence_type='session',
+            )
+        ], id='slider', className='row_3'
+        ),  # end div 2.3.
+
+        # Div 2.4. - Linechart/Barchart/Areachart - Countries, Areachart Men & Women
+        html.Div([
+            # Div 2.4.1. - Linechart Countries
+            html.Div([
+                html.P('Olympics getting Popular'),
+                dcc.Graph(
+                    id='c_linechart',
+                    config={'displayModeBar':False},
+                    figure=fig_countries_linechart
+                )
+            ], id='countries_linechart', className='boxes'
+            ),  # end div 2.4.1.
+
+            # Div 2.4.2. - Areachart Men & Women
+            html.Div([
+                html.P('Athletes Men & Women'),
+                dcc.Graph(
+                    id='a_linechart',
+                    config={'displayModeBar':False},
+                    figure=area
+                )
+            ], id='athletes_linechart', className='boxes'
+            ),  # end div 2.4.2.
+
+        ], id='linecharts', className='row_4'
+        ),  # end div 2.4.
+
+        # Div 2.5. - Barchart
+        html.Div([
+            # Div 2.5.1. - Barchart Sports
+            html.Div([
+                html.P('Even Sports need to Qualify?'),
+
+            ], id='sports_linechart', className='boxes'
+            ),  # end div 2.5.1.
+            dcc.Graph(
+                id='barchart',
+                config={'displayModeBar':False},
+                figure=bar
+            )
+        ], id='bar_chart', className='row_5'
+        ),  # end div 2.4.2.
+
+
+    ], id='div_2', className='column_2'
+    )  # end div 2.
+
+], id='outer_div',
+)
+
+
+#----------------------------------------Callbacks---------------------------------------------------------------------#
+
+@app.callback(
+
+        Output("map_choroplet", "figure"),
+        # Output("choropleth", "figure"),
+        # Output("countries_linechart", "figure"),
+
+    [
+        Input("sport_type", "value"),
+        Input("sport_select", "value"),
+        Input("year_slider", "value"),
+
+    ]
+    )
+
+
+
+
+#------------------------------------------End of Callbacks------------------------------------------------------------#
+def update_graph (team, sport, year):
+
+
+    #reduces the dataframe to be used to update the graphs, given the inputs
+    #def countries(year, sport, team):
+    if (year == 1892) & (len(sport) == 0) & (team == 'both'):
+        df = df_countries
+    elif (year != 1892) & (len(sport) == 0) & (team == 'both'):
+        df = df_countries.loc[df_countries['Year'] == year, :]
+    elif (year != 1892) & (len(sport) != 0) & (team == 'both'):
+        df = df_countries.loc[(df_countries['Year'] == year) & (df_countries['Sport'].isin(sport)), :]
+    elif (year != 1892) & (len(sport) != 0) & (team != 'both'):
+        df = df_countries.loc[(df_countries['Year'] == year) & (df_countries['Sport'].isin(sport)) & (
+                    df_countries['Team Sport'] == team), :]
+    elif (year == 1892) & (len(sport) != 0) & (team == 'both'):
+        df = df_countries.loc[df_countries['Sport'].isin(sport), :]
+    elif (year == 1892) & (len(sport) == 0) & (team != 'both'):
+        df = df_countries.loc[df_countries['Team Sport'] == team, :]
+    elif (year == 1892) & (len(sport) != 0) & (team != 'both'):
+        df = df_countries.loc[(df_countries['Sport'].isin(sport)) & (df_countries['Team Sport'] == team), :]
+    elif (year != 1892) & (len(sport) == 0) & (team != 'both'):
+        df = df_countries.loc[(df_countries['Year'] == year) & (df_countries['Team Sport'] == team), :]
+
+    df = df.groupby(by=['Country'])['Gold', 'Silver', 'Bronze', 'Total'].sum()
+    df['Country'] = df.index
+    df.reset_index(drop=True, inplace=True)
+
+    df = df.merge(df_athletes[['ISO3', 'Country']], on='Country', how='left')
+    df.drop_duplicates(inplace=True)
+
+    df = df.merge(df_participants[['City', 'Country', 'Edition']], how='outer', on='Country')
+    df.fillna('No host', inplace=True)
+
+    df = df.groupby('Country').agg({'Gold': 'first', 'Silver': 'first', 'Bronze': 'first', 'Total': 'first',
+                                    'ISO3': 'first', 'City': ', '.join, 'Edition': ', '.join}).reset_index()
+
+     #   return df
+    
+    #df = countries(year, sport, team)
+
+    ######################################MAP  CREATION##################################################33
+
+    trace1 = go.Choropleth(locations=df['ISO3'],
+                           locationmode='ISO-3',
+                           z=df['Total'],
+                           text=np.array(df),
+                           name='Total',
+                           hovertemplate="<b>%{text[0]}</b><br>" +
+                                         "Host City: %{text[6]}<br>" +
+                                         "Edition: %{text[7]}<br>" +
+                                         "Total Number of Medals: %{text[4]:.0f}<br>" +
+                                         "     Gold:  %{text[1]:.0f}" +
+                                         "     Silver:  %{text[2]:.0f}" +
+                                         "     Bronze:  %{text[3]:.0f}",
+                           hoverlabel=dict(bgcolor='rgb(242, 242, 242)',
+                                           bordercolor='rgb(242, 242, 242)',
+                                           font=dict(size=13,
+                                                     color='rgb(0, 0, 0)',
+                                                     ),
+                                           namelength=0,
+                                           ),
+                           autocolorscale=False,
+                           marker=dict(line=dict(width=0)),
+                           colorscale='Cividis',
+                           colorbar=dict(title=dict(text='Total Number<br>of Medals \n',
+                                                    font=dict(color='white')),
+                                         tickfont=dict(color='white')))
+    trace2 = go.Choropleth(locations=df['ISO3'],
+                           locationmode='ISO-3',
+                           z=df['Gold'],
+                           text=np.array(df),
+                           name='Gold',
+                           hovertemplate="<b>%{text[0]}</b><br>" +
+                                         "Host City: %{text[6]}<br>" +
+                                         "Edition: %{text[7]}<br>" +
+                                         "Total Number of Medals: %{text[4]:.0f}<br>" +
+                                         "     Gold:  %{text[1]:.0f}",
+                           hoverlabel=dict(bgcolor='rgb(242, 242, 242)',
+                                           bordercolor='rgb(242, 242, 242)',
+                                           font=dict(size=13,
+                                                     color='rgb(0, 0, 0)',
+                                                     ),
+                                           namelength=0,
+                                           ),
+                           autocolorscale=False,
+                           marker=dict(line=dict(width=0)),
+                           colorscale='Cividis',
+                           colorbar=dict(title=dict(text='Total Number<br>of Golden Medals \n',
+                                                    font=dict(color='white')),
+                                         tickfont=dict(color='white')))
+    trace3 = go.Choropleth(locations=df['ISO3'],
+                           locationmode='ISO-3',
+                           z=df['Silver'],
+                           text=np.array(df),
+                           name='Silver',
+                           hovertemplate="<b>%{text[0]}</b><br>" +
+                                         "Host City: %{text[6]}<br>" +
+                                         "Edition: %{text[7]}<br>" +
+                                         "Total Number of Medals: %{text[4]:.0f}<br>" +
+                                         "     Silver:  %{text[2]:.0f}",
+                           hoverlabel=dict(bgcolor='rgb(242, 242, 242)',
+                                           bordercolor='rgb(242, 242, 242)',
+                                           font=dict(size=13,
+                                                     color='rgb(0, 0, 0)',
+                                                     ),
+                                           namelength=0,
+                                           ),
+                           autocolorscale=False,
+                           marker=dict(line=dict(width=0)),
+                           colorscale='Cividis',
+                           colorbar=dict(title=dict(text='Total Number<br>of Silver Medals \n',
+                                                    font=dict(color='white')),
+                                         tickfont=dict(color='white')))
+    trace4 = go.Choropleth(locations=df['ISO3'],
+                           locationmode='ISO-3',
+                           z=df['Bronze'],
+                           text=np.array(df),
+                           name='Bronze',
+                           hovertemplate="<b>%{text[0]}</b><br>" +
+                                         "Host City: %{text[6]}<br>" +
+                                         "Edition: %{text[7]}<br>" +
+                                         "Total Number of Medals: %{text[4]:.0f}<br>" +
+                                         "     Bronze:  %{text[3]:.0f}",
+                           hoverlabel=dict(bgcolor='rgb(242, 242, 242)',
+                                           bordercolor='rgb(242, 242, 242)',
+                                           font=dict(size=13,
+                                                     color='rgb(0, 0, 0)',
+                                                     ),
+                                           namelength=0,
+                                           ),
+                           autocolorscale=False,
+                           marker=dict(line=dict(width=0)),
+                           colorscale='Cividis',
+                           colorbar=dict(title=dict(text='Total Number<br>of Bronze Medals \n',
+                                                    font=dict(color='white')),
+                                         tickfont=dict(color='white')))
+    layout = dict(geo=dict(landcolor='rgb(43, 43, 43)',
+                           showcountries=False,
+                           showframe=False,
+                           #framewidth=0,
+                           #framecolor='rgb(30, 30, 30)',
+                           coastlinecolor='rgb(43, 43, 43)',
+                           showcoastlines=True,
+                           showland=True,
+                           showocean=True,
+                           oceancolor='rgb(30, 30, 30)',
+                           showlakes=True,
+                           lakecolor='rgb(30, 30, 30)',
+                           projection={'type': 'equirectangular'}),
+                  dragmode=False,
+                  margin=dict(autoexpand=False,
+                              l=10, r=150, t=10, b=40
+                              ),
+                  paper_bgcolor='rgb(30, 30, 30)',
+                  plot_bgcolor='rgb(30, 30, 30)',
+                  updatemenus=[
+                      go.layout.Updatemenu(
+                          visible=True,
+                          type='buttons',
+                          direction="right",
+                          active=0,
+                          buttons=list([
+                              dict(args=[{"visible": [True, False, False, False]}],
+                                   label="Total", method="update"),
+                              dict(args=[{"visible": [False, True, False, False]}],
+                                   label="Gold", method="update"),
+                              dict(args=[{"visible": [False, False, True, False]}],
+                                   label="Silver", method="update"),
+                              dict(args=[{"visible": [False, False, False, True]}],
+                                   label="Bronze", method="update"),
+                          ]),
+                          showactive=True,
+                          x=0.90,
+                          xanchor="right",
+                          y=0.10,
+                          yanchor="top",
+                          bgcolor='rgb(30, 30, 30)',
+                          font=dict(color='rgb(165, 149, 1)')
+                      )
+                  ]
+                  )
+
+
+
+    return go.Figure(data=[trace1, trace2, trace3, trace4], layout=layout)
+
 #-------------------------------------------------------------------------------------------------------------------#
 #--------------------------------------------------- Charts --------------------------------------------------------#
 #-------------------------------------------------------------------------------------------------------------------#
@@ -537,412 +944,6 @@ bar.add_trace(go.Scatter(
     showlegend=False,
     hoverinfo='skip'
 ))
-
-
-
-
-
-
-
-#--------------------------------------------------------------------------------------------------------------------#
-#---------------------------------------------------LAYOUT-----------------------------------------------------------#
-#--------------------------------------------------------------------------------------------------------------------#
-
-app = dash.Dash(__name__, assets_folder='style')
-
-server = app.server
-
-app.layout = html.Div([
-
-    # Div 1. - Title, Top Winners, Top countries, Filter, Search
-    html.Div([
-
-        # Div 1.1. - Title
-        html.Div([
-            html.P('Olympic Games'),
-            html.P('Summer', id='p2'),
-            html.Img(src='data:image/png;base64,{}'.format(encoded_image.decode()), id='logo')
-            #html.Img(src=app.get_asset_url( '/images/Olympic-logo.png')),
-
-        ], id='title', className='title leftboxes'
-        ),  # end div 1.1.
-
-        # Div 1.2. - Top Winners
-        html.Div([
-            html.H2('Top Winners'),
-            # dcc.Graph(
-            #         id='top_contries_fig'
-            # )
-        ], id='top_winners', className='leftboxes'
-        ),  # end div 1.2.
-
-        # Div 1.3. - Top Countries
-        html.Div([
-
-            html.H2('Top Countries')
-
-        ], id='top_countries', className='leftboxes'
-        ),  # end div 1.3.
-
-        # Div 1.4. - Search, Filter
-        html.Div([
-            # Div 1.4.1. - Filter
-            html.Div([
-                html.P('What Type of Sports do you want to see?'),
-                dcc.RadioItems(
-                    id='sport_type',
-                    options=[
-                        {'label': 'Team', 'value': 'Team'},
-                        {'label': 'Individual', 'value': 'Individual'},
-                        {'label': 'Both', 'value': 'both'},
-
-                    ],
-                    value='both',
-                    labelStyle={'display': 'inline-block'}
-                )
-            ], id='filter'
-            ),  # end div 1.4.1
-
-            # Div 1.4.2. - Search
-            html.Div([
-                html.P(),
-                html.P("Do you want to select particular sports?"),
-                dcc.Dropdown(
-                    id='sport_select',
-                    options=sports_select,
-                    value=[],
-                    multi=True
-                )
-            ], id='search'
-            )  # end div 1.4.2.
-
-        ], id='filters', className='leftboxes'
-        )  # end div 1.4.
-
-
-    ], id='div_1', className='column_1'
-    ),  # end div 1.
-
-
-
-    # Div 2. - Nr of Editions, HeatMap, Slider, Linecharts (Countries, Events, Athletes)
-    html.Div([
-
-        # Div 2.1. - Nr of Editions, Nr Countries, Nr Cities, Nr Events
-        html.Div([
-            # Div 2.1.1. - Nr of Editions
-            html.Div([
-                html.H3('Number of Editions:'),
-                html.P('XXXI')
-            ], id='nr_editions', className='miniboxes'
-            ),  # end div 2.1.1.
-
-            # Div 2.1.2. - Nr Countries
-            html.Div([
-                html.H3('Number of Countries: '),
-                html.Div([str(nr_countries)], className='nr')
-            ], id='nr_countries', className='miniboxes'
-            ),  # end div 2.1.2.
-
-            # Div 2.1.2. - Nr Cities
-            html.Div([
-                html.H3('Number of Host Cities: '),
-                html.Div([str(nr_host_cities)], className='nr'),
-            ], id='nr_cities', className='miniboxes'
-            ),  # end div 2.1.2.
-
-            # Div 2.1.3. - Nr Events
-            html.Div([
-                html.H3('Number of Events: '),
-                html.Div([str(nr_events)], className='nr')
-            ], id='nr_events', className='miniboxes'
-            ),  # end div 2.1.3.
-
-        ], id='counts', className='row_1'
-        ),  # end div 2.1.
-
-
-        # Div 2.2. - HeatMap
-        html.Div([
-            html.Div([dcc.Graph(id='map_choroplet',config={'displayModeBar':False})], className='nice_choro'),
-            # dcc.Graph(id='heatmap', figure=map)
-        ], id='heatmap', className='row_2'
-        ),  # end div 2.2.
-
-        # Div 2.3. - Slider
-        html.Div([
-            dcc.Slider(
-                id='year_slider',
-                min=1892,
-                max=2016,
-                step=4,
-                #marks=datedict,
-                marks=years_select, #.insert(0, 'All')
-                #tooltip=str(value),
-                value=1892,
-                included=False,
-                persistence_type='session',
-            )
-        ], id='slider', className='row_3'
-        ),  # end div 2.3.
-
-        # Div 2.4. - Linechart/Barchart/Areachart - Countries, Areachart Men & Women
-        html.Div([
-            # Div 2.4.1. - Linechart Countries
-            html.Div([
-                html.P('Olympics getting Popular'),
-                dcc.Graph(
-                    id='c_linechart',
-                    config={'displayModeBar':False},
-                    figure=fig_countries_linechart
-                )
-            ], id='countries_linechart', className='boxes'
-            ),  # end div 2.4.1.
-
-            # Div 2.4.2. - Areachart Men & Women
-            html.Div([
-                html.P('Athletes Men & Women'),
-                dcc.Graph(
-                    id='a_linechart',
-                    config={'displayModeBar':False},
-                    figure=area
-                )
-            ], id='athletes_linechart', className='boxes'
-            ),  # end div 2.4.2.
-
-        ], id='linecharts', className='row_4'
-        ),  # end div 2.4.
-
-        # Div 2.5. - Barchart
-        html.Div([
-            # Div 2.5.1. - Barchart Sports
-            html.Div([
-                html.P('Even Sports need to Qualify?'),
-
-            ], id='sports_linechart', className='boxes'
-            ),  # end div 2.5.1.
-            dcc.Graph(
-                id='barchart',
-                config={'displayModeBar':False},
-                figure=bar
-            )
-        ], id='bar_chart', className='row_5'
-        ),  # end div 2.4.2.
-
-
-    ], id='div_2', className='column_2'
-    )  # end div 2.
-
-], id='outer_div',
-)
-
-
-#----------------------------------------Callbacks---------------------------------------------------------------------#
-
-@app.callback(
-
-        Output("map_choroplet", "figure"),
-        # Output("choropleth", "figure"),
-        # Output("countries_linechart", "figure"),
-
-    [
-        Input("sport_type", "value"),
-        Input("sport_select", "value"),
-        Input("year_slider", "value"),
-
-    ]
-    )
-
-
-
-
-#------------------------------------------End of Callbacks------------------------------------------------------------#
-def update_graph (team, sport, year):
-
-
-    #reduces the dataframe to be used to update the graphs, given the inputs
-    #def countries(year, sport, team):
-    if (year == 1892) & (len(sport) == 0) & (team == 'both'):
-        df = df_countries
-    elif (year != 1892) & (len(sport) == 0) & (team == 'both'):
-        df = df_countries.loc[df_countries['Year'] == year, :]
-    elif (year != 1892) & (len(sport) != 0) & (team == 'both'):
-        df = df_countries.loc[(df_countries['Year'] == year) & (df_countries['Sport'].isin(sport)), :]
-    elif (year != 1892) & (len(sport) != 0) & (team != 'both'):
-        df = df_countries.loc[(df_countries['Year'] == year) & (df_countries['Sport'].isin(sport)) & (
-                    df_countries['Team Sport'] == team), :]
-    elif (year == 1892) & (len(sport) != 0) & (team == 'both'):
-        df = df_countries.loc[df_countries['Sport'].isin(sport), :]
-    elif (year == 1892) & (len(sport) == 0) & (team != 'both'):
-        df = df_countries.loc[df_countries['Team Sport'] == team, :]
-    elif (year == 1892) & (len(sport) != 0) & (team != 'both'):
-        df = df_countries.loc[(df_countries['Sport'].isin(sport)) & (df_countries['Team Sport'] == team), :]
-    elif (year != 1892) & (len(sport) == 0) & (team != 'both'):
-        df = df_countries.loc[(df_countries['Year'] == year) & (df_countries['Team Sport'] == team), :]
-
-    df = df.groupby(by=['Country'])['Gold', 'Silver', 'Bronze', 'Total'].sum()
-    df['Country'] = df.index
-    df.reset_index(drop=True, inplace=True)
-
-    df = df.merge(df_athletes[['ISO3', 'Country']], on='Country', how='left')
-    df.drop_duplicates(inplace=True)
-
-    df = df.merge(df_participants[['City', 'Country', 'Edition']], how='outer', on='Country')
-    df.fillna('No host', inplace=True)
-
-    df = df.groupby('Country').agg({'Gold': 'first', 'Silver': 'first', 'Bronze': 'first', 'Total': 'first',
-                                    'ISO3': 'first', 'City': ', '.join, 'Edition': ', '.join}).reset_index()
-
-     #   return df
-    
-    #df = countries(year, sport, team)
-
-    ######################################MAP  CREATION##################################################33
-
-    trace1 = go.Choropleth(locations=df['ISO3'],
-                           locationmode='ISO-3',
-                           z=df['Total'],
-                           text=np.array(df),
-                           name='Total',
-                           hovertemplate="<b>%{text[0]}</b><br>" +
-                                         "Host City: %{text[6]}<br>" +
-                                         "Edition: %{text[7]}<br>" +
-                                         "Total Number of Medals: %{text[4]:.0f}<br>" +
-                                         "     Gold:  %{text[1]:.0f}" +
-                                         "     Silver:  %{text[2]:.0f}" +
-                                         "     Bronze:  %{text[3]:.0f}",
-                           hoverlabel=dict(bgcolor='rgb(242, 242, 242)',
-                                           bordercolor='rgb(242, 242, 242)',
-                                           font=dict(size=13,
-                                                     color='rgb(0, 0, 0)',
-                                                     ),
-                                           namelength=0,
-                                           ),
-                           autocolorscale=False,
-                           marker=dict(line=dict(width=0)),
-                           colorscale='Cividis',
-                           colorbar=dict(title=dict(text='Total Number<br>of Medals \n',
-                                                    font=dict(color='white')),
-                                         tickfont=dict(color='white')))
-    trace2 = go.Choropleth(locations=df['ISO3'],
-                           locationmode='ISO-3',
-                           z=df['Gold'],
-                           text=np.array(df),
-                           name='Gold',
-                           hovertemplate="<b>%{text[0]}</b><br>" +
-                                         "Host City: %{text[6]}<br>" +
-                                         "Edition: %{text[7]}<br>" +
-                                         "Total Number of Medals: %{text[4]:.0f}<br>" +
-                                         "     Gold:  %{text[1]:.0f}",
-                           hoverlabel=dict(bgcolor='rgb(242, 242, 242)',
-                                           bordercolor='rgb(242, 242, 242)',
-                                           font=dict(size=13,
-                                                     color='rgb(0, 0, 0)',
-                                                     ),
-                                           namelength=0,
-                                           ),
-                           autocolorscale=False,
-                           marker=dict(line=dict(width=0)),
-                           colorscale='Cividis',
-                           colorbar=dict(title=dict(text='Total Number<br>of Golden Medals \n',
-                                                    font=dict(color='white')),
-                                         tickfont=dict(color='white')))
-    trace3 = go.Choropleth(locations=df['ISO3'],
-                           locationmode='ISO-3',
-                           z=df['Silver'],
-                           text=np.array(df),
-                           name='Silver',
-                           hovertemplate="<b>%{text[0]}</b><br>" +
-                                         "Host City: %{text[6]}<br>" +
-                                         "Edition: %{text[7]}<br>" +
-                                         "Total Number of Medals: %{text[4]:.0f}<br>" +
-                                         "     Silver:  %{text[2]:.0f}",
-                           hoverlabel=dict(bgcolor='rgb(242, 242, 242)',
-                                           bordercolor='rgb(242, 242, 242)',
-                                           font=dict(size=13,
-                                                     color='rgb(0, 0, 0)',
-                                                     ),
-                                           namelength=0,
-                                           ),
-                           autocolorscale=False,
-                           marker=dict(line=dict(width=0)),
-                           colorscale='Cividis',
-                           colorbar=dict(title=dict(text='Total Number<br>of Silver Medals \n',
-                                                    font=dict(color='white')),
-                                         tickfont=dict(color='white')))
-    trace4 = go.Choropleth(locations=df['ISO3'],
-                           locationmode='ISO-3',
-                           z=df['Bronze'],
-                           text=np.array(df),
-                           name='Bronze',
-                           hovertemplate="<b>%{text[0]}</b><br>" +
-                                         "Host City: %{text[6]}<br>" +
-                                         "Edition: %{text[7]}<br>" +
-                                         "Total Number of Medals: %{text[4]:.0f}<br>" +
-                                         "     Bronze:  %{text[3]:.0f}",
-                           hoverlabel=dict(bgcolor='rgb(242, 242, 242)',
-                                           bordercolor='rgb(242, 242, 242)',
-                                           font=dict(size=13,
-                                                     color='rgb(0, 0, 0)',
-                                                     ),
-                                           namelength=0,
-                                           ),
-                           autocolorscale=False,
-                           marker=dict(line=dict(width=0)),
-                           colorscale='Cividis',
-                           colorbar=dict(title=dict(text='Total Number<br>of Bronze Medals \n',
-                                                    font=dict(color='white')),
-                                         tickfont=dict(color='white')))
-    layout = dict(geo=dict(landcolor='rgb(43, 43, 43)',
-                           showcountries=False,
-                           showframe=False,
-                           #framewidth=0,
-                           #framecolor='rgb(30, 30, 30)',
-                           coastlinecolor='rgb(43, 43, 43)',
-                           showcoastlines=True,
-                           showland=True,
-                           showocean=True,
-                           oceancolor='rgb(30, 30, 30)',
-                           showlakes=True,
-                           lakecolor='rgb(30, 30, 30)',
-                           projection={'type': 'equirectangular'}),
-                  dragmode=False,
-                  margin=dict(autoexpand=False,
-                              l=10, r=150, t=10, b=40
-                              ),
-                  paper_bgcolor='rgb(30, 30, 30)',
-                  plot_bgcolor='rgb(30, 30, 30)',
-                  updatemenus=[
-                      go.layout.Updatemenu(
-                          visible=True,
-                          type='buttons',
-                          direction="right",
-                          active=0,
-                          buttons=list([
-                              dict(args=[{"visible": [True, False, False, False]}],
-                                   label="Total", method="update"),
-                              dict(args=[{"visible": [False, True, False, False]}],
-                                   label="Gold", method="update"),
-                              dict(args=[{"visible": [False, False, True, False]}],
-                                   label="Silver", method="update"),
-                              dict(args=[{"visible": [False, False, False, True]}],
-                                   label="Bronze", method="update"),
-                          ]),
-                          showactive=True,
-                          x=0.90,
-                          xanchor="right",
-                          y=0.10,
-                          yanchor="top",
-                          bgcolor='rgb(30, 30, 30)',
-                          font=dict(color='rgb(165, 149, 1)')
-                      )
-                  ]
-                  )
-
-
-
-    return go.Figure(data=[trace1, trace2, trace3, trace4], layout=layout)
-
 
 
 
