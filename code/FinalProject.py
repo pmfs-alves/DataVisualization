@@ -27,7 +27,7 @@ athletes_medals = pd.read_excel('data/tops_athletes.xlsx', sheet_name='Athletes 
 encoded_image = base64.b64encode(open('images/Olympic-logo.png', 'rb').read())
 
 #create years dict
-years_select = {str(i): '{}'.format(str(i)) for i in df_participants.Year.unique()}
+years_select = {int(i): '{}'.format(str(i)) for i in df_participants.Year.unique()}
 years_select[1892] = "All"
 
 #create sports dict
@@ -287,7 +287,7 @@ def update_graph (team, sport, year):
     elif (year != 1892) & (len(sport) == 0) & (team != 'both'):
         df = df_countries.loc[(df_countries['Year'] == year) & (df_countries['Team Sport'] == team), :]
 
-    df = df.groupby(by=['Country'])['Gold', 'Silver', 'Bronze', 'Total'].sum()
+    df = df.groupby(by=['Country'])['Gold', 'Silver', 'Bronze'].sum()
     df['Country'] = df.index
     df.reset_index(drop=True, inplace=True)
 
@@ -295,8 +295,8 @@ def update_graph (team, sport, year):
     df.drop_duplicates(inplace=True)
 
     df = df.merge(df_participants[['City', 'Country', 'Edition']], how='outer', on='Country')
-    df.fillna('No host', inplace=True)
-
+    df[['City','Edition']].fillna('No host', inplace=True)
+    df['Total'] = df['Gold'] + df['Silver'] + df['Bronze']
     df = df.groupby('Country').agg({'Gold': 'first', 'Silver': 'first', 'Bronze': 'first', 'Total': 'first',
                                     'ISO3': 'first', 'City': ', '.join, 'Edition': ', '.join}).reset_index()
 
@@ -526,7 +526,9 @@ def update_graph (team, sport, year):
 
     # --------------------------------------------------- TOP COUNTRIES TABLE------------------------------------------#
 
-    top_5_countries = df.sort_values(by='Total', ascending=False)
+    top_5_countries = df.copy()
+    top_5_countries.Total= top_5_countries.Total.astype(int)
+    top_5_countries = top_5_countries.sort_values(by='Total', ascending=False)
     top_5_countries = top_5_countries.head()
     colors = ['rgb(239, 243, 255)', 'rgb(189, 215, 231)', 'rgb(107, 174, 214)',
               'rgb(49, 130, 189)', 'rgb(8, 81, 156)']
@@ -833,24 +835,20 @@ def update_graph (team, sport, year):
             previous_list.extend(df_participants.at[idx - 1, 'New Sports'])
             previous_list.extend(df_participants.at[idx - 1, 'Returning Sports'])
             previous_list.extend(df_participants.at[idx - 1, 'Maintained Sports'])
-            df_participants.at[idx, 'Lost Sports'] = [a for a in previous_list
-                                                      if a not in df_athletes[
-                                                          df_athletes['Year'] == x].Sport.unique().tolist()]
 
         if (idx == 0):
             df_participants.at[idx, 'New Sports'] = df_athletes[df_athletes['Year'] == years[0]].Sport.unique().tolist()
             df_participants.at[idx, 'Returning Sports'] = []
             df_participants.at[idx, 'Maintained Sports'] = []
-            df_participants.at[idx, 'Lost Sports'] = []
         elif (idx == 1):
             df_participants.at[idx, 'New Sports'] = [a for a in
                                                      df_athletes[df_athletes['Year'] == x].Sport.unique().tolist() if
                                                      a not in df_participants['New Sports'][idx - 1]]
             df_participants.at[idx, 'Returning Sports'] = []
-            df_participants.at[idx, 'Maintained Sports'] = [a for a in
-                                                            df_athletes[
-                                                                df_athletes['Year'] == x].Sport.unique().tolist() if
-                                                            a in df_participants['New Sports'][idx - 1]]
+            df_participants.at[idx, 'Lost Sports'] = [a for a in previous_list if a not in df_athletes[
+                df_athletes['Year'] == x].Sport.unique().tolist()]
+            df_participants.at[idx, 'Maintained Sports'] = [a for a in df_athletes[
+                df_athletes['Year'] == x].Sport.unique().tolist() if a in df_participants['New Sports'][idx - 1]]
         else:
             df_participants.at[idx, 'New Sports'] = [a for a in
                                                      df_athletes[df_athletes['Year'] == x].Sport.unique().tolist() if
@@ -862,12 +860,13 @@ def update_graph (team, sport, year):
                                                            a not in df_participants['Maintained Sports'][
                                                                idx - 1] and a not in
                                                            df_participants['Returning Sports'][idx - 1]]
-            df_participants.at[idx, 'Maintained Sports'] = [a for a in
-                                                            df_athletes[
-                                                                df_athletes['Year'] == x].Sport.unique().tolist()
+            df_participants.at[idx, 'Maintained Sports'] = [a for a in df_athletes[
+                df_athletes['Year'] == x].Sport.unique().tolist()
                                                             if a in df_participants['New Sports'][idx - 1]
                                                             or a in df_participants['Returning Sports'][idx - 1]
                                                             or a in df_participants['Maintained Sports'][idx - 1]]
+            df_participants.at[idx, 'Lost Sports'] = [a for a in previous_list if a not in df_athletes[
+                df_athletes['Year'] == x].Sport.unique().tolist()]
 
         previous_list = []
         all_sports.extend(df_participants.at[idx, 'New Sports'])
@@ -882,17 +881,16 @@ def update_graph (team, sport, year):
         df_participants.at[idx, 'Maintained Sports_Count'] = len(df_participants.at[idx, 'Maintained Sports'])
 
     for idx, x in enumerate(years):
-        df_participants.at[idx, 'New Sports'] = [' {0}'.format(elem) if idx != 0 else '{0}'.format(elem) for idx, elem
-                                                 in
-                                                 enumerate(df_participants.at[idx, 'New Sports'])]
-        df_participants.at[idx, 'Returning Sports'] = [' {0}'.format(elem) if idx != 0 else '{0}'.format(elem) for
-                                                       idx, elem
-                                                       in enumerate(df_participants.at[idx, 'Returning Sports'])]
-        df_participants.at[idx, 'Maintained Sports'] = [' {0}'.format(elem) if idx != 0 else '{0}'.format(elem) for
-                                                        idx, elem in
+        df_participants.at[idx, 'New Sports'] = [' {0}'.format(elem) if index != 0 else '{0}'.format(elem) for
+                                                 index, elem in enumerate(df_participants.at[idx, 'New Sports'])]
+        df_participants.at[idx, 'Returning Sports'] = [' {0}'.format(elem) if index != 0 else '{0}'.format(elem) for
+                                                       index, elem in
+                                                       enumerate(df_participants.at[idx, 'Returning Sports'])]
+        df_participants.at[idx, 'Maintained Sports'] = [' {0}'.format(elem) if index != 0 else '{0}'.format(elem) for
+                                                        index, elem in
                                                         enumerate(df_participants.at[idx, 'Maintained Sports'])]
-        df_participants.at[idx, 'Lost Sports'] = [' {0}'.format(elem) if idx != 0 else '{0}'.format(elem) for idx, elem in
-                                                  enumerate(df_participants.at[idx, 'Lost Sports'])]
+        # df_participants.at[idx, 'Lost Sports'] = [' {0}'.format(elem) if index != 0 else '{0}'.format(elem) for
+        #                                           index, elem in enumerate(df_participants.at[idx, 'Lost Sports'])]
 
     for idx, x in enumerate(years):
         if df_participants.at[idx, 'Lost Sports'] == []:
