@@ -119,7 +119,8 @@ app.layout = html.Div([
                     id='sport_select',
                     options=sports_select,
                     value=[],
-                    multi=True
+                    multi=True,
+                    style={'backgroundColor': 'rgb(218,218,218)', 'color': 'black', 'font-size': '13px'}
                 )
             ], id='search'
             )  # end div 1.4.2.
@@ -129,7 +130,10 @@ app.layout = html.Div([
 
         # Div 1.5.Text
         html.Div([
-            html.P('The International Olympic Committee was created on 23 June 1894; the first Olympic Games of the modern era opened in Athens on 6 April 1896; and the Olympic Movement has not stopped growing ever since. ')
+            html.H3('More About'),
+            html.P('The International Olympic Committee was created on 23 June 1894.'),
+            html.P('The first Olympic Games of the modern era opened in Athens on 6 April 1896, and the Olympic Movement has not stopped growing ever since. '),
+            html.P('Although, in 1916, 1940 and 1944 the Olympic Games had to be cancelled as a consequence of the World War I and the World War II.')
 
         ], id='text', className='leftboxes'
         ),

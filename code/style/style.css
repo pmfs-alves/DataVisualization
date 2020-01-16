@@ -16,6 +16,7 @@ body {
 .column_1{
     margin-top: -10px;
     margin-left: -10px;
+    margin-bottom: -20px;
     height: 100%;
     flex: 25%;
     background-color: #2b2b2b;
@@ -23,7 +24,7 @@ body {
 }
 #title p{
     color: rgb(255,255,255);
-    font-size: 45px;
+    font-size: 43px;
     color: #fff;
     font-family: ATrebuchet MS, sans-serif ;
     margin-top: 10%;
@@ -36,13 +37,13 @@ p#p2{
     margin-top: 8%;
 }
 #logo{
-    width: 65%;
+    width: 63%;
     height: auto;
     margin-top: -30px;
-    margin-bottom: 15%;;
+    margin-bottom: 1%;
 }
 #top_winners{
-    margin-bottom:10%;
+    margin-bottom:7%;
 }
 #top_countries{
     margin-bottom:10%;
@@ -58,27 +59,29 @@ p#p2{
 }
 #search{
     margin-bottom:10%;
-    padding-left: 10%;
-    padding-right: 10%;
+    padding-left: 12%;
+    padding-right: 12%;
 }
 #sport_select{
     background-color: DodgerBlue;
 }
-
-
 .leftboxes h2{
     font-weight:normal;
     color: white;
 }
 #text p {
     font-size: 14px;
-    margin: 12%;
-    margin-top: 20%;
+    margin-left: 12%;
+    margin-right: 12%;
     text-align: justify;
     text-justify: inter-word;
 }
 #text{
-    padding-bottom: 200px;
+    padding-bottom: 130px;
+}
+#text h3{
+    margin-top: 25%;
+    color:
 }
 
 
@@ -117,9 +120,7 @@ p#p2{
     background-color: rgb(43,43,43);
     padding : 1%;
 }
-#slider {
-    font-size :30px;
-}
+
 .row_4{
     display: flex;
 }
@@ -140,7 +141,7 @@ p#p2{
 .row_5{
     margin-top: 4%;
     background-color: rgb(43,43,43);
-    padding-bottom:10%;
+    padding-bottom:5%;
 }
 
 
