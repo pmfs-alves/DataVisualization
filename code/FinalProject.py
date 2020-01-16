@@ -71,6 +71,7 @@ app.layout = html.Div([
         html.Div([
             html.P('Tokyo 2020 Olympic games are approaching fast and 120 years have passed since the first modern era '
                    'Olympic games. It is time to have a look at some games insights since the creation.'),
+            html.Br()
         ], id='intro', className='leftboxes'
         ),
 
@@ -135,8 +136,7 @@ app.layout = html.Div([
             html.P('The first Olympic Games of the modern era opened in Athens in 1896, and the Olympic Movement has not stopped growing ever since. '),
             html.P('Although, the VI, XII and XIII editions of the Olympic Summer Games were cancelled due to the I and II World Wars.'),
             html.Br(), html.Br(), html.Br(), html.Br(), html.Br(), html.Br(),
-            html.Br(), html.Br(), html.Br(), html.Br(), html.Br(), html.Br(),
-            html.Br()
+            html.Br(), html.Br(), html.Br()
         ], id='text', className='leftboxes'
         ),
 
@@ -722,7 +722,7 @@ def update_graph(team, sport, year):
                                   side='right',
                                   ),
                        autosize=False,
-                       width=500,
+                       width=510,
                        height=400,
                        margin=dict(autoexpand=False,
                                    l=10, r=50, t=10, b=70
@@ -1085,7 +1085,7 @@ def update_graph(team, sport, year):
                                             range=[0, 250],
                                             ),
                                  autosize=False,
-                                 width=510,
+                                 width=512,
                                  height=400,
                                  margin=dict(autoexpand=False, l=50, r=5, t=10, b=70),
                                  showlegend=False,
