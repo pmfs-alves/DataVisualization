@@ -792,11 +792,11 @@ def update_graph(team, sport, year):
                     xref="x",
                     # y-reference is assigned to the y-values
                     yref="y",
-                    x0=year - 2,
+                    x0=year - 1.7,
                     y0=0,
-                    x1=year + 2,
+                    x1=year + 1.7,
                     y1=int(df_participants[df_participants.Year == year]['Participants']),
-                    fillcolor="#FF8C00",
+                    fillcolor="#FF8C00",#ff9966
                     opacity=0.6,
                     line_width=0,
                 )])
@@ -999,7 +999,7 @@ def update_graph(team, sport, year):
                     x1=year + 2,
                     y1=df_participants[df_participants.Year == year][
                         ['Returning Sports_Count','Maintained Sports_Count', 'New Sports_Count']].sum().sum(),
-                    fillcolor="#ff9966",
+                    fillcolor="#FF8C00",
                     opacity=0.7,
                     line_width=0
                 )])
@@ -1151,7 +1151,9 @@ def update_graph(team, sport, year):
                     x1=year + 0.15,
                     y0=0,
                     y1=int(df_participants[df_participants.Year == year]['Countries']),
-                    fillcolor="#ff9966",
+                    fillcolor="#FF8C00",
+                    line=dict(
+                        color="#FF8C00"),
                     line_width=2,
                     opacity=0.7
                 )])
