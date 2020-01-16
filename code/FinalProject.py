@@ -737,7 +737,7 @@ def update_graph(team, sport, year):
             showarrow=True,
             font=dict(
                 family="Arial",
-                size=12,
+                size=13,
                 color="#ffffff"
             ),
             align="left",
@@ -765,7 +765,7 @@ def update_graph(team, sport, year):
             showarrow=True,
             font=dict(
                 family="Arial",
-                size=12,
+                size=13,
                 color="#ffffff"
             ),
             align="left",
@@ -795,7 +795,7 @@ def update_graph(team, sport, year):
                     x0=year - 2,
                     y0=0,
                     x1=year + 2,
-                    y1=df_participants[df_participants.Year == year]['Participants'],
+                    y1=int(df_participants[df_participants.Year == year]['Participants']),
                     fillcolor="#FF8C00",
                     opacity=0.6,
                     line_width=0,
@@ -922,10 +922,8 @@ def update_graph(team, sport, year):
                                            ),
                              tick0=0
                              ),
-                  autosize=False,
-                  width=800,
-                  height=500,
                   showlegend=True,
+                  margin=dict(autoexpand=False, l=50, r=150, t=10, b=30),
                   legend=dict(font=dict(color='white'), uirevision=False),
                   paper_bgcolor='rgba(0, 0, 0)',
                   plot_bgcolor='rgba(0, 0, 0)'
@@ -1093,7 +1091,7 @@ def update_graph(team, sport, year):
             showarrow=True,
             font=dict(
                 family="Arial",
-                size=12,
+                size=13,
                 color="#ffffff"
             ),
             align="left",
@@ -1121,7 +1119,7 @@ def update_graph(team, sport, year):
             showarrow=True,
             font=dict(
                 family="Arial",
-                size=12,
+                size=13,
                 color="#ffffff"
             ),
             align="left",
@@ -1152,7 +1150,7 @@ def update_graph(team, sport, year):
                     x1=year + 0.15,
                     y0=0,
                     y1=int(df_participants[df_participants.Year == year]['Countries']),
-                    fillcolor="#00b3b3",
+                    fillcolor="#ff9966",
                     line_width=2,
                     opacity=0.7
                 )])
