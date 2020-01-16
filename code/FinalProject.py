@@ -19,6 +19,7 @@ import plotly.express as px
 df_athletes = pd.read_excel('data/athlete_events.xlsx', sheet_name='athlete_events')
 df_participants = pd.read_excel('data/athlete_events.xlsx', sheet_name='participants')
 df_countries= pd.read_excel('data/tops_countries.xlsx',sheet_name='Countries')
+# df_flags = pd.read_excel('data/Country_Flags_excel.xlsx',sheet_name='Countries')
 
 #Encode Image
 
@@ -503,7 +504,7 @@ bar = go.Figure(data=[
                            )),
 
     go.Bar(x=df_participants['Year'], y=df_participants['Returning Sports_Count'], name='Returning Sports',
-           text=df_participants['Returning Sports'], marker=dict(color='rgb(230, 230, 230)'),
+           text=df_participants['Returning Sports'], marker=dict(color='rgb(35, 87, 105)'),
            hovertemplate="<b>Returning Sports:'</b> %{y:.0f}<br>%{text}",  # Total Sports: %{text}<br>
            hoverlabel=dict(bgcolor='rgb(242, 242, 242)',
                            bordercolor='rgb(242, 242, 242)',
@@ -513,7 +514,7 @@ bar = go.Figure(data=[
                            namelength=0,
                            )),
     go.Bar(name='New Sports', x=df_participants['Year'], y=df_participants['New Sports_Count'],
-           text=df_participants['New Sports'], marker=dict(color='rgb(35, 87, 105)'),
+           text=df_participants['New Sports'], marker=dict(color='rgb(230, 230, 230)'),
            hovertemplate="<b>New Sports:</b> %{y:.0f}<br>%{text}",  # Total Sports: %{text}<br>
            hoverlabel=dict(bgcolor='rgb(242, 242, 242)',
                            bordercolor='rgb(255, 89, 89)',
@@ -582,7 +583,7 @@ app.layout = html.Div([
 
         # Div 1.3. - Top Countries
         html.Div([
-            html.H2('Top Countries:'),
+            html.H2('Top Countries'),
             html.Div([dcc.Graph(id='table_top_c',config={'displayModeBar':False})], className='nice_choro')
 
         ], id='top_countries', className='leftboxes'
@@ -945,6 +946,7 @@ def update_graph (team, sport, year):
     # ------------------------- TOP COUNTRIES TABLE-------------------------#
 
     top_5_countries = df.sort_values(by='Total', ascending=False)
+    #top_5_countries = pd.merge(top_5_countries, df_flags, on='ISO3')t
     top_5_countries = top_5_countries.head()
     colors = ['rgb(239, 243, 255)', 'rgb(189, 215, 231)', 'rgb(107, 174, 214)',
               'rgb(49, 130, 189)', 'rgb(8, 81, 156)']
