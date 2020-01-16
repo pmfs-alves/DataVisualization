@@ -79,7 +79,7 @@ p#p2{
 
 }
 #text{
-    padding-bottom: 103 px;
+    padding-bottom: 3003 px;
 }
 #text h3{
     font-size: 18px;
@@ -132,11 +132,18 @@ p#p2{
     flex: 36%;
     background-color: rgb(43,43,43);
     margin-right:2%;
-    padding: 10px;
+    padding: 0px;
     padding-top:2px;
 }
 #countries_linechart{
     height:auto;
+    padding-left: 2.5px;
+}
+#athletes_linechart{
+    padding-right: 2.5px;
+}
+#bar_chart{
+    padding-left: 5px;
 }
 .boxes p {
     font-size: 20px;

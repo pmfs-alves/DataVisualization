@@ -126,8 +126,10 @@ app.layout = html.Div([
         html.Div([
             html.H3('More About'),
             html.P('The first Olympic Games of the modern era opened in Athens in 1896, and the Olympic Movement has not stopped growing ever since. '),
-            html.P('Although, the VI, XII and XIII editions of the Olympic Summer Games were cancelled due to the I and II World Wars.')
-
+            html.P('Although, the VI, XII and XIII editions of the Olympic Summer Games were cancelled due to the I and II World Wars.'),
+            html.Br(), html.Br(), html.Br(), html.Br(), html.Br(), html.Br(),
+            html.Br(), html.Br(), html.Br(), html.Br(), html.Br(), html.Br(),
+            html.Br(), html.Br(), html.Br(), html.Br()
         ], id='text', className='leftboxes'
         ),
 
@@ -1076,7 +1078,7 @@ def update_graph(team, sport, year):
                                             range=[0, 250],
                                             ),
                                  autosize=False,
-                                 width=540,
+                                 width=520,
                                  height=400,
                                  margin=dict(autoexpand=False, l=50, r=5, t=10, b=70),
                                  showlegend=False,
