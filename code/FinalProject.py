@@ -27,8 +27,8 @@ athletes_medals = pd.read_excel('data/tops_athletes.xlsx', sheet_name='Athletes 
 encoded_image = base64.b64encode(open('images/Olympic-logo.png', 'rb').read())
 
 #create years dict
-years_select = {int(i): '{}'.format(str(i)) for i in df_participants.Year.unique()}
-years_select[1892] = "All"
+years_select = {str(i): '{}'.format(str(i)) for i in df_participants.Year.unique()}
+years_select[str(1892)] = "All"
 
 #create sports dict
 sports_select = [dict(label=sport.replace('_', ' '), value=sport) for sport in df_athletes.Sport.unique()]
@@ -43,12 +43,6 @@ nr_host_cities = len(nr_host_cities)
 
 nr_events = df_athletes.Event.unique()
 nr_events = len(nr_events)
-
-
-#-------------------------------------------------------------------------------------------------------------------#
-#--------------------------------------------------- Charts --------------------------------------------------------#
-#-------------------------------------------------------------------------------------------------------------------#
-
 
 #--------------------------------------------------------------------------------------------------------------------#
 #---------------------------------------------------LAYOUT-----------------------------------------------------------#
@@ -268,38 +262,38 @@ app.layout = html.Div([
 
 
 #----------------------------------------Callbacks---------------------------------------------------------------------#
-def update_graph (team, sport, year):
+def update_graph(team, sport, year):
 
-    #reduces the dataframe to be used to update the graphs, given the inputs
-    #def countries(year, sport, team):
+    # reduces the dataframe to be used to update the graphs, given the inputs
     if (year == 1892) & (len(sport) == 0) & (team == 'both'):
-        df = df_countries
+        df = df_countries.copy()
         athletes = athletes_medals
     elif (year != 1892) & (len(sport) == 0) & (team == 'both'):
-        df = df_countries.loc[df_countries['Year'] == year, :]
-        athletes = athletes_medals.loc[athletes_medals['Year'] == year, :]
+        df = df_countries.loc[df_countries['Year'] == year, :].copy()
+        athletes = athletes_medals.loc[athletes_medals['Year'] == year, :].copy()
     elif (year != 1892) & (len(sport) != 0) & (team == 'both'):
-        df = df_countries.loc[(df_countries['Year'] == year) & (df_countries['Sport'].isin(sport)), :]
-        athletes = athletes_medals.loc[(athletes_medals['Year'] == year) & (athletes_medals['Sport'].isin(sport)), :]
+        df = df_countries.loc[(df_countries['Year'] == year) & (df_countries['Sport'].isin(sport)), :].copy()
+        athletes = athletes_medals.loc[(athletes_medals['Year'] == year) & (athletes_medals['Sport'].isin(sport)),
+                   :].copy()
     elif (year != 1892) & (len(sport) != 0) & (team != 'both'):
         df = df_countries.loc[(df_countries['Year'] == year) & (df_countries['Sport'].isin(sport)) & (
-                    df_countries['Team Sport'] == team), :]
+                df_countries['Team Sport'] == team), :].copy()
         athletes = athletes_medals.loc[(athletes_medals['Year'] == year) & (athletes_medals['Sport'].isin(sport)) & (
-                athletes_medals['Team Sport'] == team), :]
+                athletes_medals['Team Sport'] == team), :].copy()
     elif (year == 1892) & (len(sport) != 0) & (team == 'both'):
-        df = df_countries.loc[df_countries['Sport'].isin(sport), :]
-        athletes = athletes_medals.loc[athletes_medals['Sport'].isin(sport), :]
+        df = df_countries.loc[df_countries['Sport'].isin(sport), :].copy()
+        athletes = athletes_medals.loc[athletes_medals['Sport'].isin(sport), :].copy()
     elif (year == 1892) & (len(sport) == 0) & (team != 'both'):
-        df = df_countries.loc[df_countries['Team Sport'] == team, :]
-        athletes = athletes_medals.loc[athletes_medals['Team Sport'] == team, :]
+        df = df_countries.loc[df_countries['Team Sport'] == team, :].copy()
+        athletes = athletes_medals.loc[athletes_medals['Team Sport'] == team, :].copy()
     elif (year == 1892) & (len(sport) != 0) & (team != 'both'):
-        df = df_countries.loc[(df_countries['Sport'].isin(sport)) & (df_countries['Team Sport'] == team), :]
+        df = df_countries.loc[(df_countries['Sport'].isin(sport)) & (df_countries['Team Sport'] == team), :].copy()
         athletes = athletes_medals.loc[(athletes_medals['Sport'].isin(sport)) & (athletes_medals['Team Sport'] == team),
-                   :]
+                   :].copy()
     elif (year != 1892) & (len(sport) == 0) & (team != 'both'):
-        df = df_countries.loc[(df_countries['Year'] == year) & (df_countries['Team Sport'] == team), :]
-        athletes = athletes_medals.loc[(athletes_medals['Year'] == year) & (athletes_medals['Team Sport'] == team), :]
-
+        df = df_countries.loc[(df_countries['Year'] == year) & (df_countries['Team Sport'] == team), :].copy()
+        athletes = athletes_medals.loc[(athletes_medals['Year'] == year) & (athletes_medals['Team Sport'] == team),
+                   :].copy()
 
     df = df.groupby(by=['Country'])['Gold', 'Silver', 'Bronze'].sum()
     df['Country'] = df.index
@@ -309,13 +303,13 @@ def update_graph (team, sport, year):
     df.drop_duplicates(inplace=True)
 
     df = df.merge(df_participants[['City', 'Country', 'Edition']], how='outer', on='Country')
-    df[['City','Edition']].fillna('No host', inplace=True)
+    df.loc[df['City'].isnull(), 'City'] = 'No host'
+    df.loc[df['Edition'].isnull(), 'Edition'] = 'No host'
     df['Total'] = df['Gold'] + df['Silver'] + df['Bronze']
     df = df.groupby('Country').agg({'Gold': 'first', 'Silver': 'first', 'Bronze': 'first', 'Total': 'first',
                                     'ISO3': 'first', 'City': ', '.join, 'Edition': ', '.join}).reset_index()
 
-
-################################################Top 5 Athletes Filter#############################3
+#---------------------------------------------------Top 5 Athletes Filter----------------------------------------------#
 
     athletes = athletes.groupby(by=['Name'])['Gold', 'Silver', 'Bronze', 'Total'].sum()
     athletes['Name'] = athletes.index
@@ -377,7 +371,7 @@ def update_graph (team, sport, year):
 
     dfs = dfs.replace(0, np.nan)
 
-    ###################################### MAP  CREATION ##################################################33
+    #--------------------------------------------------------MAP  CREATION---------------------------------------------#
 
     trace1 = go.Choropleth(locations=df['ISO3'],
                            locationmode='ISO-3',
@@ -523,11 +517,8 @@ def update_graph (team, sport, year):
     # --------------------------------------------------- TOP COUNTRIES TABLE------------------------------------------#
 
     top_5_countries = df.copy()
-    top_5_countries.Total= top_5_countries.Total.astype(int)
     top_5_countries = top_5_countries.sort_values(by='Total', ascending=False)
     top_5_countries = top_5_countries.head()
-    colors = ['rgb(239, 243, 255)', 'rgb(189, 215, 231)', 'rgb(107, 174, 214)',
-              'rgb(49, 130, 189)', 'rgb(8, 81, 156)']
 
     table_countries = go.Table(
         header=dict(
@@ -541,7 +532,7 @@ def update_graph (team, sport, year):
             values=[top_5_countries.Country, top_5_countries.Gold, top_5_countries.Silver, top_5_countries.Bronze],
             line_color='black', fill_color='rgb(43, 43, 43)',
             align=['center','center'], font=dict(color='white', size=14),
-            height = 30
+            height=30
         )
     )
     layout_table = dict(
@@ -549,11 +540,9 @@ def update_graph (team, sport, year):
         plot_bgcolor='black',
         paper_bgcolor='black',
         autosize=False,
-        width=430,
+        width=400,
         height=340,
-        margin=dict(autoexpand=False,
-                    l=10, r=10, t=10, b=5
-                    ),
+        margin=dict(autoexpand=False, l=10, r=10, t=10, b=5),
     )
 
     table = go.Figure(data=table_countries, layout=layout_table)
@@ -580,40 +569,38 @@ def update_graph (team, sport, year):
                              marker={'symbol': 'circle', 'size': 7, 'color': 'rgb(255, 206, 51)'}, name='Gold'))
 
     fig_tp5a.update_layout(dragmode=False,
-                      xaxis=dict(title=dict(text="Medals Won",
-                                            font=dict(family='Arial',
-                                                      size=14,
-                                                      color='white',
-                                                      ),
-                                            ),
-                                 range=[0, (top5_athletes.Total.max() + 1)],
-                                 showgrid=False,
-                                 tick0=0,
-                                 tickfont=dict(family='Arial',
-                                               size=13,
-                                               color='white',
-                                               ),
-                                 showline=False,
-                                 showticklabels=True,
-                                 dtick=5),  # which ticks to show - one by one
-                      yaxis=dict(showgrid=False,
-                                 showline=False,
-                                 tickfont=dict(family='Arial',
-                                               size=13,
-                                               color='white',
-                                                ),
-                                 #standoff=2,
-                                 ),
-                      showlegend=False,
-                      plot_bgcolor='black',
-                      paper_bgcolor='black',
-                      autosize=False,
-                      width=410,
-                      height=220,
-                      margin=dict(autoexpand=False,
-                                  l=140, r=10, t=10, b=30
-                                  ),
-                      )
+                              xaxis=dict(title=dict(text="Medals Won",
+                                                    font=dict(family='Arial',
+                                                              size=14,
+                                                              color='white',
+                                                              ),
+                                                    ),
+                                         range=[0, (top5_athletes.Total.max() + 1)],
+                                         showgrid=False,
+                                         tick0=0,
+                                         tickfont=dict(family='Arial',
+                                                       size=13,
+                                                       color='white',
+                                                       ),
+                                         showline=False,
+                                         showticklabels=True,
+                                         dtick=5),  # which ticks to show - one by one
+                              yaxis=dict(showgrid=False,
+                                         showline=False,
+                                         tickfont=dict(family='Arial',
+                                                       size=13,
+                                                       color='white',
+                                                        ),
+                                         #standoff=2,
+                                         ),
+                              showlegend=False,
+                              plot_bgcolor='black',
+                              paper_bgcolor='black',
+                              autosize=False,
+                              width=400,
+                              height=220,
+                              margin=dict(autoexpand=False, l=140, r=10, t=10, b=30),
+                            )
 
     fig_tp5a.update_layout({
         'plot_bgcolor': 'rgba(0, 0, 0, 0)',
@@ -936,8 +923,8 @@ def update_graph (team, sport, year):
                              tick0=0
                              ),
                   autosize=False,
-                  width=600,
-                  height=300,
+                  width=800,
+                  height=500,
                   showlegend=True,
                   legend=dict(font=dict(color='white'), uirevision=False),
                   paper_bgcolor='rgba(0, 0, 0)',
@@ -1013,8 +1000,7 @@ def update_graph (team, sport, year):
                     y0=0,
                     x1=year + 2,
                     y1=df_participants[df_participants.Year == year][
-                        ['Returning Sports_Count', 'Maintained Sports_Count', 'New Sports_Count']].sum().sum(),
-                    # df_participants[df_participants.Year==2000][['Returning Sports_Count','Maintained Sports_Count','New Sports_Count']].sum().sum()
+                        ['Returning Sports_Count','Maintained Sports_Count', 'New Sports_Count']].sum().sum(),
                     fillcolor="#ff9966",
                     opacity=0.7,
                     line_width=0
