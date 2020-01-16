@@ -125,9 +125,8 @@ app.layout = html.Div([
         # Div 1.5.Text
         html.Div([
             html.H3('More About'),
-            html.P('The International Olympic Committee was created on 23 June 1894.'),
-            html.P('The first Olympic Games of the modern era opened in Athens on 6 April 1896, and the Olympic Movement has not stopped growing ever since. '),
-            html.P('Although, in 1916, 1940 and 1944 the Olympic Games had to be cancelled as a consequence of the World War I and the World War II.')
+            html.P('The first Olympic Games of the modern era opened in Athens in 1896, and the Olympic Movement has not stopped growing ever since. '),
+            html.P('Although, the VI, XII and XIII editions of the Olympic Summer Games were cancelled due to the I and II World Wars.')
 
         ], id='text', className='leftboxes'
         ),
@@ -315,12 +314,13 @@ def update_graph(team, sport, year):
 
 #---------------------------------------------------Top 5 Athletes Filter----------------------------------------------#
 
-    athletes = athletes.groupby(by=['Name'])['Gold', 'Silver', 'Bronze', 'Total'].sum()
+    athletes = athletes.groupby(by=['Name'])['Gold', 'Silver', 'Bronze'].sum()
     athletes['Name'] = athletes.index
     athletes.reset_index(drop=True, inplace=True)
     athletes.drop_duplicates(inplace=True)
 
     top5_athletes = athletes
+    top5_athletes['Total'] = top5_athletes['Gold'] + top5_athletes['Silver'] + top5_athletes['Bronze']
 
     top5_athletes = top5_athletes.sort_values(by=['Total'], ascending=False)
     top5_athletes = top5_athletes.head()
