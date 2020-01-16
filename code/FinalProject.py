@@ -918,7 +918,7 @@ def update_graph(team, sport, year):
                              ),
                   yaxis=dict(title=dict(text="Number of Sports",
                                         font=dict(family='Arial',
-                                                  size=13,
+                                                  size=14,
                                                   color='white',
                                                   ),
                                         ),
@@ -930,7 +930,7 @@ def update_graph(team, sport, year):
                              ticks='outside',
                              tickcolor='white',
                              tickfont=dict(family='Arial',
-                                           size=12,
+                                           size=13,
                                            color='white',
                                            ),
                              tick0=0
