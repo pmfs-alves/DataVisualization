@@ -945,7 +945,7 @@ def update_graph(team, sport, year):
 
                 go.Bar(x=df_participants['Year'], y=df_participants['Returning Sports_Count'], name='Returning Sports',
                        text=df_participants['Returning Sports'], marker=dict(color='rgb(35, 87, 105)'),
-                       hovertemplate="<b>Returning Sports:'</b> %{y:.0f}<br>%{text}",  # Total Sports: %{text}<br>
+                       hovertemplate="<b>Returning Sports:</b> %{y:.0f}<br>%{text}",  # Total Sports: %{text}<br>
                        hoverlabel=dict(bgcolor='rgb(242, 242, 242)',
                                        bordercolor='rgb(242, 242, 242)',
                                        font=dict(size=13,
@@ -957,7 +957,7 @@ def update_graph(team, sport, year):
                        text=df_participants['New Sports'], marker=dict(color='rgb(230, 230, 230)'),
                        hovertemplate="<b>New Sports:</b> %{y:.0f}<br>%{text}",  # Total Sports: %{text}<br>
                        hoverlabel=dict(bgcolor='rgb(242, 242, 242)',
-                                       bordercolor='rgb(255, 89, 89)',
+                                       bordercolor='rgb(242, 242, 242)',
                                        font=dict(size=13,
                                                  color='rgb(0, 0, 0)',
                                                  ),
