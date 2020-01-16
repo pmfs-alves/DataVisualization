@@ -1103,7 +1103,8 @@ def update_graph (team, sport, year):
             y=92,
             xref="x",
             yref="y",
-            text="After New Zealand's rugby team broke the<br>international sports embargo on Apartheid<br>in South Africa, 28 African countries boycotted<br>the summer games in Montreal.",
+            text="After New Zealand's rugby team broke the<br>international sports embargo on Apartheid<br>in South Afr"
+                 "ica, 28 African countries boycotted<br>the summer games in Montreal.",
             showarrow=True,
             font=dict(
                 family="Arial",
