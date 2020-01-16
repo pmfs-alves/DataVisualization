@@ -27,8 +27,8 @@ athletes_medals = pd.read_excel('data/tops_athletes.xlsx', sheet_name='Athletes 
 encoded_image = base64.b64encode(open('images/Olympic-logo.png', 'rb').read())
 
 #create years dict
-years_select = {i: '{}'.format(str(i)) for i in df_participants.Year.unique()}
-years_select[1892] = "All"
+years_select = {str(i): '{}'.format(str(i)) for i in df_participants.Year.unique()}
+years_select[str(1892)] = "All"
 
 #create sports dict
 sports_select = [dict(label=sport.replace('_', ' '), value=sport) for sport in df_athletes.Sport.unique()]
@@ -264,9 +264,6 @@ app.layout = html.Div([
 #----------------------------------------Callbacks---------------------------------------------------------------------#
 def update_graph(team, sport, year):
 
-    year=1892
-    sport=[]
-    team='both'
     # reduces the dataframe to be used to update the graphs, given the inputs
     if (year == 1892) & (len(sport) == 0) & (team == 'both'):
         df = df_countries.copy()
@@ -314,13 +311,12 @@ def update_graph(team, sport, year):
 
 #---------------------------------------------------Top 5 Athletes Filter----------------------------------------------#
 
-    athletes = athletes.groupby(by=['Name'])['Gold', 'Silver', 'Bronze'].sum()
+    athletes = athletes.groupby(by=['Name'])['Gold', 'Silver', 'Bronze', 'Total'].sum()
     athletes['Name'] = athletes.index
     athletes.reset_index(drop=True, inplace=True)
     athletes.drop_duplicates(inplace=True)
 
     top5_athletes = athletes
-    top5_athletes['Total'] = top5_athletes['Gold'] + top5_athletes['Silver'] + top5_athletes['Bronze']
 
     top5_athletes = top5_athletes.sort_values(by=['Total'], ascending=False)
     top5_athletes = top5_athletes.head()
@@ -521,7 +517,6 @@ def update_graph(team, sport, year):
     # --------------------------------------------------- TOP COUNTRIES TABLE------------------------------------------#
 
     top_5_countries = df.copy()
-    top_5_countries.Total = top_5_countries.Total.astype(int)
     top_5_countries = top_5_countries.sort_values(by='Total', ascending=False)
     top_5_countries = top_5_countries.head()
 
@@ -928,8 +923,8 @@ def update_graph(team, sport, year):
                              tick0=0
                              ),
                   autosize=False,
-                  width=600,
-                  height=300,
+                  width=800,
+                  height=500,
                   showlegend=True,
                   legend=dict(font=dict(color='white'), uirevision=False),
                   paper_bgcolor='rgba(0, 0, 0)',
@@ -1004,8 +999,8 @@ def update_graph(team, sport, year):
                     x0=year - 2,
                     y0=0,
                     x1=year + 2,
-                    y1=df_participants[df_participants.Year == year][['Returning Sports_Count','Maintained Sports_Count', 'New Sports_Count']].sum().sum(),
-                    # df_participants[df_participants.Year==2000][['Returning Sports_Count','Maintained Sports_Count','New Sports_Count']].sum().sum()
+                    y1=df_participants[df_participants.Year == year][
+                        ['Returning Sports_Count','Maintained Sports_Count', 'New Sports_Count']].sum().sum(),
                     fillcolor="#ff9966",
                     opacity=0.7,
                     line_width=0
