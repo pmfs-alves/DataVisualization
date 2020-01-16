@@ -131,9 +131,8 @@ app.layout = html.Div([
         # Div 1.5.Text
         html.Div([
             html.H3('More About'),
-            html.P('The International Olympic Committee was created on 23 June 1894.'),
-            html.P('The first Olympic Games of the modern era opened in Athens on 6 April 1896, and the Olympic Movement has not stopped growing ever since. '),
-            html.P('Although, in 1916, 1940 and 1944 the Olympic Games had to be cancelled as a consequence of the World War I and the World War II.')
+            html.P('The first Olympic Games of the modern era opened in Athens in 1896, and the Olympic Movement has not stopped growing ever since. '),
+            html.P('Although, the VI, XII and XIII editions of the Olympic Summer Games were cancelled due to the I and II World Wars.')
 
         ], id='text', className='leftboxes'
         ),
@@ -275,21 +274,32 @@ def update_graph (team, sport, year):
     #def countries(year, sport, team):
     if (year == 1892) & (len(sport) == 0) & (team == 'both'):
         df = df_countries
+        athletes = athletes_medals
     elif (year != 1892) & (len(sport) == 0) & (team == 'both'):
         df = df_countries.loc[df_countries['Year'] == year, :]
+        athletes = athletes_medals.loc[athletes_medals['Year'] == year, :]
     elif (year != 1892) & (len(sport) != 0) & (team == 'both'):
         df = df_countries.loc[(df_countries['Year'] == year) & (df_countries['Sport'].isin(sport)), :]
+        athletes = athletes_medals.loc[(athletes_medals['Year'] == year) & (athletes_medals['Sport'].isin(sport)), :]
     elif (year != 1892) & (len(sport) != 0) & (team != 'both'):
         df = df_countries.loc[(df_countries['Year'] == year) & (df_countries['Sport'].isin(sport)) & (
                     df_countries['Team Sport'] == team), :]
+        athletes = athletes_medals.loc[(athletes_medals['Year'] == year) & (athletes_medals['Sport'].isin(sport)) & (
+                athletes_medals['Team Sport'] == team), :]
     elif (year == 1892) & (len(sport) != 0) & (team == 'both'):
         df = df_countries.loc[df_countries['Sport'].isin(sport), :]
+        athletes = athletes_medals.loc[athletes_medals['Sport'].isin(sport), :]
     elif (year == 1892) & (len(sport) == 0) & (team != 'both'):
         df = df_countries.loc[df_countries['Team Sport'] == team, :]
+        athletes = athletes_medals.loc[athletes_medals['Team Sport'] == team, :]
     elif (year == 1892) & (len(sport) != 0) & (team != 'both'):
         df = df_countries.loc[(df_countries['Sport'].isin(sport)) & (df_countries['Team Sport'] == team), :]
+        athletes = athletes_medals.loc[(athletes_medals['Sport'].isin(sport)) & (athletes_medals['Team Sport'] == team),
+                   :]
     elif (year != 1892) & (len(sport) == 0) & (team != 'both'):
         df = df_countries.loc[(df_countries['Year'] == year) & (df_countries['Team Sport'] == team), :]
+        athletes = athletes_medals.loc[(athletes_medals['Year'] == year) & (athletes_medals['Team Sport'] == team), :]
+
 
     df = df.groupby(by=['Country'])['Gold', 'Silver', 'Bronze'].sum()
     df['Country'] = df.index
@@ -306,24 +316,6 @@ def update_graph (team, sport, year):
 
 
 ################################################Top 5 Athletes Filter#############################3
-    if (year == 1892) & (len(sport) == 0) & (team == 'both'):
-        athletes = athletes_medals
-    elif (year != 1892) & (len(sport) == 0) & (team == 'both'):
-        athletes = athletes_medals.loc[athletes_medals['Year'] == year, :]
-    elif (year != 1892) & (len(sport) != 0) & (team == 'both'):
-        athletes = athletes_medals.loc[(athletes_medals['Year'] == year) & (athletes_medals['Sport'].isin(sport)), :]
-    elif (year != 1892) & (len(sport) != 0) & (team != 'both'):
-        athletes = athletes_medals.loc[(athletes_medals['Year'] == year) & (athletes_medals['Sport'].isin(sport)) & (
-                    athletes_medals['Team Sport'] == team), :]
-    elif (year == 1892) & (len(sport) != 0) & (team == 'both'):
-        athletes = athletes_medals.loc[athletes_medals['Sport'].isin(sport), :]
-    elif (year == 1892) & (len(sport) == 0) & (team != 'both'):
-        athletes = athletes_medals.loc[athletes_medals['Team Sport'] == team, :]
-    elif (year == 1892) & (len(sport) != 0) & (team != 'both'):
-        athletes = athletes_medals.loc[(athletes_medals['Sport'].isin(sport)) & (athletes_medals['Team Sport'] == team),
-                   :]
-    elif (year != 1892) & (len(sport) == 0) & (team != 'both'):
-        athletes = athletes_medals.loc[(athletes_medals['Year'] == year) & (athletes_medals['Team Sport'] == team), :]
 
     athletes = athletes.groupby(by=['Name'])['Gold', 'Silver', 'Bronze', 'Total'].sum()
     athletes['Name'] = athletes.index
