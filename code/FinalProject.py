@@ -709,7 +709,7 @@ def update_graph(team, sport, year):
                                   side='right',
                                   ),
                        autosize=False,
-                       width=520,
+                       width=540,
                        height=400,
                        margin=dict(autoexpand=False,
                                    l=10, r=50, t=10, b=70
@@ -792,11 +792,11 @@ def update_graph(team, sport, year):
                     xref="x",
                     # y-reference is assigned to the y-values
                     yref="y",
-                    x0=year - 2,
+                    x0=year - 1.7,
                     y0=0,
-                    x1=year + 2,
+                    x1=year + 1.7,
                     y1=int(df_participants[df_participants.Year == year]['Participants']),
-                    fillcolor="#FF8C00",
+                    fillcolor="#FF8C00",#ff9966
                     opacity=0.6,
                     line_width=0,
                 )])
@@ -881,7 +881,7 @@ def update_graph(team, sport, year):
 
     layout = dict(xaxis=dict(title=dict(text="Year",
                                         font=dict(family='Arial',
-                                                  size=13,
+                                                  size=14,
                                                   color='white',
                                                   ),
                                         ),
@@ -895,7 +895,7 @@ def update_graph(team, sport, year):
                              range=[1894, 2018],
                              tickfont=dict(
                                  family='Arial',
-                                 size=12,
+                                 size=13,
                                  color='white',
                              ),
                              tickvals=[1896, 1904, 1912, 1920, 1928, 1936, 1948, 1956, 1964,
@@ -923,7 +923,7 @@ def update_graph(team, sport, year):
                              tick0=0
                              ),
                   showlegend=True,
-                  margin=dict(autoexpand=False, l=50, r=150, t=10, b=30),
+                  margin=dict(autoexpand=False, l=50, r=180, t=10, b=60),
                   legend=dict(font=dict(color='white'), uirevision=False),
                   paper_bgcolor='rgba(0, 0, 0)',
                   plot_bgcolor='rgba(0, 0, 0)'
@@ -999,7 +999,7 @@ def update_graph(team, sport, year):
                     x1=year + 2,
                     y1=df_participants[df_participants.Year == year][
                         ['Returning Sports_Count','Maintained Sports_Count', 'New Sports_Count']].sum().sum(),
-                    fillcolor="#ff9966",
+                    fillcolor="#FF8C00",
                     opacity=0.7,
                     line_width=0
                 )])
@@ -1072,7 +1072,7 @@ def update_graph(team, sport, year):
                                             range=[0, 250],
                                             ),
                                  autosize=False,
-                                 width=530,
+                                 width=540,
                                  height=400,
                                  margin=dict(autoexpand=False, l=50, r=5, t=10, b=70),
                                  showlegend=False,
@@ -1151,7 +1151,9 @@ def update_graph(team, sport, year):
                     x1=year + 0.15,
                     y0=0,
                     y1=int(df_participants[df_participants.Year == year]['Countries']),
-                    fillcolor="#ff9966",
+                    fillcolor="#FF8C00",
+                    line=dict(
+                        color="#FF8C00"),
                     line_width=2,
                     opacity=0.7
                 )])
