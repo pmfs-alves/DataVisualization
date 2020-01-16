@@ -756,7 +756,7 @@ app.layout = html.Div([
         Output(component_id='table_top_c', component_property='figure'),
         Output(component_id='table_top_a', component_property='figure')
         ],
-    
+
         # Output("choropleth", "figure"),
         # Output("countries_linechart", "figure"),
 
