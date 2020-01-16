@@ -406,8 +406,8 @@ def update_graph (team, sport, year):
                            marker=dict(line=dict(width=0)),
                            colorscale='Aggrnyl',
                            colorbar=dict(title=dict(text='Total Number<br>of Medals \n',
-                                                    font=dict(color='white')),
-                                         tickfont=dict(color='white')))
+                                                    font=dict(color='white', size=14)),
+                                         tickfont=dict(color='white', size=13)))
     trace2 = go.Choropleth(locations=df['ISO3'],
                            locationmode='ISO-3',
                            z=df['Gold'],
@@ -429,8 +429,8 @@ def update_graph (team, sport, year):
                            marker=dict(line=dict(width=0)),
                            colorscale='Aggrnyl',
                            colorbar=dict(title=dict(text='Total Number<br>of Golden Medals \n',
-                                                    font=dict(color='white')),
-                                         tickfont=dict(color='white')))
+                                                    font=dict(color='white', size=14)),
+                                         tickfont=dict(color='white', size=13)))
     trace3 = go.Choropleth(locations=df['ISO3'],
                            locationmode='ISO-3',
                            z=df['Silver'],
@@ -452,8 +452,8 @@ def update_graph (team, sport, year):
                            marker=dict(line=dict(width=0)),
                            colorscale='Aggrnyl',
                            colorbar=dict(title=dict(text='Total Number<br>of Silver Medals \n',
-                                                    font=dict(color='white')),
-                                         tickfont=dict(color='white')))
+                                                    font=dict(color='white', size=14)),
+                                         tickfont=dict(color='white', size=13)))
     trace4 = go.Choropleth(locations=df['ISO3'],
                            locationmode='ISO-3',
                            z=df['Bronze'],
@@ -475,8 +475,8 @@ def update_graph (team, sport, year):
                            marker=dict(line=dict(width=0)),
                            colorscale='Aggrnyl',
                            colorbar=dict(title=dict(text='Total Number<br>of Bronze Medals \n',
-                                                    font=dict(color='white')),
-                                         tickfont=dict(color='white')))
+                                                    font=dict(color='white', size=14)),
+                                         tickfont=dict(color='white', size=13)))
     layout = dict(geo=dict(landcolor='rgb(43, 43, 43)',
                            showcountries=False,
                            showframe=False,
@@ -518,7 +518,7 @@ def update_graph (team, sport, year):
                           y=0.10,
                           yanchor="top",
                           bgcolor='rgb(30, 30, 30)',
-                          font=dict(color='rgb(14, 135, 127)')
+                          font=dict(color='rgb(14, 135, 127)', size=14)
                       )
                   ]
                   )
@@ -943,7 +943,7 @@ def update_graph (team, sport, year):
                              ),
                   autosize=False,
                   width=600,
-                  height=30,
+                  height=300,
                   showlegend=True,
                   legend=dict(font=dict(color='white'), uirevision=False),
                   paper_bgcolor='rgba(0, 0, 0)',
