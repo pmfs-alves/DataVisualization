@@ -15,10 +15,13 @@ import plotly.express as px
 #-------------------------------------------------------------------------------------------------------------------#
 #------------------------------------------------ Get Data ---------------------------------------------------------#
 #-------------------------------------------------------------------------------------------------------------------#
-
+print(" ")
 df_athletes = pd.read_excel('data/athlete_events.xlsx', sheet_name='athlete_events')
+print(" ")
 df_participants = pd.read_excel('data/athlete_events.xlsx', sheet_name='participants')
+print(" ")
 df_countries= pd.read_excel('data/tops_countries.xlsx',sheet_name='Countries')
+print(" " )
 # df_flags = pd.read_excel('data/Country_Flags_excel.xlsx',sheet_name='Countries')
 athletes_medals = pd.read_excel('data/tops_athletes.xlsx', sheet_name='Athletes Medals')
 
@@ -1089,7 +1092,8 @@ def update_graph(team, sport, year):
             y=92,
             xref="x",
             yref="y",
-            text="After New Zealand's rugby team broke the<br>international sports embargo on Apartheid<br>in South Africa, 28 African countries boycotted<br>the summer games in Montreal.",
+            text="After New Zealand's rugby team broke the<br>international sports embargo on Apartheid<br>in South Afr"
+                 "ica, 28 African countries boycotted<br>the summer games in Montreal.",
             showarrow=True,
             font=dict(
                 family="Arial",
