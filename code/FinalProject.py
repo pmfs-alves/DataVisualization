@@ -100,7 +100,7 @@ app.layout = html.Div([
 
                     ],
                     value='both',
-                    labelStyle={'display': 'inline-block', 'font-size': '20px'}
+                    labelStyle={'display': 'inline-block', 'font-size': '15px'}
                 )
             ], id='filter'
             ),  # end div 1.4.1
