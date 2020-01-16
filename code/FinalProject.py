@@ -715,7 +715,7 @@ def update_graph(team, sport, year):
                                   side='right',
                                   ),
                        autosize=False,
-                       width=500,
+                       width=540,
                        height=400,
                        margin=dict(autoexpand=False,
                                    l=10, r=50, t=10, b=70
@@ -929,7 +929,7 @@ def update_graph(team, sport, year):
                              tick0=0
                              ),
                   showlegend=True,
-                  margin=dict(autoexpand=False, l=50, r=180, t=10, b=60),
+                  margin=dict(autoexpand=False, l=50, r=170, t=10, b=70),
                   legend=dict(font=dict(color='white'), uirevision=False),
                   paper_bgcolor='rgba(0, 0, 0)',
                   plot_bgcolor='rgba(0, 0, 0)'
@@ -1078,7 +1078,7 @@ def update_graph(team, sport, year):
                                             range=[0, 250],
                                             ),
                                  autosize=False,
-                                 width=520,
+                                 width=540,
                                  height=400,
                                  margin=dict(autoexpand=False, l=50, r=5, t=10, b=70),
                                  showlegend=False,
