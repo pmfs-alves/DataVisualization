@@ -695,7 +695,7 @@ app.layout = html.Div([
                 html.P('Olympics getting Popular'),
                 dcc.Graph(
                     id='c_linechart',
-                    config={'displayModeBar':False},
+
                     figure=fig_countries_linechart
                 )
             ], id='countries_linechart', className='boxes'
@@ -706,7 +706,7 @@ app.layout = html.Div([
                 html.P('Athletes Men & Women'),
                 dcc.Graph(
                     id='a_linechart',
-                    config={'displayModeBar':False},
+
                     figure=area
                 )
             ], id='athletes_linechart', className='boxes'
@@ -725,7 +725,7 @@ app.layout = html.Div([
             ),  # end div 2.5.1.
             dcc.Graph(
                 id='barchart',
-                config={'displayModeBar':False},
+                
                 figure=bar
             )
         ], id='bar_chart', className='row_5'
