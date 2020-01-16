@@ -855,22 +855,33 @@ countries_names = c_m.Country.unique()
 
 top_5_countries = df.sort_values(by='Total', ascending=False)
 top_5_countries = top_5_countries.head()
-colors = ['rgb(239, 243, 255)', 'rgb(189, 215, 231)', 'rgb(107, 174, 214)',
-          'rgb(49, 130, 189)', 'rgb(8, 81, 156)']
 
 table_countries = go.Table(
     header=dict(
         values=["Country", "Gold", "Silver", "Bronze"],
-        line_color='white', fill_color='white',
-        align='center', font=dict(color='black', size=12)
+        line_color=['rgb(128,128,128)','rgb(255, 206, 51)','rgb(192,192,192)','rgb(205, 127, 50)'], 
+        fill_color=['rgb(128,128,128)','rgb(255, 206, 51)','rgb(192,192,192)','rgb(205, 127, 50)'],
+        align='center', 
+        font=dict(color=['black'], size=12),
     ),
     cells=dict(
         values=[top_5_countries.Country, top_5_countries.Gold, top_5_countries.Silver, top_5_countries.Bronze],
-        line_color=['white'], fill_color=[colors],
-        align='center', font=dict(color='black', size=11)
+        line_color='black', fill_color='rgb(43, 43, 43)',
+        align=['center','center'], font=dict(color='white', size=11),
     )
 )
+layout = dict(
+              showlegend=False,
+              plot_bgcolor='black',
+              paper_bgcolor='black',
+              autosize=False,
+              width=430,
+              height=190,
+              margin=dict(autoexpand=False,
+                          l=10,r=10,t=10,b=5
+                       ),
+        )
 
-table = go.Figure(data=table_countries)
+table = go.Figure(data=table_countries, layout=layout)
 
 pyo.plot(table)
