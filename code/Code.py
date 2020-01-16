@@ -249,7 +249,6 @@ line = go.Figure(data=go.Scatter(x=df_participants['Year'],
                                                 size=12,
                                                 color='white',
                                                 ),
-                                        
                                         tickvals=[1896,1904,1912,1920,1928,1936,1948,1956,1964,
                                                   1972,1980,1988,1996,2004,2012],
                                         dtick = 4,
@@ -596,7 +595,7 @@ layout= dict(xaxis=dict(title=dict(text="Year",
                         linecolor='white',
                         linewidth=2,
                         ticks='outside',
-                         tickcolor='white',
+                        tickcolor='white',
                         range=[1894,2018],
                         tickfont=dict(
                                 family='Arial',
@@ -629,9 +628,9 @@ layout= dict(xaxis=dict(title=dict(text="Year",
 
                        ),
                      
-              autosize=False,
-              width=600,
-              height=450,
+#              autosize=False,
+#              width=600,
+#              height=450,
               margin=dict(autoexpand=False,
                           l=50,r=10,t=10,b=70
                        ),
@@ -701,116 +700,146 @@ pyo.plot(bar)
 # Top 5 Winners
 # -----------------------------------------------------------------------------
 
-athletes_medals = pd.read_excel(r'C:\Users\Sofia\OneDrive - NOVAIMS\Nova IMS\Mestrado\Cadeiras\Data_Visualization\Projeto DV\DataVisualization\code\data\tops_athletes.xlsx', sheet_name='Athletes Medals')
+athletes_medals = pd.read_excel(r'C:\Users\TITA\OneDrive\Faculdade\2 Mestrado\1º semestre\Data Visualization\Project\DataVisualization\code\data\tops_athletes.xlsx', sheet_name='Athletes Medals')
 
-athletes_medals.Year=athletes_medals.Year.astype(str)
-top5_athletes = athletes_medals[athletes_medals.Year=='1900']
-top5_athletes=top5_athletes.drop_duplicates()
+year=1892
+team='Individual'
+sport=[]
 
-top5_athletes = top5_athletes.sort_values(by=['Total'], ascending=False)
-top5_athletes = top5_athletes.head()
-top5_athletes = top5_athletes.sort_values(by=['Total'], ascending=True)
+# FILTERING
+def athletes(year, sport, team):
+    if (year == 1892) & (len(sport) == 0) & (team == 'both'):
+        athletes = athletes_medals
+    elif (year != 1892) & (len(sport) == 0) & (team == 'both'):
+        athletes = athletes_medals.loc[athletes_medals['Year']==year,:]
+    elif (year != 1892) & (len(sport) != 0) & (team == 'both'):
+        athletes = athletes_medals.loc[(athletes_medals['Year']==year) & (athletes_medals['Sport'].isin(sport)),:]
+    elif (year != 1892) & (len(sport) != 0) & (team != 'both'):
+        athletes = athletes_medals.loc[(athletes_medals['Year']==year) & (athletes_medals['Sport'].isin(sport)) & (athletes_medals['Team Sport']==team),:]
+    elif (year == 1892) & (len(sport) != 0) & (team == 'both'):
+        athletes = athletes_medals.loc[athletes_medals['Sport'].isin(sport),:]  
+    elif (year == 1892) & (len(sport) == 0) & (team != 'both'):
+        athletes = athletes_medals.loc[athletes_medals['Team Sport']==team,:]
+    elif (year == 1892) & (len(sport) != 0) & (team != 'both'):
+        athletes = athletes_medals.loc[(athletes_medals['Sport'].isin(sport)) & (athletes_medals['Team Sport']==team),:]
+    elif (year != 1892) & (len(sport) == 0) & (team != 'both'):
+        athletes = athletes_medals.loc[(athletes_medals['Year']==year) & (athletes_medals['Team Sport']==team),:]
+    
+    athletes= athletes.groupby(by=['Name'])['Gold','Silver','Bronze','Total'].sum()
+    athletes['Name'] = athletes.index
+    athletes.reset_index(drop=True, inplace=True)
+    athletes.drop_duplicates(inplace=True)
+    
+    top5_athletes = athletes
+        
+    top5_athletes = top5_athletes.sort_values(by=['Total'], ascending=False)
+    top5_athletes = top5_athletes.head()
+    top5_athletes = top5_athletes.sort_values(by=['Total'], ascending=True)
+    
+    top5_athletes=top5_athletes.drop_duplicates()
+    
+    top5_athletes.Name = [(i.split()[0]+' '+i.split()[-1]) for i in top5_athletes.Name]
+    
+    top5_athletes=top5_athletes.reset_index(drop=True)
+    
+    dfs=top5_athletes.copy()
+    dfs.drop(dfs.index, inplace=True)
+    dfs.drop(columns='Total', inplace=True)
+    for index, row in top5_athletes.iterrows():
+        if row.Bronze>=1:
+            v=0 
+            while v < row.Bronze:
+                dfs = dfs.append({'Name' : row.Name , 'Gold' : 0,'Silver':0,'Bronze':row.Bronze-v} , ignore_index=True)
+                v+=1
+        if row.Bronze == 0 and row.Silver>0:
+            v=0
+            while v < row.Silver:
+                dfs = dfs.append({'Name' : row.Name , 'Gold' : 0,'Silver':row.Silver-v,'Bronze':0} , ignore_index=True)
+                v+=1
+                
+        if row.Bronze>0 and row.Silver>0:
+            v=row.Silver
+            j=0
+            while v>0:
+                dfs = dfs.append({'Name' : row.Name , 'Gold' : 0,'Silver':row.Bronze+row.Silver-j,'Bronze':0} , ignore_index=True)
+                v-=1
+                j+=1
+        if (row.Bronze!=0 or row.Silver!=0) and row.Gold>0:
+            v=row.Gold
+            j=0
+            while v>0:
+                dfs = dfs.append({'Name' : row.Name , 'Gold' : row.Bronze+row.Silver+row.Gold-j,'Silver':0,'Bronze':0} , ignore_index=True)
+                v-=1
+                j+=1
+                
+        if row.Gold>0 and row.Bronze==0 and row.Silver==0:
+            v=0
+            while v < row.Gold:
+                dfs = dfs.append({'Name' : row.Name , 'Gold' : row.Gold-v,'Silver':0,'Bronze':0} , ignore_index=True)
+                v+=1
 
-top5_athletes.drop(columns='Unnamed: 0', inplace=True)
 
-top5_athletes=top5_athletes.drop_duplicates()
-
-top5_athletes.Name = [(i.split()[0]+' '+i.split()[-1]) for i in top5_athletes.Name]
-
-top5_athletes=top5_athletes.reset_index(drop=True)
-
-dfs = top5_athletes.copy()
-dfs.drop(dfs.index, inplace=True)
-for index, row in top5_athletes.iterrows():
-    if row.Bronze >= 1:
-        v = 0
-        while v < row.Bronze:
-            dfs = dfs.append({'Name': row.Name, 'Gold': 0, 'Silver': 0, 'Bronze': row.Bronze - v, 'Year': row.Year,
-                              'Sport': row.Sport, 'Team Sport': row['Team Sport'], 'Total': 0}, ignore_index=True)
-            v += 1
-    if row.Bronze == 0 and row.Silver > 1:
-        v = 0
-        while v < row.Silver:
-            dfs = dfs.append({'Name': row.Name, 'Gold': 0, 'Silver': row.Silver - v, 'Bronze': 0, 'Year': row.Year,
-                              'Sport': row.Sport, 'Team Sport': row['Team Sport'], 'Total': 0}, ignore_index=True)
-            v += 1
-
-    if row.Bronze > 0 and row.Silver > 0:
-        a = abs(row.Silver - row.Bronze)
-        v = 0
-        j = 0
-        while v <= a:
-            dfs = dfs.append(
-                {'Name': row.Name, 'Gold': 0, 'Silver': row.Bronze + row.Silver - j, 'Bronze': 0, 'Year': row.Year,
-                 'Sport': row.Sport, 'Team Sport': row['Team Sport'], 'Total': 0}, ignore_index=True)
-            v += 1
-            j += 1
-    if (row.Bronze != 0 or row.Silver != 0) and row.Gold > 0:
-        v = row.Gold
-        j = 0
-        while v > 0:
-            dfs = dfs.append(
-                {'Name': row.Name, 'Gold': row.Bronze + row.Silver + row.Gold - j, 'Silver': 0, 'Bronze': 0,
-                 'Year': row.Year, 'Sport': row.Sport, 'Team Sport': row['Team Sport'], 'Total': 0}, ignore_index=True)
-            v -= 1
-            j += 1
-
-    if row.Gold > 0 and row.Bronze == 0 and row.Silver == 0:
-        v = 0
-        while v < row.Gold:
-            dfs = dfs.append(
-                {'Name': row.Name, 'Gold': row.Gold - v, 'Silver': 0, 'Bronze': 0, 'Year': row.Year, 'Sport': row.Sport,
-                 'Team Sport': row['Team Sport'], 'Total': 0}, ignore_index=True)
-            v += 1
-
-layout = dict(dragmode=False, title=dict(text="<b><i> The winner takes it all",
-                                         font=dict(family='Raleway',
-                                                   size=30,
-                                                   color='rgb(0, 0, 0)',
-                                                   ),
-                                         x=0.5,
-                                         ),
-              xaxis=dict(title=dict(text="<b>Medals Won",
-                                    font=dict(family='Arial',
-                                              size=16,
-                                              color='rgb(0, 0, 0)',
-                                              ),
-
-                                    ),
-                         range=[0.3, 30],
-                         tick0=0,
-
-                         dtick=5),  # which ticks to show - one by one
-
-              yaxis=dict(title=dict(text="<b>Athlete",
-                                    font=dict(family='Arial',
-                                              size=16,
-                                              color='rgb(0, 0, 0)',
-                                              ),
-                                    )
-                         ),
-
-              showlegend=False,
-              plot_bgcolor='white'
-              )
-fig = go.Figure(layout=layout)
+fig = go.Figure()
 
 fig.add_trace(go.Scatter(x=dfs.Bronze.tolist(), y=dfs.Name.tolist(), mode='markers',
                          hoverinfo='skip',
-
-                         marker={'symbol': 'circle', 'size': 16, 'color': 'rgb(205, 127, 50)'}, name='Bronze'))
+                         marker={'symbol': 'circle', 'size': 7, 'color': 'rgb(205, 127, 50)'}, name='Bronze'))
 
 fig.add_trace(go.Scatter(x=dfs.Silver.tolist(), y=dfs.Name.tolist(), mode='markers',
                          hoverinfo='skip',
-
-                         marker={'symbol': 'circle', 'size': 16, 'color': 'rgb(192,192,192)'}, name='Silver'))
+                         marker={'symbol': 'circle', 'size': 7, 'color': 'rgb(192,192,192)'}, name='Silver'))
 
 fig.add_trace(go.Scatter(x=dfs.Gold.tolist(), y=dfs.Name.tolist(), mode='markers',
                          hoverinfo='skip',
+                         marker={'symbol': 'circle', 'size': 7, 'color': 'rgb(255, 206, 51)'}, name='Gold'))
 
-                         marker={'symbol': 'circle', 'size': 16, 'color': 'rgb(255, 206, 51)'}, name='Gold'))
+fig.update_layout(dragmode=False, 
+                  xaxis=dict(title=dict(text="Medals Won",
+                                        font=dict(family='Arial',
+                                                  size=13,
+                                                  color='white',
+                                                  ),
+                                    ),
+                         range=[0.3,(top5_athletes.Total.max()+0.3)],
+                         showgrid=False,
+                         tick0=0,
+                         tickfont=dict(family='Arial',
+                                       size=12,
+                                       color='white',
+                                       ),
+                         showline=True,
+                         showticklabels=True,
+                         #linecolor='white',
+                         #linewidth=0.5,
+                         #ticks='outside',
+                         #tickcolor='white',
+                         dtick=5),  # which ticks to show - one by one
+              yaxis=dict(showgrid=False,
+                         tickfont=dict(
+                                family='Arial',
+                                size=12,
+                                color='white',
+                                ),
+#                         showline=True,
+#                         showticklabels=True,
+#                         linecolor='white',
+#                         linewidth=0.5,
+#                         ticks='outside',
+#                         tickcolor='white',
+                         ),
+              showlegend=False,
+              plot_bgcolor='black',
+              paper_bgcolor='black',
+              autosize=False,
+              width=390,
+              height=200,
+              margin=dict(autoexpand=False,
+                          l=140,r=10,t=10,b=30
+                       ),
+              )
 
 pyo.plot(fig)
+
 # -----------------------------------------------------------------------------
 # Top 5 Countries
 # -----------------------------------------------------------------------------
@@ -824,4 +853,24 @@ c_m = c_m.to_frame().reset_index()
 
 countries_names = c_m.Country.unique()
 
+top_5_countries = df.sort_values(by='Total', ascending=False)
+top_5_countries = top_5_countries.head()
+colors = ['rgb(239, 243, 255)', 'rgb(189, 215, 231)', 'rgb(107, 174, 214)',
+          'rgb(49, 130, 189)', 'rgb(8, 81, 156)']
 
+table_countries = go.Table(
+    header=dict(
+        values=["Country", "Gold", "Silver", "Bronze"],
+        line_color='white', fill_color='white',
+        align='center', font=dict(color='black', size=12)
+    ),
+    cells=dict(
+        values=[top_5_countries.Country, top_5_countries.Gold, top_5_countries.Silver, top_5_countries.Bronze],
+        line_color=['white'], fill_color=[colors],
+        align='center', font=dict(color='black', size=11)
+    )
+)
+
+table = go.Figure(data=table_countries)
+
+pyo.plot(table)
