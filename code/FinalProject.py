@@ -67,7 +67,14 @@ app.layout = html.Div([
         ], id='title', className='title leftboxes'
         ),  # end div 1.1.
 
-        # Div 1.2. - Top Winners
+        # end div 1.2.
+        html.Div([
+            html.P('Tokyo 2020 Olympic games are approaching fast and 120 years have passed since the first modern era '
+                   'Olympic games. It is time to have a look at some games insights since the creation.'),
+        ], id='intro', className='leftboxes'
+        ),
+
+        # Div 1.3. - Top Winners
         html.Div([
             html.H2('Top Winners'),
             html.Div([dcc.Graph(id='table_top_a',config={'displayModeBar':False})], className='nice_choro')
@@ -76,7 +83,7 @@ app.layout = html.Div([
             #         id='top_contries_fig'
             # )
         ], id='top_winners', className='leftboxes'
-        ),  # end div 1.2.
+        ),  # end div 1.3.
 
         # Div 1.3. - Top Countries
         html.Div([
@@ -129,7 +136,7 @@ app.layout = html.Div([
             html.P('Although, the VI, XII and XIII editions of the Olympic Summer Games were cancelled due to the I and II World Wars.'),
             html.Br(), html.Br(), html.Br(), html.Br(), html.Br(), html.Br(),
             html.Br(), html.Br(), html.Br(), html.Br(), html.Br(), html.Br(),
-            html.Br(), html.Br(), html.Br(), html.Br()
+            html.Br()
         ], id='text', className='leftboxes'
         ),
 
@@ -715,7 +722,7 @@ def update_graph(team, sport, year):
                                   side='right',
                                   ),
                        autosize=False,
-                       width=540,
+                       width=500,
                        height=400,
                        margin=dict(autoexpand=False,
                                    l=10, r=50, t=10, b=70
@@ -1078,7 +1085,7 @@ def update_graph(team, sport, year):
                                             range=[0, 250],
                                             ),
                                  autosize=False,
-                                 width=540,
+                                 width=510,
                                  height=400,
                                  margin=dict(autoexpand=False, l=50, r=5, t=10, b=70),
                                  showlegend=False,
