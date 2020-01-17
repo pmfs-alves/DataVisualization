@@ -1,12 +1,15 @@
 import pandas as pd
+from collections import Counter
 import dash
 import dash_core_components as dcc
 import dash_html_components as html
 import base64
 
+
 from dash.dependencies import Input, Output
 import numpy as np
 import plotly.graph_objects as go
+
 
 
 
@@ -19,11 +22,9 @@ print(" ")
 df_participants = pd.read_excel('data/athlete_events.xlsx', sheet_name='participants')
 print(" ")
 df_countries= pd.read_excel('data/tops_countries.xlsx',sheet_name='Countries')
-print(" " )
 # df_flags = pd.read_excel('data/Country_Flags_excel.xlsx',sheet_name='Countries')
 athletes_medals = pd.read_excel('data/tops_athletes.xlsx', sheet_name='Athletes Medals')
 print(" ")
-
 #Encode Image
 
 encoded_image = base64.b64encode(open('images/Olympic-logo.png', 'rb').read())
