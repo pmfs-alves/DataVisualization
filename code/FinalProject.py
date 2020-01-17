@@ -1,4 +1,5 @@
 import pandas as pd
+from collections import Counter
 import dash
 import dash_core_components as dcc
 import dash_html_components as html
@@ -332,6 +333,22 @@ def update_graph(team, sport, year):
     top5_athletes = top5_athletes.sort_values(by=['Total'], ascending=True)
 
     top5_athletes = top5_athletes.drop_duplicates()
+
+    contador = Counter(top5_athletes.Name.tolist())
+    repeted = []
+
+    for key, value in contador.items():
+        if value > 1:
+            repeted.append(key)
+
+    if len(repeted) != 0:
+        repeted_frame = top5_athletes[top5_athletes.Name.isin(repeted)].copy()
+        top5_athletes = top5_athletes[~top5_athletes.Name.isin(repeted)].copy()
+        for i in repeted:
+            soma = repeted_frame[repeted_frame.Name == i].sum(axis=0)
+            top5_athletes = top5_athletes.append(
+                {'Name': i, 'Gold': soma['Gold'], 'Silver': soma['Silver'], 'Bronze': soma['Bronze'],
+                 'Total': soma['Total']}, ignore_index=True)
 
     top5_athletes.Name = [(i.split()[0] + ' ' + i.split()[-1] + "  ") for i in top5_athletes.Name]
 
