@@ -5,11 +5,9 @@ import dash_html_components as html
 import base64
 
 from dash.dependencies import Input, Output
-from dash.dependencies import Input, Output
 import numpy as np
-import plotly.offline as pyo
 import plotly.graph_objects as go
-import plotly.express as px
+
 
 
 #-------------------------------------------------------------------------------------------------------------------#
@@ -24,6 +22,7 @@ df_countries= pd.read_excel('data/tops_countries.xlsx',sheet_name='Countries')
 print(" " )
 # df_flags = pd.read_excel('data/Country_Flags_excel.xlsx',sheet_name='Countries')
 athletes_medals = pd.read_excel('data/tops_athletes.xlsx', sheet_name='Athletes Medals')
+print(" ")
 
 #Encode Image
 
@@ -70,7 +69,15 @@ app.layout = html.Div([
         ], id='title', className='title leftboxes'
         ),  # end div 1.1.
 
-        # Div 1.2. - Top Winners
+        # end div 1.2.
+        html.Div([
+            html.P('Tokyo 2020 Olympic games are approaching fast and 120 years have passed since the first modern era '
+                   'Olympic games. It is time to have a look at some games insights since the creation.'),
+            html.Br()
+        ], id='intro', className='leftboxes'
+        ),
+
+        # Div 1.3. - Top Winners
         html.Div([
             html.H2('Top Winners'),
             html.Div([dcc.Graph(id='table_top_a',config={'displayModeBar':False})], className='nice_choro')
@@ -79,7 +86,7 @@ app.layout = html.Div([
             #         id='top_contries_fig'
             # )
         ], id='top_winners', className='leftboxes'
-        ),  # end div 1.2.
+        ),  # end div 1.3.
 
         # Div 1.3. - Top Countries
         html.Div([
@@ -103,7 +110,7 @@ app.layout = html.Div([
 
                     ],
                     value='both',
-                    labelStyle={'display': 'inline-block'}
+                    labelStyle={'display': 'inline-block', 'font-size': '15px'}
                 )
             ], id='filter'
             ),  # end div 1.4.1
@@ -129,8 +136,9 @@ app.layout = html.Div([
         html.Div([
             html.H3('More About'),
             html.P('The first Olympic Games of the modern era opened in Athens in 1896, and the Olympic Movement has not stopped growing ever since. '),
-            html.P('Although, the VI, XII and XIII editions of the Olympic Summer Games were cancelled due to the I and II World Wars.')
-
+            html.P('Although, the VI, XII and XIII editions of the Olympic Summer Games were cancelled due to the I and II World Wars.'),
+            html.Br(), html.Br(), html.Br(), html.Br(), html.Br(), html.Br(),
+            html.Br(), html.Br(), html.Br()
         ], id='text', className='leftboxes'
         ),
 
@@ -327,6 +335,22 @@ def update_graph(team, sport, year):
 
     top5_athletes = top5_athletes.drop_duplicates()
 
+    contador = Counter(top5_athletes.Name.tolist())
+    repeted = []
+
+    for key, value in contador.items():
+        if value > 1:
+            repeted.append(key)
+
+    if len(repeted) != 0:
+        repeted_frame = top5_athletes[top5_athletes.Name.isin(repeted)].copy()
+        top5_athletes = top5_athletes[~top5_athletes.Name.isin(repeted)].copy()
+        for i in repeted:
+            soma = repeted_frame[repeted_frame.Name == i].sum(axis=0)
+            top5_athletes = top5_athletes.append(
+                {'Name': i, 'Gold': soma['Gold'], 'Silver': soma['Silver'], 'Bronze': soma['Bronze'],
+                 'Total': soma['Total']}, ignore_index=True)
+
     top5_athletes.Name = [(i.split()[0] + ' ' + i.split()[-1] + "  ") for i in top5_athletes.Name]
 
     top5_athletes = top5_athletes.reset_index(drop=True)
@@ -395,6 +419,7 @@ def update_graph(team, sport, year):
                                                      ),
                                            namelength=0,
                                            ),
+                           visible=True,
                            autocolorscale=False,
                            marker=dict(line=dict(width=0)),
                            colorscale='Aggrnyl',
@@ -418,6 +443,7 @@ def update_graph(team, sport, year):
                                                      ),
                                            namelength=0,
                                            ),
+                           visible=False,
                            autocolorscale=False,
                            marker=dict(line=dict(width=0)),
                            colorscale='Aggrnyl',
@@ -441,6 +467,7 @@ def update_graph(team, sport, year):
                                                      ),
                                            namelength=0,
                                            ),
+                           visible=False,
                            autocolorscale=False,
                            marker=dict(line=dict(width=0)),
                            colorscale='Aggrnyl',
@@ -464,6 +491,7 @@ def update_graph(team, sport, year):
                                                      ),
                                            namelength=0,
                                            ),
+                           visible=False,
                            autocolorscale=False,
                            marker=dict(line=dict(width=0)),
                            colorscale='Aggrnyl',
@@ -712,7 +740,7 @@ def update_graph(team, sport, year):
                                   side='right',
                                   ),
                        autosize=False,
-                       width=520,
+                       width=510,
                        height=400,
                        margin=dict(autoexpand=False,
                                    l=10, r=50, t=10, b=70
@@ -740,7 +768,7 @@ def update_graph(team, sport, year):
             showarrow=True,
             font=dict(
                 family="Arial",
-                size=12,
+                size=13,
                 color="#ffffff"
             ),
             align="left",
@@ -768,7 +796,7 @@ def update_graph(team, sport, year):
             showarrow=True,
             font=dict(
                 family="Arial",
-                size=12,
+                size=13,
                 color="#ffffff"
             ),
             align="left",
@@ -795,11 +823,11 @@ def update_graph(team, sport, year):
                     xref="x",
                     # y-reference is assigned to the y-values
                     yref="y",
-                    x0=year - 2,
+                    x0=year - 1.7,
                     y0=0,
-                    x1=year + 2,
-                    y1=df_participants[df_participants.Year == year]['Participants'],
-                    fillcolor="#FF8C00",
+                    x1=year + 1.7,
+                    y1=int(df_participants[df_participants.Year == year]['Participants']),
+                    fillcolor="#FF8C00",#ff9966
                     opacity=0.6,
                     line_width=0,
                 )])
@@ -884,7 +912,7 @@ def update_graph(team, sport, year):
 
     layout = dict(xaxis=dict(title=dict(text="Year",
                                         font=dict(family='Arial',
-                                                  size=13,
+                                                  size=14,
                                                   color='white',
                                                   ),
                                         ),
@@ -898,17 +926,17 @@ def update_graph(team, sport, year):
                              range=[1894, 2018],
                              tickfont=dict(
                                  family='Arial',
-                                 size=12,
+                                 size=13,
                                  color='white',
                              ),
-                             tickvals=[1896, 1904, 1912, 1920, 1928, 1936, 1948, 1956, 1964,
-                                       1972, 1980, 1988, 1996, 2004, 2012],
+                             # tickvals=[1896, 1904, 1912, 1920, 1928, 1936, 1948, 1956, 1964,
+                             #           1972, 1980, 1988, 1996, 2004, 2012],
                              dtick=4,
                              tickangle=45
                              ),
                   yaxis=dict(title=dict(text="Number of Sports",
                                         font=dict(family='Arial',
-                                                  size=13,
+                                                  size=14,
                                                   color='white',
                                                   ),
                                         ),
@@ -920,15 +948,13 @@ def update_graph(team, sport, year):
                              ticks='outside',
                              tickcolor='white',
                              tickfont=dict(family='Arial',
-                                           size=12,
+                                           size=13,
                                            color='white',
                                            ),
                              tick0=0
                              ),
-                  autosize=False,
-                  width=800,
-                  height=500,
                   showlegend=True,
+                  margin=dict(autoexpand=False, l=50, r=170, t=10, b=70),
                   legend=dict(font=dict(color='white'), uirevision=False),
                   paper_bgcolor='rgba(0, 0, 0)',
                   plot_bgcolor='rgba(0, 0, 0)'
@@ -948,7 +974,7 @@ def update_graph(team, sport, year):
 
                 go.Bar(x=df_participants['Year'], y=df_participants['Returning Sports_Count'], name='Returning Sports',
                        text=df_participants['Returning Sports'], marker=dict(color='rgb(35, 87, 105)'),
-                       hovertemplate="<b>Returning Sports:'</b> %{y:.0f}<br>%{text}",  # Total Sports: %{text}<br>
+                       hovertemplate="<b>Returning Sports:</b> %{y:.0f}<br>%{text}",  # Total Sports: %{text}<br>
                        hoverlabel=dict(bgcolor='rgb(242, 242, 242)',
                                        bordercolor='rgb(242, 242, 242)',
                                        font=dict(size=13,
@@ -960,7 +986,7 @@ def update_graph(team, sport, year):
                        text=df_participants['New Sports'], marker=dict(color='rgb(230, 230, 230)'),
                        hovertemplate="<b>New Sports:</b> %{y:.0f}<br>%{text}",  # Total Sports: %{text}<br>
                        hoverlabel=dict(bgcolor='rgb(242, 242, 242)',
-                                       bordercolor='rgb(255, 89, 89)',
+                                       bordercolor='rgb(242, 242, 242)',
                                        font=dict(size=13,
                                                  color='rgb(0, 0, 0)',
                                                  ),
@@ -1004,7 +1030,7 @@ def update_graph(team, sport, year):
                     x1=year + 2,
                     y1=df_participants[df_participants.Year == year][
                         ['Returning Sports_Count','Maintained Sports_Count', 'New Sports_Count']].sum().sum(),
-                    fillcolor="#ff9966",
+                    fillcolor="#FF8C00",
                     opacity=0.7,
                     line_width=0
                 )])
@@ -1077,7 +1103,7 @@ def update_graph(team, sport, year):
                                             range=[0, 250],
                                             ),
                                  autosize=False,
-                                 width=530,
+                                 width=512,
                                  height=400,
                                  margin=dict(autoexpand=False, l=50, r=5, t=10, b=70),
                                  showlegend=False,
@@ -1097,7 +1123,7 @@ def update_graph(team, sport, year):
             showarrow=True,
             font=dict(
                 family="Arial",
-                size=12,
+                size=13,
                 color="#ffffff"
             ),
             align="left",
@@ -1125,7 +1151,7 @@ def update_graph(team, sport, year):
             showarrow=True,
             font=dict(
                 family="Arial",
-                size=12,
+                size=13,
                 color="#ffffff"
             ),
             align="left",
@@ -1156,12 +1182,21 @@ def update_graph(team, sport, year):
                     x1=year + 0.15,
                     y0=0,
                     y1=int(df_participants[df_participants.Year == year]['Countries']),
-                    fillcolor="#00b3b3",
+                    fillcolor="#FF8C00",
+                    line=dict(
+                        color="#FF8C00"),
                     line_width=2,
                     opacity=0.7
                 )])
 
     return map, table, fig_tp5a, area, bar, line
+
+
+
+
+
+
+
 
 
 # Run application

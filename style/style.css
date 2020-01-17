@@ -16,6 +16,7 @@ body {
 .column_1{
     margin-top: -10px;
     margin-left: -10px;
+    margin-bottom: -20px;
     height: 100%;
     flex: 25%;
     background-color: #2b2b2b;
@@ -23,7 +24,7 @@ body {
 }
 #title p{
     color: rgb(255,255,255);
-    font-size: 45px;
+    font-size: 43px;
     color: #fff;
     font-family: ATrebuchet MS, sans-serif ;
     margin-top: 10%;
@@ -36,34 +37,63 @@ p#p2{
     margin-top: 8%;
 }
 #logo{
-    width: 70%;
+    width: 63%;
     height: auto;
     margin-top: -30px;
-    margin-bottom: 15%;;
+    margin-bottom: 4%;
+}
+#intro{
+    font-size: 18px;
+    margin-left: 12%;
+    margin-right: 12%;
+    text-align: justify;
+    text-justify: inter-word;
 }
 #top_winners{
-    margin-bottom:10%;
+    margin-bottom:12%;
 }
 #top_countries{
-    margin-bottom:10%;
+    margin-top: 8%;
 }
 #filter{
     margin-bottom:10%;
 }
+#filter p{
+    font-size : 16px;
+}
+#search p{
+    font-size : 16px;
+}
 #search{
     margin-bottom:10%;
-    padding-left: 10%;
-    padding-right: 10%;
+    padding-left: 12%;
+    padding-right: 12%;
 }
 #sport_select{
     background-color: DodgerBlue;
 }
-
-
 .leftboxes h2{
     font-weight:normal;
-    color: rgb(254,192,54);
+    color: white;
 }
+#text p {
+    font-size: 15px;
+    margin-left: 12%;
+    margin-right: 12%;
+    text-align: justify;
+    text-justify: inter-word;
+    line-height: 1.6;
+
+}
+#text{
+    padding-bottom: 3003 px;
+}
+#text h3{
+    font-size: 18px;
+    margin-top: 30%;
+    color: rgb(86,125,125);
+}
+
 
 
 .column_2{
@@ -73,7 +103,7 @@ p#p2{
 
 .row_1{
     display: flex;
-    margin-bottom: 5%;
+    margin-bottom: 4%;
 }
 .miniboxes{
     flex: 25%;
@@ -81,25 +111,28 @@ p#p2{
 .row_1 h3{
     font-weight:normal;
     color: rgb(178,178,178);
-    font-size: 19px;
+    font-size: 23px;
 }
 .row_1 p{
-    font-size: 17px;
-    margin-top: -3%;
+    font-size: 20px;
+    margin-top: -4%;
 }
 .row_1 .nr {
-    font-size: 17px;
+    font-size: 20px;
     margin-top: -3%;
 }
 .row_2{
+    margin-top: -2%;
     margin-bottom: 2%;
 }
 .row_3{
     margin-bottom: 4%;
     background-color: rgb(43,43,43);
     padding : 1%;
-    padding-top:2%;
+    padding-right: 2%;
+    padding-top: 1.5%
 }
+
 .row_4{
     display: flex;
 }
@@ -107,15 +140,28 @@ p#p2{
     flex: 36%;
     background-color: rgb(43,43,43);
     margin-right:2%;
-    padding: 10px;
+    padding: 0px;
     padding-top:2px;
 }
 #countries_linechart{
     height:auto;
+    padding-left: 2.5px;
+}
+#athletes_linechart{
+    padding-right: -2px;
+    padding-left: 2px;
+}
+#bar_chart{
+    padding-left: 5px;
 }
 .boxes p {
     font-size: 20px;
-    margin-bottom: -10px;
+    margin-bottom: 20px;
+}
+.row_5{
+    margin-top: 4%;
+    background-color: rgb(43,43,43);
+    padding-bottom:2%;
 }
 
 
