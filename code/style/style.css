@@ -148,7 +148,8 @@ p#p2{
     padding-left: 2.5px;
 }
 #athletes_linechart{
-    padding-right: 0px;
+    padding-right: -2px;
+    padding-left: 2px;
 }
 #bar_chart{
     padding-left: 5px;
